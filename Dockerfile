@@ -1,6 +1,6 @@
 FROM node:9.6.1
 
-WORKDIR /telegram-bot-secretary/app/src
+WORKDIR /app/src
 
 COPY package.json yarn.lock ./
 
