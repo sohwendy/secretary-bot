@@ -7,12 +7,14 @@ It retrieves events from google sheets using google service account.
 It filters out the event and send the notifications.  
 2 notifications are sent per event, the day before and on the actual day.
 
-Spreadsheet
-| data A1      | time A2  | type A3  | title A4    | 
-| ------------ | -------- | -------- | ----------- | 
-| 28 Feb 2018  | 15:00    | Write    | Tests       |
-| 28 Feb 2018  | 15:00    | Book     | Shuttle     |
-| 21 Mar 2018  | 08:00    | Upgrade  | Packages    |
+## Data
+Spreadsheet  
+
+| date (A1)    | time (A2)| type (A3)| title (A4)  |
+| ------------ |:--------:|:--------:| -----------:|  
+| 28 Feb 2018  | 15:00    | Write    | Tests       |  
+| 28 Feb 2018  | 15:00    | Book     | Shuttle     |  
+| 21 Mar 2018  | 08:00    | Upgrade  | Packages    |  
 
 On 28 Feb 2018, this message will be sent to telegram:
 
