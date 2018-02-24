@@ -7,7 +7,9 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node src/index.js ",
+    "live": "node src/index.js live",
+    "debug": "node src/index.js debug",
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
     "test-debug": "node --inspect node_modules/ava/profile.js",
     "test": "nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
@@ -27,10 +29,10 @@
   ],
   "dependencies": {
     "bot-brother": "^2.1.5",
+    "cron": "^1.3.0",
     "google-auth-library": "^1.2.0",
     "googleapis": "^26.0.0",
-    "moment": "^2.20.1",
-    "node-schedule": "^1.3.0"
+    "moment": "^2.20.1"
   },
   "devDependencies": {
     "ava": "^0.25.0",

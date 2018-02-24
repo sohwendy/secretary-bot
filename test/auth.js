@@ -17,12 +17,12 @@ function Jwt(email, _a, key, scope, _b){
   this.authorize = noop;
 }
 
-const readFileMock = _ => JSON.stringify(secrets);
-const exceptionMock = _ => { throw 'exception'; };
+const readFileMock = () => JSON.stringify(secrets);
+const exceptionMock = () => { throw 'exception'; };
 const googleMock = { auth: { JWT: Jwt } };
 let auth;
 
-test.before(_ => {
+test.before(() => {
   auth = rewire('../src/auth.js');
   auth.__set__('google', googleMock);
 });

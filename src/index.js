@@ -1,17 +1,27 @@
-// const schedule = require('node-schedule');
+const cron = require('cron');
 const TelegramBot = require('node-telegram-bot-api');
 const sheets = require('./sheets');
 const chat = require('../secrets/chat');
 
-// const rule = new schedule.RecurrenceRule();
-// rule.day = [1, 2, 3, 4, 5];
-// rule.hour = 8;
-// rule.minute = 55;
+const schedule = {
+  debug: '00 * * * * *',
+  live: '* 48 8 * * *'
+};
 
-// const weekday = schedule.scheduleJob(rule, fetch());
+const bot = new TelegramBot(chat.token, { polling: true });
+// eslint-disable-next-line camelcase
+const send = data => bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' });
 
-const bot = new TelegramBot(chat.token, { polling: false });
-sheets
-  .fetch()
-  // eslint-disable-next-line camelcase
-  .then(data => bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' }));
+const state = process.argv[2] || '';
+
+if (state) {
+  new cron.CronJob({
+    cronTime: schedule[state],
+    onTick: function() {
+      sheets.fetch().then(send);
+    },
+    start: true
+  });
+} else {
+  sheets.fetch().then(send);
+}

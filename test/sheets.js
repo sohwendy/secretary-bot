@@ -12,12 +12,12 @@ const secretsMock = {
 const readSheetsMock = params => { return { data: { values: params } }; };
 const authMock = (file, scope) => `${file},${scope}`;
 const parserMock = { parse: param => param };
-const emptyMock = { parse: _ => '' } ;
-const exceptionMock = { parse: _ => { throw 'this is an exception'; } };
+const emptyMock = { parse: () => '' } ;
+const exceptionMock = { parse: () => { throw 'this is an exception'; } };
 let rewireMock = [];
 let sheets;
 
-test.beforeEach(_ => {
+test.beforeEach(() => {
   sheets = rewire('../src/sheets.js');
   rewireMock.push(sheets.__set__('readSheets', readSheetsMock));
   rewireMock.push(sheets.__set__('secrets', secretsMock));
