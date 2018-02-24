@@ -1,0 +1,39 @@
+{
+  "name": "telegram-bot-secretary",
+  "version": "0.0.1",
+  "description": "a bot that reminds",
+  "main": "src/index.js",
+  "author": "Wendy",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "node src/index.js",
+    "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/"
+  },
+  "bugs": {
+    "url": "https://github.com/sohwendy/telegram-bot-secretary/issues"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sohwendy/telegram-bot-secretary.git"
+  },
+  "keywords": [
+    "telegram",
+    "google",
+    "stock",
+    "node"
+  ],
+  "dependencies": {
+    "bot-brother": "^2.1.5",
+    "google-auth-library": "^1.2.0",
+    "googleapis": "^26.0.0",
+    "moment": "^2.20.1",
+    "node-schedule": "^1.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.9.0"
+  }
+}
