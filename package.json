@@ -37,6 +37,7 @@
     "eslint": "^4.18.1",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
-    "mockdate": "^2.0.2"
+    "mockdate": "^2.0.2",
+    "rewire": "^3.0.2"
   }
 }
