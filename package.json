@@ -10,7 +10,7 @@
     "start": "node src/index.js",
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
     "test-debug": "node --inspect node_modules/ava/profile.js",
-    "test": "ava"
+    "test": "nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {
     "url": "https://github.com/sohwendy/telegram-bot-secretary/issues"
@@ -38,6 +38,7 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
     "mockdate": "^2.0.2",
+    "nyc": "^11.4.1",
     "rewire": "^3.0.2"
   }
 }

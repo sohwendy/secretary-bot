@@ -33,6 +33,10 @@
     "camelcase": [
         2,
         {"properties": "always"}
+    ],
+    "no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "^_" }
     ]
   }
 }

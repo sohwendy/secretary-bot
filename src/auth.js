@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const readFile = promisify(fs.readFile);
 
+/* istanbul ignore next */
 const error = (error) => {
   if (error) {
     console.error('Google Auth error', error);

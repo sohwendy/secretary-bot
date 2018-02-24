@@ -1,6 +1,5 @@
 import test from 'ava';
 const rewire = require('rewire');
-const sheets = rewire('../src/sheets.js');
 
 const secretsMock = {
   file: 'some_file',
@@ -13,18 +12,20 @@ const secretsMock = {
 const readSheetsMock = params => { return { data: { values: params } }; };
 const authMock = (file, scope) => `${file},${scope}`;
 const parserMock = { parse: param => param };
+const emptyMock = { parse: _ => '' } ;
+const exceptionMock = { parse: _ => { throw 'this is an exception'; } };
 let rewireMock = [];
+let sheets;
 
-test.before(_ => {
+test.beforeEach(_ => {
+  sheets = rewire('../src/sheets.js');
   rewireMock.push(sheets.__set__('readSheets', readSheetsMock));
   rewireMock.push(sheets.__set__('secrets', secretsMock));
   rewireMock.push(sheets.__set__('auth', authMock));
-  rewireMock.push(sheets.__set__('parser', parserMock));
 });
 
-test.after(_ => rewireMock.map(m => m()));
-
-test('fetch', async t => {
+test('fetch()', async t => {
+  rewireMock.push(sheets.__set__('parser', parserMock));
   const expected = {
     data: {
       auth: 'some_file,some_test',
@@ -33,6 +34,22 @@ test('fetch', async t => {
     },
     link: 'some_link'
   };
+  const actual = await sheets.fetch();
+
+  t.deepEqual(expected, actual);
+});
+
+test('fetch() returns nil', async t => {
+  rewireMock.push(sheets.__set__('parser', emptyMock));
+  const expected = undefined;
+  const actual = await sheets.fetch();
+
+  t.deepEqual(expected, actual);
+});
+
+test('fetch() returns nil upon exception', async t => {
+  rewireMock.push(sheets.__set__('parser', exceptionMock));
+  const expected = undefined;
   const actual = await sheets.fetch();
 
   t.deepEqual(expected, actual);

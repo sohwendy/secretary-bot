@@ -1,7 +1,7 @@
 # telegram-bot-secretary
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/telegram-bot-secretary.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/sohwendy/telegram-bot-secretary.svg?branch=master)](https://travis-ci.org/sohwendy/telegram-bot-secretary)  
+[![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/telegram-bot-secretary.svg)](https://greenkeeper.io/)
 
 A bot that reads google sheets data to send notifications to telegram chat.
 
@@ -49,3 +49,4 @@ yarn start
 
 ## References
 [Node.js Quickstart | Sheets API | Google Developers ](https://developers.google.com/sheets/api/quickstart/nodejs)
+[ava test runner](https://github.com/avajs/ava)
