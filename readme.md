@@ -1,4 +1,5 @@
 # telegram-bot-secretary
+[![Build Status](https://travis-ci.org/sohwendy/telegram-bot-secretary.svg?branch=master)](https://travis-ci.org/sohwendy/telegram-bot-secretary)  
 
 A bot that reads google sheets data to send notifications to telegram chat.
 

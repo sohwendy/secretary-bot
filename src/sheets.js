@@ -21,7 +21,7 @@ module.exports = {
       const sheetsData = await readSheets(params);
       const data = sheetsData.data.values;
       const link = secrets.link;
-      const msg = parser({ data, link });
+      const msg = parser.parse({ data, link });
       if (msg)
         return msg;
     } catch (err) {
