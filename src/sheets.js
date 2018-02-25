@@ -3,14 +3,20 @@ const { google } = require('googleapis');
 const notification = require('./parser/notification');
 const alert = require('./parser/alert');
 const auth = require('./auth');
-const secrets = require('../secrets/sheets');
+const constants = require('../config/constants');
 
 const sheets = google.sheets('v4');
 const readSheets = promisify(sheets.spreadsheets.values.get);
 
+function _getSecrets(fake) {
+  return `${constants.secretPath[ fake ? 'fake' : 'real']}/sheets`;
+}
+
 module.exports = {
-  fetchNotification: async () => {
+  _getSecrets: _getSecrets,
+  fetchNotification: async (fake) => {
     try {
+      const secrets = require(_getSecrets(fake));
       const authClient = await auth(secrets.file, secrets.scope);
 
       const params = {
@@ -29,8 +35,9 @@ module.exports = {
       console.error('cant fetch notification\n', err);
     }
   },
-  fetchAlert: async () => {
+  fetchAlert: async (fake) => {
     try {
+      const secrets = require(_getSecrets(fake));
       const authClient = await auth(secrets.file, secrets.scope);
 
       const params = {

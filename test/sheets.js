@@ -1,13 +1,8 @@
 import test from 'ava';
 const rewire = require('rewire');
+const secretsMock = require('../sample/sheets');
+const constants = require('../config/constants');
 
-const secretsMock = {
-  file: 'some_file',
-  link: 'some_link',
-  scope: 'some_test',
-  id: 'some_id',
-  range: 'some_range'
-};
 
 const readSheetsMock = params => { return { data: { values: params } }; };
 const authMock = (file, scope) => `${file},${scope}`;
@@ -24,17 +19,31 @@ test.beforeEach(() => {
   rewireMock.push(sheets.__set__('auth', authMock));
 });
 
-test('fetchNotification()', async t => {
+test('_getSecrets() returns real path', async t => {
+  const expected = `${constants.secretPath.real}/sheets`;
+  const actual = sheets._getSecrets();
+
+  t.deepEqual(expected, actual);
+});
+
+test('_getSecrets(true) returns fake path', async t => {
+  const expected = `${constants.secretPath.fake}/sheets`;
+  const actual = sheets._getSecrets(true);
+
+  t.deepEqual(expected, actual);
+});
+
+test('fetchNotification() works', async t => {
   rewireMock.push(sheets.__set__('notification', parserMock));
   const expected = {
     data: {
-      auth: 'some_file,some_test',
-      spreadsheetId: 'some_id',
-      range: 'some_range'
+      auth: `${secretsMock.file},${secretsMock.scope}`,
+      spreadsheetId: secretsMock.id,
+      range: secretsMock.range
     },
-    link: 'some_link'
+    link: secretsMock.link
   };
-  const actual = await sheets.fetchNotification();
+  const actual = await sheets.fetchNotification(true);
 
   t.deepEqual(expected, actual);
 });
@@ -42,7 +51,7 @@ test('fetchNotification()', async t => {
 test('fetchNotification() returns nil', async t => {
   rewireMock.push(sheets.__set__('notification', emptyMock));
   const expected = undefined;
-  const actual = await sheets.fetchNotification();
+  const actual = await sheets.fetchNotification(true);
 
   t.deepEqual(expected, actual);
 });
@@ -50,23 +59,23 @@ test('fetchNotification() returns nil', async t => {
 test('fetchNotification() returns nil upon exception', async t => {
   rewireMock.push(sheets.__set__('notification', exceptionMock));
   const expected = undefined;
-  const actual = await sheets.fetchNotification();
+  const actual = await sheets.fetchNotification(true);
 
   t.deepEqual(expected, actual);
 });
 
 
-test('fetchAlert()', async t => {
+test('fetchAlert() works', async t => {
   rewireMock.push(sheets.__set__('alert', parserMock));
   const expected = {
     data: {
-      auth: 'some_file,some_test',
-      spreadsheetId: 'some_id',
-      range: 'some_range'
+      auth: `${secretsMock.file},${secretsMock.scope}`,
+      spreadsheetId: secretsMock.id,
+      range: secretsMock.range
     },
-    link: 'some_link'
+    link: secretsMock.link
   };
-  const actual = await sheets.fetchAlert();
+  const actual = await sheets.fetchAlert(true);
 
   t.deepEqual(expected, actual);
 });
@@ -74,7 +83,7 @@ test('fetchAlert()', async t => {
 test('fetchAlert() returns nil', async t => {
   rewireMock.push(sheets.__set__('alert', emptyMock));
   const expected = undefined;
-  const actual = await sheets.fetchAlert();
+  const actual = await sheets.fetchAlert(true);
 
   t.deepEqual(expected, actual);
 });
@@ -82,7 +91,7 @@ test('fetchAlert() returns nil', async t => {
 test('fetchAlert() returns nil upon exception', async t => {
   rewireMock.push(sheets.__set__('alert', exceptionMock));
   const expected = undefined;
-  const actual = await sheets.fetchAlert();
+  const actual = await sheets.fetchAlert(true);
 
   t.deepEqual(expected, actual);
 });

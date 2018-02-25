@@ -14,4 +14,8 @@ module.exports = {
     min: 0,
     max: 2
   },
+  secretPath: {
+    real: '../secrets',
+    fake: '../sample'
+  }
 };
