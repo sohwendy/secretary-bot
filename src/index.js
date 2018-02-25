@@ -4,24 +4,39 @@ const sheets = require('./sheets');
 const chat = require('../secrets/chat');
 
 const schedule = {
-  debug: '00 * * * * *',
-  live: '* 48 8 * * *'
+  debug: {
+    daily: '00 * * * * *',
+    minute: '00 * * * * *'
+  },
+  live: {
+    daily: '* 48 8 * * *',
+    minute: '* */15 8 * * *'
+  }
 };
 
 const bot = new TelegramBot(chat.token, { polling: true });
+const send = data => {
 // eslint-disable-next-line camelcase
-const send = data => bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' });
+  data ? bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' }) : '';
+};
 
 const state = process.argv[2] || '';
 
-if (state) {
+if (!state) {
+  sheets.fetchNotification().then(send);
+  sheets.fetchAlert().then(send);
+} else {
+  // daily
   new cron.CronJob({
-    cronTime: schedule[state],
-    onTick: function() {
-      sheets.fetch().then(send);
-    },
+    cronTime: schedule[state].daily,
+    onTick: () => sheets.fetchNotification().then(send),
     start: true
   });
-} else {
-  sheets.fetch().then(send);
+
+  // monitor 15 min
+  new cron.CronJob({
+    cronTime: schedule[state].minute,
+    onTick: () => sheets.fetchAlert().then(send),
+    start: true
+  });
 }

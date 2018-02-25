@@ -7,11 +7,12 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "node src/index.js ",
+    "start": "node src/index.js",
     "live": "node src/index.js live",
     "debug": "node src/index.js debug",
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
-    "test-debug": "node --inspect node_modules/ava/profile.js",
+    "test-ddebug": "node --inspect node_modules/ava/profile.js",
+    "test-debug": "ava" ,
     "test": "nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {

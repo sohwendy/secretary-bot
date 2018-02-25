@@ -24,8 +24,8 @@ test.beforeEach(() => {
   rewireMock.push(sheets.__set__('auth', authMock));
 });
 
-test('fetch()', async t => {
-  rewireMock.push(sheets.__set__('parser', parserMock));
+test('fetchNotification()', async t => {
+  rewireMock.push(sheets.__set__('notification', parserMock));
   const expected = {
     data: {
       auth: 'some_file,some_test',
@@ -34,23 +34,55 @@ test('fetch()', async t => {
     },
     link: 'some_link'
   };
-  const actual = await sheets.fetch();
+  const actual = await sheets.fetchNotification();
 
   t.deepEqual(expected, actual);
 });
 
-test('fetch() returns nil', async t => {
-  rewireMock.push(sheets.__set__('parser', emptyMock));
+test('fetchNotification() returns nil', async t => {
+  rewireMock.push(sheets.__set__('notification', emptyMock));
   const expected = undefined;
-  const actual = await sheets.fetch();
+  const actual = await sheets.fetchNotification();
 
   t.deepEqual(expected, actual);
 });
 
-test('fetch() returns nil upon exception', async t => {
-  rewireMock.push(sheets.__set__('parser', exceptionMock));
+test('fetchNotification() returns nil upon exception', async t => {
+  rewireMock.push(sheets.__set__('notification', exceptionMock));
   const expected = undefined;
-  const actual = await sheets.fetch();
+  const actual = await sheets.fetchNotification();
+
+  t.deepEqual(expected, actual);
+});
+
+
+test('fetchAlert()', async t => {
+  rewireMock.push(sheets.__set__('alert', parserMock));
+  const expected = {
+    data: {
+      auth: 'some_file,some_test',
+      spreadsheetId: 'some_id',
+      range: 'some_range'
+    },
+    link: 'some_link'
+  };
+  const actual = await sheets.fetchAlert();
+
+  t.deepEqual(expected, actual);
+});
+
+test('fetchAlert() returns nil', async t => {
+  rewireMock.push(sheets.__set__('alert', emptyMock));
+  const expected = undefined;
+  const actual = await sheets.fetchAlert();
+
+  t.deepEqual(expected, actual);
+});
+
+test('fetchAlert() returns nil upon exception', async t => {
+  rewireMock.push(sheets.__set__('alert', exceptionMock));
+  const expected = undefined;
+  const actual = await sheets.fetchAlert();
 
   t.deepEqual(expected, actual);
 });
