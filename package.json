@@ -13,7 +13,7 @@
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
     "test-ddebug": "node --inspect node_modules/ava/profile.js",
     "test-debug": "ava" ,
-    "test": "nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
+    "test": "yarn lint && nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {
     "url": "https://github.com/sohwendy/telegram-bot-secretary/issues"
