@@ -38,7 +38,7 @@ test('_stringify', t => {
 
   t.deepEqual(expected, actual);
 });
-//
+
 test('_createHeader for today', t => {
   const today = moment('03 Mar 2018', 'DD MMM YYYY');
   const expected = '3) Today 03 Mar Sat';

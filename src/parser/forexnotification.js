@@ -1,5 +1,15 @@
 const constants = require('../../config/constants');
 
+function _roundDown(value, precision = 2) {
+  const factor = Math.pow(10, precision);
+  return Math.floor(value * factor) / factor;
+}
+
+function _roundUp(value, precision = 2) {
+  const factor = Math.pow(10, precision);
+  return Math.ceil(value * factor) / factor;
+}
+
 function _stringify(row) {
   const foreign = row.code.toLowerCase();
   const buyRate = row.buyRate.toString().padStart(5);
@@ -11,21 +21,21 @@ function _stringify(row) {
 
 function _filter(row) {
   const { factor, data } = this;
-  const buyRate = _round(data[row.code] / factor * row.buyUnit);
-  const sellRate = _round(factor / data[row.code] * row.sellUnit);
-  return { code: row.code, buyRate, sellRate, buyUnit: row.buyUnit, sellUnit: row.sellUnit};
-}
-
-function _round(value) {
-  const factor = Math.pow(10, 2);
-  return Math.round(value * factor) / factor;
+  const { code, buyUnit, sellUnit } = row;
+  if (!code || !buyUnit || !sellUnit || !data[code] || !factor)
+    return { code, buyRate: '-', sellRate: '-', buyUnit: '-', sellUnit: '-' };
+  const buyRate = _roundDown(data[code] / factor * buyUnit);
+  const sellRate = _roundUp(factor / data[code] * sellUnit);
+  return { code, buyRate, sellRate, buyUnit, sellUnit};
 }
 
 module.exports = {
+  _roundDown: _roundDown,
+  _roundUp: _roundUp,
   _filter: _filter,
   _stringify: _stringify,
   parse: ({ data }) => {
-    if (data.length === 0) return '';
+    if (!data || data.length === 0) return '';
 
     const forex = constants.forex.data;
     const factor = data['SGD'];
