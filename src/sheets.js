@@ -3,20 +3,16 @@ const { google } = require('googleapis');
 const notification = require('./parser/tasknotification');
 const alert = require('./parser/taskalert');
 const auth = require('../lib/auth');
+const { _getSecrets } = require('../lib/commonhelper');
 const constants = require('../config/constants');
 
 const sheets = google.sheets('v4');
 const readSheets = promisify(sheets.spreadsheets.values.get);
 
-function _getSecrets(fake) {
-  return `${constants.secretPath[ fake ? 'fake' : 'real']}/sheets`;
-}
-
 module.exports = {
-  _getSecrets: _getSecrets,
   fetchNotification: async (fake) => {
     try {
-      const secrets = require(_getSecrets(fake));
+      const secrets = require(_getSecrets(constants.secretPath, fake, 'sheets'));
 
       const options = { spreadsheetId: secrets.id, range: secrets.range };
       const params = await auth(secrets.file, secrets.scope, options);
@@ -35,7 +31,7 @@ module.exports = {
   },
   fetchAlert: async (fake) => {
     try {
-      const secrets = require(_getSecrets(fake));
+      const secrets = require(_getSecrets(constants.secretPath, fake, 'sheets'));
 
       const options = { spreadsheetId: secrets.id, range: secrets.range };
       const params = await auth(secrets.file, secrets.scope, options);

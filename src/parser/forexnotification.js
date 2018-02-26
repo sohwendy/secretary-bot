@@ -1,14 +1,5 @@
 const constants = require('../../config/constants');
-
-function _roundDown(value, precision = 2) {
-  const factor = Math.pow(10, precision);
-  return Math.floor(value * factor) / factor;
-}
-
-function _roundUp(value, precision = 2) {
-  const factor = Math.pow(10, precision);
-  return Math.ceil(value * factor) / factor;
-}
+const { roundDown, roundUp } = require('../../lib/forexhelper');
 
 function _stringify(row) {
   const foreign = row.code.toLowerCase();
@@ -24,14 +15,12 @@ function _filter(row) {
   const { code, buyUnit, sellUnit } = row;
   if (!code || !buyUnit || !sellUnit || !data[code] || !factor)
     return { code, buyRate: '-', sellRate: '-', buyUnit: '-', sellUnit: '-' };
-  const buyRate = _roundDown(data[code] / factor * buyUnit);
-  const sellRate = _roundUp(factor / data[code] * sellUnit);
+  const buyRate = roundDown(data[code] / factor * buyUnit);
+  const sellRate = roundUp(factor / data[code] * sellUnit);
   return { code, buyRate, sellRate, buyUnit, sellUnit};
 }
 
 module.exports = {
-  _roundDown: _roundDown,
-  _roundUp: _roundUp,
   _filter: _filter,
   _stringify: _stringify,
   parse: ({ data }) => {

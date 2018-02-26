@@ -19,20 +19,6 @@ test.beforeEach(() => {
   rewireMock.push(sheets.__set__('auth', authMock));
 });
 
-test('_getSecrets() returns real path', async t => {
-  const expected = `${constants.secretPath.real}/sheets`;
-  const actual = sheets._getSecrets();
-
-  t.deepEqual(expected, actual);
-});
-
-test('_getSecrets(true) returns fake path', async t => {
-  const expected = `${constants.secretPath.fake}/sheets`;
-  const actual = sheets._getSecrets(true);
-
-  t.deepEqual(expected, actual);
-});
-
 test('fetchNotification() works', async t => {
   rewireMock.push(sheets.__set__('notification', parserMock));
   const expected = {

@@ -19,7 +19,7 @@ module.exports = {
     max: 2
   },
   forex: {
-    title: '🌎 🤑...',
+    title: '🌎 Left - more is better, Right - less is better...',
     data: [
       { code: 'USD', buyUnit: 1, sellUnit: 1 },
       { code: 'MYR', buyUnit: 1, sellUnit: 1 },
@@ -35,3 +35,4 @@ module.exports = {
     ]
   }
 };
+

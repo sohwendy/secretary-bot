@@ -27,6 +27,7 @@ if (!state) {
   sheets.fetchNotification().then(send);
   sheets.fetchAlert().then(send);
   forex.fetchNotification().then(send);
+  forex.fetchAlert().then(send);
 } else {
   // daily
   new cron.CronJob({
