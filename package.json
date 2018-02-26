@@ -12,7 +12,7 @@
     "debug": "node src/index.js debug",
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
     "test-ddebug": "node --inspect node_modules/ava/profile.js",
-    "test-debug": "ava" ,
+    "test-debug": "ava",
     "test": "yarn lint && nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {
@@ -29,6 +29,7 @@
     "node"
   ],
   "dependencies": {
+    "axios": "^0.18.0",
     "bot-brother": "^2.1.5",
     "cron": "^1.3.0",
     "google-auth-library": "^1.2.0",

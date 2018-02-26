@@ -52,9 +52,11 @@ yarn start
 ## To do 
 [ ] check time for reminder  
 [ ] scheduler  
+[ ] create boilerplate
 [X] docker  
 [X] tests  
 [ ] use sinon for mock and spying  
+
 
 ## References
 [Node.js Quickstart | Sheets API | Google Developers ](https://developers.google.com/sheets/api/quickstart/nodejs)  

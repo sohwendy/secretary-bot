@@ -1,6 +1,7 @@
 const cron = require('cron');
 const TelegramBot = require('node-telegram-bot-api');
 const sheets = require('./sheets');
+const forex = require('./forex');
 const chat = require('../secrets/chat');
 
 const schedule = {
@@ -25,6 +26,7 @@ const state = process.argv[2] || '';
 if (!state) {
   sheets.fetchNotification().then(send);
   sheets.fetchAlert().then(send);
+  forex.fetchNotification().then(send);
 } else {
   // daily
   new cron.CronJob({
