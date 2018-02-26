@@ -13,6 +13,7 @@
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
     "test-ddebug": "node --inspect node_modules/ava/profile.js",
     "test-debug": "ava",
+    "test-watch": "ava --watch",
     "test": "yarn lint && nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {

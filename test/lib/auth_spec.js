@@ -23,14 +23,17 @@ const googleMock = { auth: { JWT: Jwt } };
 let auth;
 
 test.before(() => {
-  auth = rewire('../src/auth.js');
+  auth = rewire('../../lib/auth.js');
   auth.__set__('google', googleMock);
 });
 
 test('function', async t => {
   auth.__set__('readFile', readFileMock);
-  const expected = new Jwt(secrets.client_email, null, secrets.private_key, 'some_scope', null);
-  const actual = await auth('', 'some_scope');
+  const expected = {
+    auth: new Jwt(secrets.client_email, null, secrets.private_key, 'some_scope', null),
+    foo: 'bar'
+  };
+  const actual = await auth('', 'some_scope', {foo: 'bar'});
 
   t.deepEqual(expected, actual);
 });

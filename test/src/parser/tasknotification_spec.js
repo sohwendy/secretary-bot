@@ -1,7 +1,7 @@
 const test = require('ava');
 const mockdate = require('mockdate');
 const moment = require('moment');
-const notification = require('../../src/parser/notification');
+const notification = require('../../../src/parser/tasknotification');
 
 const data = [
   [ '02 Mar 2018', '00:00:00', 'no', 'empty'],

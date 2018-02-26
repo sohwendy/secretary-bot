@@ -1,8 +1,8 @@
 const { promisify } = require('util');
 const { google } = require('googleapis');
-const notification = require('./parser/notification');
-const alert = require('./parser/alert');
-const auth = require('./auth');
+const notification = require('./parser/tasknotification');
+const alert = require('./parser/taskalert');
+const auth = require('../lib/auth');
 const constants = require('../config/constants');
 
 const sheets = google.sheets('v4');
@@ -17,43 +17,39 @@ module.exports = {
   fetchNotification: async (fake) => {
     try {
       const secrets = require(_getSecrets(fake));
-      const authClient = await auth(secrets.file, secrets.scope);
 
-      const params = {
-        auth: authClient,
-        spreadsheetId: secrets.id,
-        range: secrets.range
-      };
+      const options = { spreadsheetId: secrets.id, range: secrets.range };
+      const params = await auth(secrets.file, secrets.scope, options);
 
       const sheetsData = await readSheets(params);
       const data = sheetsData.data.values;
+
       const link = secrets.link;
       const msg = notification.parse({ data, link });
-      if (msg)
-        return msg;
+
+      return msg || '';
     } catch (err) {
       console.error('cant fetch notification\n', err);
     }
+    return '';
   },
   fetchAlert: async (fake) => {
     try {
       const secrets = require(_getSecrets(fake));
-      const authClient = await auth(secrets.file, secrets.scope);
 
-      const params = {
-        auth: authClient,
-        spreadsheetId: secrets.id,
-        range: secrets.range
-      };
+      const options = { spreadsheetId: secrets.id, range: secrets.range };
+      const params = await auth(secrets.file, secrets.scope, options);
 
       const sheetsData = await readSheets(params);
       const data = sheetsData.data.values;
+
       const link = secrets.link;
       const msg = alert.parse({ data, link });
-      if (msg)
-        return msg;
+
+      return msg || '';
     } catch (err) {
       console.error('cant fetch alert\n', err);
     }
+    return '';
   }
 };
