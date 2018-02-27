@@ -5,13 +5,25 @@ const forex = require('./forex');
 const chat = require('../secrets/chat');
 
 const schedule = {
-  debug: {
-    daily: '00 * * * * *',
-    minute: '00 * * * * *'
+  notification: {
+    debug: {
+      daily: '00 * * * * *',
+      minute: '00 * * * * *'
+    },
+    live: {
+      daily: '* 48 8 * * *',
+      minute: '* */15 8 * * *'
+    }
   },
-  live: {
-    daily: '* 48 8 * * *',
-    minute: '* */15 8 * * *'
+  alert: {
+    debug: {
+      daily: '00 * 9-17/2 * * *',
+      minute: '00 * * * * *'
+    },
+    live: {
+      daily: '* 48 10 * * *',
+      minute: '* */15 8 * * *'
+    }
   }
 };
 
@@ -31,15 +43,29 @@ if (!state) {
 } else {
   // daily
   new cron.CronJob({
-    cronTime: schedule[state].daily,
+    cronTime: schedule.notification[state].daily,
     onTick: () => sheets.fetchNotification().then(send),
     start: true
   });
 
   // monitor 15 min
   new cron.CronJob({
-    cronTime: schedule[state].minute,
+    cronTime: schedule.notification[state].minute,
     onTick: () => sheets.fetchAlert().then(send),
+    start: true
+  });
+
+  // daily
+  new cron.CronJob({
+    cronTime: schedule.alert[state].daily,
+    onTick: () => forex.fetchNotification().then(send),
+    start: true
+  });
+
+  // monitor 2h
+  new cron.CronJob({
+    cronTime: schedule[state].alert.minute,
+    onTick: () => forex.fetchAlert().then(send),
     start: true
   });
 }

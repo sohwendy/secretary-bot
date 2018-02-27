@@ -2,12 +2,7 @@ const constants = require('../../config/constants');
 const { roundDown, roundUp } = require('../../lib/forexhelper');
 
 function _stringify(row) {
-  const foreign = row.code.toLowerCase();
-  const buyRate = row.buyRate.toString().padStart(5);
-  const sellRate = row.sellRate.toString().padStart(5);
-  const sellUnit = row.sellUnit.toString().padStart(5);
-
-  return `${row.buyUnit} sgd to ${foreign}  ${buyRate}  ${sellUnit} ${foreign} to sgd  ${sellRate}`;
+  return `${row.sellUnit} ${row.code} to ${row.sellRate} sgd   (${row.min}, ${row.max}) ${row.msg}`;
 }
 
 function _filter(row) {
@@ -27,47 +22,32 @@ function _formatAlertJson(row, index) {
   return { code: row[0], min, max, msg: row[3], done: row[4], index };
 }
 
-function _groupAlert(array, row) {
-  const condition = { min: row.min, max: row.max, msg: row.msg, done: row.done, index: row.index } ;
-
-  if (array.length === 0) {
-    array.push({code: row.code, data: [condition]});
-    return array;
+function _mergeAlert(triggers, t) {
+  const rateList = this;
+  const rate = rateList.find(r => r.code === t.code);
+  if (rate && rate.sellRate >= t.min && rate.sellRate < t.max && t.msg) {
+    triggers.push(Object.assign(t, rate));
   }
-  const index = array.findIndex(group => group.code === row.code);
-  if (index >= 0) {
-    let data = array[index].data;
-    data.push(condition);
-    data.sort((a, b) => a.min > b.min);
-  } else {
-    array.push({ code: row.code, data: [condition] });
-  }
-  return array;
+  return triggers;
 }
 
 module.exports = {
   _filter: _filter,
   _stringify: _stringify,
   _formatAlertJson: _formatAlertJson,
-  _groupAlert: _groupAlert,
+  _mergeAlert: _mergeAlert,
   parse: ({ data, alert }) => {
     if (!data || data.length === 0) return '';
     if (!alert || alert.length === 0) return '';
-    const forex = constants.forex.data;
+
+    const watchList = constants.forex.data;
     const factor = data['SGD'];
-    const filteredlist = forex.map(_filter, { factor, data });
 
-    const formattedAlert = alert.map(_formatAlertJson);
-    const groupAlert = formattedAlert.reduce(_groupAlert, []);
+    const rateList = watchList.map(_filter, { factor, data });
+    const alertList = alert.map(_formatAlertJson);
+    const triggers = alertList.reduce(_mergeAlert.bind(rateList), []);
+    const list = triggers.map(_stringify);
 
-    const alerts = groupAlert.map(group => {
-      const current = filteredlist.find(rate => rate.code === group.code);
-      const filter = group.data.filter(rule => (current.sellRate >= rule.min && current.sellRate < rule.max));
-      const first = filter[0]
-      return filter ?
-        `${current.sellUnit} ${group.code} to ${current.sellRate} sgd   (${first.min}, ${first.max}) ${first.msg}` : '';
-    });
-
-    return `${constants.forex.title}\n\n${alerts.join('\n')}\n\n`;
+    return list && list.length ? `${constants.forex.title}\n\n${list.join('\n')}\n\n` : '';
   }
 };

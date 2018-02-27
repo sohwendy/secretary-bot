@@ -8,6 +8,7 @@
   "private": false,
   "scripts": {
     "start": "node src/index.js",
+    "start-fake": "node src/test.js",
     "live": "node src/index.js live",
     "debug": "node src/index.js debug",
     "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
