@@ -1,71 +1,123 @@
 const cron = require('cron');
+const moment = require('moment');
 const TelegramBot = require('node-telegram-bot-api');
-const sheets = require('./sheets');
-const forex = require('./forex');
+const stockReport = require('./job/stock-report-job');
+const forexReport = require('./job/forex-report-job');
+const reminderReport = require('./job/reminder-report-job');
+const stockMonitor = require('./job/stock-monitor-job');
+const forexMonitor = require('./job/forex-monitor-job');
+const reminderMonitor = require('./job/reminder-monitor-job');
+const logger = require('./lib/log-helper');
+
 const chat = require('../secrets/chat');
 
 const schedule = {
-  notification: {
-    debug: {
-      daily: '00 * * * * *',
-      minute: '00 * * * * *'
+  live: {
+    reminder: {
+      report:  '15 48 8 * * *',
+      monitor: '15 0 9-22/1 * * *'
     },
-    live: {
-      daily: '* 48 8 * * *',
-      minute: '* */15 8 * * *'
+    forex: {
+      report:  '30 48 10 * * 1-6',
+      monitor: '30 48 11-20/4 * * 1-5'
+    },
+    stock: {
+      report:  '45 10 9 * * 1-6',
+      monitor: '45 10 10-5/1 * * 1-5'
+    },
+    log: {
+      monitor: '00 */10 * * * *'
     }
   },
-  alert: {
-    debug: {
-      daily: '00 * 9-17/2 * * *',
-      minute: '00 * * * * *'
+  debug: {
+    reminder: {
+      report:  '5 */6 * * * *',
+      monitor: '15 */3 * * * *'
     },
-    live: {
-      daily: '* 48 10 * * *',
-      minute: '* */15 8 * * *'
+    forex: {
+      report:  '25 */4 * * * *',
+      monitor: '35 */2 * * * *'
+    },
+    stock: {
+      report:  '45 */15 * * * *',
+      monitor: '55 */4 * * * *'
+    },
+    log: {
+      monitor: '00 */1 * * * *'
     }
   }
 };
 
-const bot = new TelegramBot(chat.token, { polling: true });
+const bot = new TelegramBot(chat.token, {polling: false});
 const send = data => {
-// eslint-disable-next-line camelcase
-  data ? bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' }) : '';
+  /* eslint-disable */
+  console.log(data);
+  data ? bot.sendMessage(chat.chatId, data, {parse_mode: 'markdown'}) : '';
+  /* eslint-enable */
 };
 
 const state = process.argv[2] || '';
 
+const today = moment().startOf('day');
+let dates = [];
+for (let day = 0; day < 3; day++) {
+  const d = today.clone().add(day, 'day').format('DD MMM YYYY');
+  dates.push(d);
+}
+let time = moment().format('HH');
+let log = logger.bind(false);
+
 if (!state) {
-  sheets.fetchNotification().then(send);
-  sheets.fetchAlert().then(send);
-  forex.fetchNotification().then(send);
-  forex.fetchAlert().then(send);
+  // time =  '08';
+  reminderReport.fetch(dates, {log}).then(send);
+  reminderMonitor.fetch(dates[0], time, {log}).then(send);
+  forexReport.fetch({log}).then(send);
+  forexMonitor.fetch({log}).then(send);
+  stockReport.fetch({log}).then(send);
+  stockMonitor.fetch({log}).then(send);
 } else {
-  // daily
   new cron.CronJob({
-    cronTime: schedule.notification[state].daily,
-    onTick: () => sheets.fetchNotification().then(send),
+    cronTime: schedule[state].reminder.report,
+    onTick: () => reminderReport.fetch(dates, {log}).then(send),
     start: true
   });
 
-  // monitor 15 min
   new cron.CronJob({
-    cronTime: schedule.notification[state].minute,
-    onTick: () => sheets.fetchAlert().then(send),
+    cronTime: schedule[state].reminder.monitor,
+    onTick: () => reminderMonitor.fetch(dates[0], time, {log}).then(send),
     start: true
   });
 
-  // daily
   new cron.CronJob({
-    cronTime: schedule.alert[state].daily,
-    onTick: () => forex.fetchNotification().then(send),
+    cronTime: schedule[state].forex.report,
+    onTick: () => forexReport.fetch({log}).then(send),
     start: true
   });
 
-  // monitor 2h
   new cron.CronJob({
-    cronTime: schedule[state].alert.minute,
-    onTick: () => forex.fetchAlert().then(send),
+    cronTime: schedule[state].forex.monitor,
+    onTick: () => forexMonitor.fetch({log}).then(send),
+    start: true
+  });
+
+  new cron.CronJob({
+    cronTime: schedule[state].stock.report,
+    onTick: () => stockReport.fetch({log}).then(send),
+    start: true
+  });
+
+  new cron.CronJob({
+    cronTime: schedule[state].stock.monitor,
+    onTick: () => stockMonitor.fetch({log}).then(send),
+    start: true
+  });
+
+  new cron.CronJob({
+    cronTime: '00 */1 * * * *',
+    onTick: () => {
+      const l = logger.bind(true);
+      l.log('ticking');
+    },
     start: true
   });
 }

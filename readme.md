@@ -3,11 +3,12 @@
 [![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/telegram-bot-secretary.svg)](https://greenkeeper.io/)
 [![Build Status](https://travis-ci.org/sohwendy/telegram-bot-secretary.svg?branch=master)](https://travis-ci.org/sohwendy/telegram-bot-secretary)  
 
-A bot that reads google sheets data to send notifications to telegram chat.
+A bot that sends notifications (reminder, stock, forex) to telegram chat.
+  
+Notifications are classified into report and notification.
+- Report refers to notification that is sent periodically eg once per day.  
+- Monitor refers to notification that is sent only if the rule is met, adhoc basis. 
 
-It retrieves events from google sheets using google service account.  
-It filters out the event and send the notifications.  
-2 notifications are sent per event, the day before and on the actual day.
 
 ## Data (TBD)
 Spreadsheet  
@@ -24,38 +25,32 @@ Upcoming events:
 Write Shuttle  
 Book Shuttle  
 
-
-Notification refers to upcoming events for next few days.
-Everyday at 08:48, the bot sends notification via telegram msg.
-
-Alert is a special notification that triggers within the 15 min window.
-Its defined by the time (A2). 
-eg the user will receive 'Eat Breakfast' alert at 10:00
-eg the user will receive 'Upgrade Packages' alert at 19:15
+## Prerequisite
+1. API token from [open exchange rates](https://openexchangerates.org)    
+2. Google Service Account key and access to the google sheet  
+3. Telegram bot token from [BotFather](https://telegram.me/BotFather)  
+4. Structured data in Google sheets 
 
 ## Configuration
-1. Rename sample/ to secrets/
-2. Download Google Service key json for google sheet  
-Rename the file to google.json  
-Drop the file into the secrets/ 
-3. Create a Telegram bot.  
-Update the token and chatId in secrets/chat.js
-4. Create a spreadsheet and share it to the google service email  
-Update the spreadsheet id in secrets/sheets.js
+1. Copy sample/ to secrets/
+2. Copy google service account key (google.json) into secrets
+3. Update the open exchange rate key in oer.js
+4. Update the telegram bot token and chat into chat.js
 
 ## Running the bot
 ```
 yarn install
-yarn start
+yarn live
 ```
 
 ## To do 
-[ ] check time for reminder  
-[ ] scheduler  
-[ ] create boilerplate
+[ ] update readme  
+[ ] create boilerplate  
+[ ] use sinon for mock and spying  
 [X] docker  
 [X] tests  
-[ ] use sinon for mock and spying  
+[X] check time for reminder  
+[X] scheduler  
 
 
 ## References

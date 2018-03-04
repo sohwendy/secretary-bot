@@ -1,38 +1,18 @@
 module.exports = {
-  secretPath: {
-    real: '../secrets',
-    fake: '../sample'
+  secretPath: (fake, file) => {
+    /* istanbul ignore next */
+    return `../../${fake ? 'sample' : 'secrets'}/${file}`;
   },
-  alert: {
-    min: 0,
-    max: 15,
-    title: '\u266B Get Ready...',
-    dateDisplay: 'DD MMM ddd',
-    dateFormat: 'DD MMM YYYY HH:mm:ss',
-  },
-  notification: {
-    dateFormat: 'DD MMM YYYY',
-    dateDisplay: 'DD MMM ddd',
-    title: 'Coming up...',
-    noEvent: 'No events',
-    min: 0,
-    max: 2
+  reminder: {
+    reportTitle: '📆 Coming up...',
+    monitorTitle: '📆🔥 Get Ready...',
   },
   forex: {
-    title: '🌎 Left - more is better, Right - less is better...',
-    data: [
-      { code: 'USD', buyUnit: 1, sellUnit: 1 },
-      { code: 'MYR', buyUnit: 1, sellUnit: 1 },
-      { code: 'CNY', buyUnit: 1, sellUnit: 1 },
-      { code: 'AUD', buyUnit: 1, sellUnit: 1 },
-      { code: 'THB', buyUnit: 1, sellUnit: 100 },
-      { code: 'JPY', buyUnit: 1, sellUnit: 1000 },
-      { code: 'TWD', buyUnit: 1, sellUnit: 100 },
-      { code: 'KRW', buyUnit: 1, sellUnit: 1000 },
-      { code: 'GBP', buyUnit: 1, sellUnit: 1 },
-      { code: 'EUR', buyUnit: 1, sellUnit: 1 },
-      { code: 'CHF', buyUnit: 1, sellUnit: 1 }
-    ]
+    reportTitle: '🌎 Left - more is gd, Right - less is gd...',
+    monitorTitle: '🌎🔥 Left - more is gd, Right - less is gd...'
+  },
+  stock: {
+    reportTitle: '👵 Retirement Nest',
+    monitorTitle: '👵🔥 Action?!'
   }
 };
-

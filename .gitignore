@@ -2,3 +2,4 @@ node_modules/
 secrets/
 .nyc_output/
 *test.js
+log.txt
