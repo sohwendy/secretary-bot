@@ -18,13 +18,15 @@ module.exports = {
   _stringify: stringify,
   fetch: async (options) => {
     try {
+      options.log('get forex report...');
+
       const secretsApi = require(constants.secretPath(options.fake, 'oer'));
       const secretsForex = require(constants.secretPath(options.fake, 'forex'));
       const codeOptions = {spreadsheetId: secretsForex.id, range: secretsForex.code.range};
 
       const data = await Promise.all([
-        RateApi.get(secretsApi.key),
-        SheetApi.get(secretsForex.file, secretsForex.scope, codeOptions),
+        RateApi.get(secretsApi.key, options.log),
+        SheetApi.get(secretsForex.file, secretsForex.scope, codeOptions, options.log),
       ]);
 
       const rawPriceJson = data[0];
@@ -35,9 +37,9 @@ module.exports = {
       // calculate the exchange rate
       const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
 
-      options.log('forex report...');
-
       const itemList = fullItem.map(stringify);
+
+      options.log('send forex report...');
       return BasicHelper.displayChat(itemList, constants.forex.reportTitle, secretsForex.link);
 
     } catch (error) {

@@ -48,15 +48,18 @@ const schedule = {
   }
 };
 
+const log = logger.bind(false);
+
 const bot = new TelegramBot(chat.token, {polling: false});
 const send = data => {
+  log(data);
   /* eslint-disable */
-  console.log(data);
   data ? bot.sendMessage(chat.chatId, data, {parse_mode: 'markdown'}) : '';
   /* eslint-enable */
 };
 
 const state = process.argv[2] || '';
+log('running in state ', state);
 
 const today = moment().startOf('day');
 let dates = [];
@@ -65,10 +68,10 @@ for (let day = 0; day < 3; day++) {
   dates.push(d);
 }
 let time = moment().format('HH');
-let log = logger.bind(false);
+
+log(dates[0], time);
 
 if (!state) {
-  // time =  '08';
   reminderReport.fetch(dates, {log}).then(send);
   reminderMonitor.fetch(dates[0], time, {log}).then(send);
   forexReport.fetch({log}).then(send);
@@ -113,10 +116,9 @@ if (!state) {
   });
 
   new cron.CronJob({
-    cronTime: '00 */1 * * * *',
+    cronTime: '00 */15 * * * *',
     onTick: () => {
-      const l = logger.bind(true);
-      l.log('ticking');
+      log('ticking');
     },
     start: true
   });

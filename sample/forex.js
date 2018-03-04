@@ -1,5 +1,5 @@
 module.exports = {
-  file: '../secrets/google.json',
+  file: '../../secrets/google.json',
   scope: ['https://www.googleapis.com/auth/spreadsheets'],
   id: 'some_id',
   link: '<some_link>',

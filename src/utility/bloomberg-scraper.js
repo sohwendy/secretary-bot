@@ -24,7 +24,7 @@ module.exports = {
       const response = await axios.get(constructUrl(ticker, market), {transformResponse: transform});
       return response.data;
     } catch (e) {
-      logger.log('Bloomberg Failed', e);
+      logger('Bloomberg Failed', e);
     }
     return '';
   }

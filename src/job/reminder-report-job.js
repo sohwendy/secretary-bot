@@ -22,10 +22,12 @@ module.exports = {
   _stringifyReminder: stringifyReminder,
   fetch: async (dates, options) => {
     try {
+      options.log('get reminder report...');
+
       const secrets = require(constants.secretPath(options.fake, 'reminder'));
       const params = {spreadsheetId: secrets.id, range: secrets.range};
 
-      const data = await SheetApi.get(secrets.file, secrets.scope, params);
+      const data = await SheetApi.get(secrets.file, secrets.scope, params, options.log);
       const reminderJson = data.map(row => IteratorHelper.toJson(row, secrets.fields));
 
       const bind = rule.bind(dates);
@@ -40,7 +42,8 @@ module.exports = {
 
       group = group.map(stringify).filter(g => g);
 
-      options.log('reminder report...', dates)
+      options.log('send reminder report...');
+
       return BasicHelper.displayChat(group, constants.reminder.reportTitle, secrets.link);
     } catch (err) {
       options.log('cant fetch reminder report', err);

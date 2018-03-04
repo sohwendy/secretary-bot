@@ -44,7 +44,7 @@ test('get works', async t => {
     range: 'range',
     spreadsheetId: 'id'
   };
-  const actual = await helper.get('key', 'scope', options, {log});
+  const actual = await helper.get('key', 'scope', options, log);
 
   t.deepEqual(expected, actual);
 });
@@ -54,7 +54,7 @@ test('get handles exception', async t => {
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.get('','', {}, {log});
+  const actual = await helper.get('','', {}, log);
 
   t.is(expected, actual);
 });

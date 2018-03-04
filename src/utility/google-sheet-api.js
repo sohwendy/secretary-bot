@@ -35,7 +35,7 @@ module.exports = {
       const result = await readSheets(params);
       return result.data.values;
     } catch (e) {
-      logger.log('Google Sheet Failed', e);
+      logger('Google Sheet Failed', e);
     }
     return '';
   }

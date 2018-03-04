@@ -50,7 +50,7 @@ test('get works', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = htmlData;
-  const actual = await helper.get('foo', 'bar', {log});
+  const actual = await helper.get('foo', 'bar', log);
 
   t.deepEqual(expected, actual);
 });
@@ -60,7 +60,7 @@ test('get handles exception', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = '';
-  const actual = await helper.get('one', 'two', {log});
+  const actual = await helper.get('one', 'two', log);
 
   t.is(expected, actual);
 });

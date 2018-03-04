@@ -11,7 +11,7 @@ module.exports = {
       const response = await axios.get(constructUrl(key));
       return response.data.rates;
     } catch (e) {
-      logger.log('OER Failed', e);
+      logger('OER Failed', e);
     }
     return '';
   }

@@ -18,15 +18,17 @@ module.exports = {
   _stringify: stringify,
   fetch: async (options) => {
     try {
+      options.log('get forex monitor...');
+
       const secretsApi = require(constants.secretPath(options.fake, 'oer'));
       const secretsForex = require(constants.secretPath(options.fake, 'forex'));
       const rulesOptions = {spreadsheetId: secretsForex.id, range: secretsForex.rule.range};
       const codeOptions = {spreadsheetId: secretsForex.id, range: secretsForex.code.range};
 
       const data = await Promise.all([
-        RateApi.get(secretsApi.key),
-        SheetApi.get(secretsForex.file, secretsForex.scope, codeOptions),
-        SheetApi.get(secretsForex.file, secretsForex.scope, rulesOptions)
+        RateApi.get(secretsApi.key, options.log),
+        SheetApi.get(secretsForex.file, secretsForex.scope, codeOptions, options.log),
+        SheetApi.get(secretsForex.file, secretsForex.scope, rulesOptions, options.log)
       ]);
 
       const rawPriceJson = data[0];
@@ -43,9 +45,8 @@ module.exports = {
 
       const fulfilRule = fullRule.filter(rule);
 
-      options.log('forex monitor...');
-
       const itemList = fulfilRule.map(stringify);
+      options.log('send forex monitor...');
       return BasicHelper.displayChat(itemList, constants.forex.monitorTitle);
     } catch (error) {
       options.log('cant fetch forex monitor', error);

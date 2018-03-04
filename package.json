@@ -38,6 +38,7 @@
     "google-auth-library": "^1.2.0",
     "googleapis": "^26.0.0",
     "moment": "^2.20.1",
+    "moment-timezone": "^0.5.14",
     "node-telegram-bot-api": "^0.30.0"
   },
   "devDependencies": {
