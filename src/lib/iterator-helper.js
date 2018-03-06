@@ -1,7 +1,7 @@
 function mergeJsonUsingKey(row) {
   const rawPriceJson = this;
   const price = rawPriceJson[row.code];
-  return price ? Object.assign(row, {price}) : {};
+  return price ? Object.assign(row, { price }) : {};
 }
 
 function mergeJsonUsingKeyValue(rule) {
@@ -20,7 +20,7 @@ function toJson(values, keys) {
       value = Number.parseFloat(field);
       value = Number.isNaN(value) ? field : value;
     }
-    return Object.assign(json, {[keys[index]]: value});
+    return Object.assign(json, { [keys[index]]: value });
   }, {});
 }
 

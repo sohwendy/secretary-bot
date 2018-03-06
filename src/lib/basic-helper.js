@@ -15,9 +15,11 @@ function round(value, precision = 3) {
 
 function calculateExchangeRate(row) {
   const factor = this;
-  const buyRate = roundDown(row.price / factor * row.buyUnit);
+  let buyRate = roundDown(row.price / factor * row.buyUnit);
+  if (buyRate > 100)
+    buyRate = round(buyRate, 1);
   const sellRate = roundUp(factor / row.price * row.sellUnit);
-  return Object.assign(row, {buyRate, sellRate});
+  return Object.assign(row, { buyRate, sellRate });
 }
 
 function pad(value, padding = 7) {

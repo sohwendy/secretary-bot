@@ -19,9 +19,9 @@ function transform(content) {
 module.exports = {
   _constructUrl: constructUrl,
   _transform: transform,
-  get: async (ticker, market, logger) => {
+  get: async(ticker, market, logger) => {
     try {
-      const response = await axios.get(constructUrl(ticker, market), {transformResponse: transform});
+      const response = await axios.get(constructUrl(ticker, market), { transformResponse: transform });
       return response.data;
     } catch (e) {
       logger('Bloomberg Failed', e);

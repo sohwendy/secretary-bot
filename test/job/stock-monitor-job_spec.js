@@ -15,22 +15,21 @@ const ruleMock = [['bbb', 'BBB', 1, 3, 'no', 'n'],
   ['bbb', 'BBB', 10.5, 12, 'no', 'n']
 ];
 const sheetApiMock = {
-  get: (_a, _b, options) => {
-    return options.range === '<some_code_range>' ? codeMock : ruleMock;
+  get: (_a, _b, options, _c) => {
+    return options.range === 'StockCode!A2:C' ? codeMock : ruleMock;
   }
 };
+
 const stockApiMock = {
   get: (code) => {
-    return {code, name: 'a name', price: 10, changeAmount: 'date'};
+    return { code, name: 'a name', price: 10, changeAmount: 'date' };
   }
 };
-const exceptionMock = () => {
-  throw 'this is an exception';
-};
+const exceptionMock = () => { throw 'this is an exception'; };
 const log = () => {};
 
 let job;
-test.before(() => {
+test.beforeEach(() => {
   job = rewire('../../src/job/stock-monitor-job');
   job.__set__('SheetApi', sheetApiMock);
   job.__set__('StockApi', stockApiMock);
@@ -38,12 +37,12 @@ test.before(() => {
 
 test('stringify works', async t => {
   const expected = 'AA      1  0.345-0.555  apple  msg';
-  const actual = job._stringify({code: 'AA', name: 'apple', price: 1, min: 0.345, max: 0.555, message: 'msg'});
+  const actual = job._stringify({ code: 'AA', name: 'apple', price: 1, min: 0.345, max: 0.555, message: 'msg' });
 
   t.is(expected, actual);
 });
 
-const row = {code: 'AA', name: 'apple', price: 5.5, min: 3, max: 6.4, message: 'msg'};
+const row = { code: 'AA', name: 'apple', price: 5.5, min: 3, max: 6.4, message: 'msg' };
 
 test('rule works', async t => {
   const expected = true;
@@ -85,7 +84,7 @@ test('fetch works', async t => {
     '```\n' +
     'BBB     10     4-11 a name  yes\n' +
     '```\n';
-  const actual = await job.fetch({log, fake: true});
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });
@@ -94,7 +93,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch({log, fake: true});
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });

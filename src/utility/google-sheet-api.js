@@ -1,5 +1,5 @@
-const {promisify} = require('util');
-const {google} = require('googleapis');
+const { promisify } = require('util');
+const { google } = require('googleapis');
 const fs = require('fs');
 
 const readFile = promisify(fs.readFile);
@@ -15,7 +15,7 @@ const error = (error) => {
 };
 
 module.exports = {
-  get: async (json, scope, options, logger) => {
+  get: async(json, scope, options, logger) => {
     try {
       const file = await readFile(json);
       const secrets = JSON.parse(file);
@@ -30,7 +30,7 @@ module.exports = {
 
       await jwtClient.authorize(error);
 
-      const params = Object.assign({auth: jwtClient}, options);
+      const params = Object.assign({ auth: jwtClient }, options);
 
       const result = await readSheets(params);
       return result.data.values;

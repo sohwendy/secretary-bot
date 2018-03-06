@@ -1,4 +1,5 @@
 import test from 'ava';
+
 const rewire = require('rewire');
 
 const log = () => {};
@@ -18,7 +19,7 @@ test('_constructUrl works', async t => {
 test('get works', async t => {
   const axiosMock = {
     get: () => {
-      return {data: {rates: 'rates'}};
+      return { data: { rates: 'rates' } };
     }
   };
   helper.__set__('axios', axiosMock);

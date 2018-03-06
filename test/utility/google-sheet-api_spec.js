@@ -1,4 +1,5 @@
 import test from 'ava';
+
 const rewire = require('rewire');
 
 let helper;
@@ -16,7 +17,7 @@ const googleMock = { auth: { JWT: Jwt } };
 const readFileMock = () => JSON.stringify(secrets);
 const readSheetsMock = params => { return { data: { values: params } }; };
 
-function Jwt(email, _a, key, scope, _b){
+function Jwt(email, _a, key, scope, _b) {
   this.email = email;
   this.key = key;
   this.scope = scope;
@@ -33,11 +34,11 @@ test.beforeEach(() => {
 test('get works', async t => {
   const axiosMock = {
     get: () => {
-      return {data: {rates: 'rates'}};
+      return { data: { rates: 'rates' } };
     }
   };
   helper.__set__('axios', axiosMock);
-  const options = {spreadsheetId: 'id', range: 'range'};
+  const options = { spreadsheetId: 'id', range: 'range' };
 
   const expected = {
     auth: new Jwt('client_email', '', 'private_key', 'scope'),
@@ -50,11 +51,11 @@ test('get works', async t => {
 });
 
 test('get handles exception', async t => {
-  const readFileMock = () => {throw 'exception'};
+  const readFileMock = () => {throw 'exception';};
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.get('','', {}, log);
+  const actual = await helper.get('', '', {}, log);
 
   t.is(expected, actual);
 });

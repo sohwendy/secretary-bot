@@ -13,20 +13,18 @@ const sheetApiMock = {
 };
 const rateApiMock = {
   get: () => {
-    return {AA: 1, BB: 3, DD: 3, SGD: 5};
+    return { AA: 1, BB: 3, DD: 3, SGD: 5 };
   }
 };
 
-const row = {code: 'ZZ', buyUnit: 2.5, sellUnit: 500, buyRate: 1.789, sellRate: 7.93, done: 'n'};
+const row = { code: 'ZZ', buyUnit: 2.5, sellUnit: 500, buyRate: 1.789, sellRate: 7.93, done: 'n' };
 
-const exceptionMock = () => {
-  throw 'this is an exception';
-};
+const exceptionMock = () => { throw 'this is an exception' };
 
 const log = () => {};
 
 let job;
-test.before(() => {
+test.beforeEach(() => {
   job = rewire('../../src/job/forex-report-job');
   job.__set__('SheetApi', sheetApiMock);
   job.__set__('RateApi', rateApiMock);
@@ -46,8 +44,8 @@ test('fetch works', async t => {
     '1 sgdaa     0.2     3 aasgd      15\n' +
     '2 sgdbb     1.2     4 bbsgd   6.667\n' +
     '```\n' +
-    '<some_link>';
-  const actual = await job.fetch({log, fake: true});
+    '[update ♧](<some_url>)';
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });
@@ -56,7 +54,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch({log, fake: true});
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });

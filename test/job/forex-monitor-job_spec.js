@@ -14,7 +14,7 @@ const ruleMock = [
   ['ZZ', '7.8', '8', 'yes', 'm2'],
   ['ZZ', '90', '100', 'no', 'm']
 ];
-const rateMock = {AA: 1, BB: 3, ZZ: 3, SGD: 5};
+const rateMock = { AA: 1, BB: 3, ZZ: 3, SGD: 5 };
 
 const row = {
   code: 'ZZ',
@@ -30,22 +30,16 @@ const row = {
 
 const sheetApiMock = {
   get: (_a, _b, options) => {
-    return options.range === '<some_code_range>' ? codeMock : ruleMock;
+    return options.range === 'ForexCode!B2:E' ? codeMock : ruleMock;
   }
 };
 
-const rateApiMock = {
-  get: () => rateMock
-};
-
+const rateApiMock = { get: () => rateMock };
 const log = () => {};
-
-const exceptionMock = () => {
-  throw 'this is an exception';
-};
+const exceptionMock = () => { throw 'this is an exception';};
 
 let job;
-test.before(() => {
+test.beforeEach(() => {
   job = rewire('../../src/job/forex-monitor-job');
   job.__set__('SheetApi', sheetApiMock);
   job.__set__('RateApi', rateApiMock);
@@ -98,7 +92,7 @@ test('fetch works', async t => {
     '```\n' +
     '4 ZZ to 6.667 sgd   (5, 8) yes\n' +
     '```\n';
-  const actual = await job.fetch({log, fake: true});
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });
@@ -108,7 +102,7 @@ test('fetch handles exception', async t => {
 
   const expected = '';
 
-  const actual = await job.fetch({log, fake: true});
+  const actual = await job.fetch({ log, fake: true });
 
   t.is(expected, actual);
 });

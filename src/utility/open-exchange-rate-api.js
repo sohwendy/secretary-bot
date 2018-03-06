@@ -6,7 +6,7 @@ function constructUrl(key) {
 
 module.exports = {
   _constructUrl: constructUrl,
-  get: async (key, logger) => {
+  get: async(key, logger) => {
     try {
       const response = await axios.get(constructUrl(key));
       return response.data.rates;

@@ -1,4 +1,5 @@
 import test from 'ava';
+
 const rewire = require('rewire');
 
 let helper;
@@ -7,9 +8,9 @@ test.beforeEach(() => {
 });
 
 const html =
-  '<meta itemprop="tickerSymbol" content="A" />'+
-  '<meta itemprop="price" content=9.9 />'+
-  '<meta itemprop="priceChange" content=0.11 />'+
+  '<meta itemprop="tickerSymbol" content="A" />' +
+  '<meta itemprop="price" content=9.9 />' +
+  '<meta itemprop="priceChange" content=0.11 />' +
   '<meta itemprop="quoteTime" content=E />';
 
 const htmlData = {
@@ -44,7 +45,7 @@ test('_transform', async t => {
 test('get works', async t => {
   const axiosMock = {
     get: (url, { transformResponse }) => {
-      return { url, data: transformResponse(html)};
+      return { url, data: transformResponse(html) };
     }
   };
   helper.__set__('axios', axiosMock);

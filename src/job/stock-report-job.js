@@ -1,7 +1,8 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants');
-const IteratorHelper = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
+const IteratorHelper = require('../lib/iterator-helper');
+const JsonFileHelper = require('../lib/json-file-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const StockApi = require('../utility/bloomberg-scraper');
 
@@ -13,15 +14,16 @@ function stringify(row) {
 
 module.exports = {
   _stringify: stringify,
-  fetch: async (options) => {
+  fetch: async(options) => {
     try {
       options.log('get stock report...');
       // get code list
-      const secrets = require(constants.secretPath(options.fake, 'stocks'));
-      const codeOptions = {spreadsheetId: secrets.id, range: secrets.code.range};
+      const stockConst = constants.stock;
+      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'stock.json'), options.log);
 
-      const codes = await SheetApi.get(secrets.file, secrets.scope, codeOptions, options.log);
-      const codeJson = codes.map(row => IteratorHelper.toJson(row, secrets.code.fields));
+      const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
+      const codes = await SheetApi.get(stockConst.file, stockConst.scope, codeOptions, options.log);
+      const codeJson = codes.map(row => IteratorHelper.toJson(row, stockConst.code.fields));
 
       // get price list
       const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix, options.log));
@@ -33,7 +35,7 @@ module.exports = {
       const itemList = mergeList.map(stringify);
 
       options.log('send stock report...');
-      return BasicHelper.displayChat(itemList, constants.stock.reportTitle, secrets.link);
+      return BasicHelper.displayChat(itemList, stockConst.reportTitle, secrets.link);
     } catch (error) {
       options.log('cant fetch stock report', error);
     }

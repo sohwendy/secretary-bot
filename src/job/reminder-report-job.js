@@ -1,4 +1,5 @@
 const constants = require('../../config/constants');
+const JsonFileHelper = require('../lib/json-file-helper');
 const IteratorHelper = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -20,15 +21,16 @@ module.exports = {
   _rule: rule,
   _stringify: stringify,
   _stringifyReminder: stringifyReminder,
-  fetch: async (dates, options) => {
+  fetch: async(dates, options) => {
     try {
       options.log('get reminder report...');
 
-      const secrets = require(constants.secretPath(options.fake, 'reminder'));
-      const params = {spreadsheetId: secrets.id, range: secrets.range};
+      const reminderConst = constants.reminder;
+      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'), options.log);
+      const params = { spreadsheetId: secrets.id, range: reminderConst.range };
 
-      const data = await SheetApi.get(secrets.file, secrets.scope, params, options.log);
-      const reminderJson = data.map(row => IteratorHelper.toJson(row, secrets.fields));
+      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params, options.log);
+      const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.fields));
 
       const bind = rule.bind(dates);
       let reminders = reminderJson.filter(bind);
@@ -37,14 +39,14 @@ module.exports = {
       group = group.map((g, index) => {
         const msg = g.map(stringifyReminder).join('\n');
         const date = `${index === 0 ? 'Today,' : ''} ${dates[index].replace(/2018/i, '')}`;
-        return {count: g.length, msg, date: date};
+        return { count: g.length, msg, date: date };
       });
 
       group = group.map(stringify).filter(g => g);
 
       options.log('send reminder report...');
 
-      return BasicHelper.displayChat(group, constants.reminder.reportTitle, secrets.link);
+      return BasicHelper.displayChat(group, reminderConst.reportTitle, secrets.link);
     } catch (err) {
       options.log('cant fetch reminder report', err);
     }

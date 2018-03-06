@@ -14,15 +14,12 @@ const sheetApiMock = {
   }
 };
 
-const exceptionMock = () => {
-  throw 'this is an exception';
-};
+const exceptionMock = () => { throw 'this is an exception'; };
 const log = () => {};
-
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
 let job;
-test.before(() => {
+test.beforeEach(() => {
   job = rewire('../../src/job/reminder-report-job');
   job.__set__('SheetApi', sheetApiMock);
 });
@@ -30,28 +27,28 @@ test.before(() => {
 test('rule works', async t => {
   const expected = true;
   const bind = job._rule.bind(['foo', 'bar', 'baz']);
-  const actual = bind({date: 'baz'});
+  const actual = bind({ date: 'baz' });
 
   t.is(expected, actual);
 });
 
 test('stringify works', async t => {
   const expected = '1) date\nmsg';
-  const actual = job._stringify({count: 1, date: 'date', msg: 'msg'});
+  const actual = job._stringify({ count: 1, date: 'date', msg: 'msg' });
 
   t.is(expected, actual);
 });
 
 test('stringify return empty string if no row', async t => {
   const expected = '';
-  const actual = job._stringify({count: 0, date: 'date', msg: 'msg'});
+  const actual = job._stringify({ count: 0, date: 'date', msg: 'msg' });
 
   t.is(expected, actual);
 });
 
 test('stringify return empty string if no row', async t => {
   const expected = 'type   title';
-  const actual = job._stringifyReminder({type: 'type', title: 'title'});
+  const actual = job._stringifyReminder({ type: 'type', title: 'title' });
 
   t.is(expected, actual);
 });
@@ -67,9 +64,9 @@ test('fetch works', async t => {
     '4   jackfruit\n' +
     '4   strawberry\n' +
     '```\n' +
-    '<some_link>';
+    '[update ♧](<some_url>)';
 
-  const actual = await job.fetch(dates, {log, fake: true});
+  const actual = await job.fetch(dates, { log, fake: true });
 
   t.is(expected, actual);
 });
@@ -78,7 +75,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch('one', {log, fake: true});
+  const actual = await job.fetch('one', { log, fake: true });
 
   t.is(expected, actual);
 });

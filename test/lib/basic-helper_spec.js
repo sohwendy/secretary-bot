@@ -1,4 +1,5 @@
 import test from 'ava';
+
 const helper = require('../../src/lib/basic-helper');
 
 test('roundDown with default precision', t => {
@@ -51,7 +52,7 @@ test('round down with precision of 6', t => {
 });
 
 test('calculateExchangeRate works', t => {
-  const input = { price: 200 , buyUnit: 4, sellUnit: 5 };
+  const input = { price: 200, buyUnit: 4, sellUnit: 5 };
   const factor = 2;
 
   const bind = helper.calculateExchangeRate.bind(factor);
