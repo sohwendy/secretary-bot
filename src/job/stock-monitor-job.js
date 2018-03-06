@@ -3,6 +3,7 @@ const constants = require('../../config/constants');
 const IteratorHelper = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
+const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const StockApi = require('../utility/bloomberg-scraper');
 
@@ -23,23 +24,23 @@ module.exports = {
   _stringify: stringify,
   fetch: async(options) => {
     try {
-      options.log('get stock monitor...');
+      Logger.log('get stock monitor...');
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'stock.json'), options.log);
+      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'stock.json'));
       const rulesOptions = { spreadsheetId: secrets.id, range: stockConst.rule.range };
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
 
       // get code and rule list
       let data = await Promise.all([
-        SheetApi.get(stockConst.file, stockConst.scope, codeOptions, options.log),
-        SheetApi.get(stockConst.file, stockConst.scope, rulesOptions, options.log)
+        SheetApi.get(stockConst.file, stockConst.scope, codeOptions),
+        SheetApi.get(stockConst.file, stockConst.scope, rulesOptions)
       ]);
 
       const codeJson = data[0].map(row => IteratorHelper.toJson(row, stockConst.code.fields));
       const ruleJson = data[1].map(row => IteratorHelper.toJson(row, stockConst.rule.fields));
 
       // get price list
-      const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix, options.log));
+      const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix));
       const priceJson = await Promise.all(requests);
 
       let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKeyValue, priceJson);
@@ -47,10 +48,10 @@ module.exports = {
 
       const fulfilRule = mergeList.filter(rule);
       const itemList = fulfilRule.map(stringify);
-      options.log('send stock monitor...');
+      Logger.log('send stock monitor...');
       return BasicHelper.displayChat(itemList, stockConst.monitorTitle);
     } catch (error) {
-      options.log('cant fetch stock monitor', error);
+      Logger.log('cant fetch stock monitor', error);
     }
     return '';
   }

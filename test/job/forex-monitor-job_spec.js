@@ -35,7 +35,6 @@ const sheetApiMock = {
 };
 
 const rateApiMock = { get: () => rateMock };
-const log = () => {};
 const exceptionMock = () => { throw 'this is an exception';};
 
 let job;
@@ -92,7 +91,7 @@ test('fetch works', async t => {
     '```\n' +
     '4 ZZ to 6.667 sgd   (5, 8) yes\n' +
     '```\n';
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });
@@ -102,7 +101,7 @@ test('fetch handles exception', async t => {
 
   const expected = '';
 
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });

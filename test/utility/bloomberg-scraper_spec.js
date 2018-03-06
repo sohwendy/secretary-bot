@@ -19,7 +19,6 @@ const htmlData = {
   price: '9.9',
   time: 'E',
 };
-const log = () => {};
 
 test('_constructUrl works', async t => {
   const expected = 'https://www.bloomberg.com/quote/one:two';
@@ -51,7 +50,7 @@ test('get works', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = htmlData;
-  const actual = await helper.get('foo', 'bar', log);
+  const actual = await helper.get('foo', 'bar');
 
   t.deepEqual(expected, actual);
 });
@@ -61,7 +60,7 @@ test('get handles exception', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = '';
-  const actual = await helper.get('one', 'two', log);
+  const actual = await helper.get('one', 'two');
 
   t.is(expected, actual);
 });

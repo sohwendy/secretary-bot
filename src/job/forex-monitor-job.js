@@ -3,6 +3,7 @@ const constants = require('../../config/constants');
 const BasicHelper = require('../lib/basic-helper');
 const IteratorHelper = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
+const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const RateApi = require('../utility/open-exchange-rate-api');
 
@@ -19,20 +20,20 @@ module.exports = {
   _stringify: stringify,
   fetch: async(options) => {
     try {
-      options.log('get forex monitor...');
+      Logger.log('get forex monitor...');
 
       const forexConst = constants.forex;
 
-      const secretsApi = await JsonFileHelper.get(constants.secretPath(options.fake, 'oer.json'), options.log);
-      const secretsForex = await JsonFileHelper.get(constants.secretPath(options.fake, 'forex.json'), options.log);
+      const secretsApi = await JsonFileHelper.get(constants.secretPath(options.fake, 'oer.json'));
+      const secretsForex = await JsonFileHelper.get(constants.secretPath(options.fake, 'forex.json'));
 
       const rulesOptions = { spreadsheetId: secretsForex.id, range: forexConst.rule.range };
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
 
       const data = await Promise.all([
-        RateApi.get(secretsApi.key, options.log),
-        SheetApi.get(forexConst.file, forexConst.scope, codeOptions, options.log),
-        SheetApi.get(forexConst.file, forexConst.scope, rulesOptions, options.log)
+        RateApi.get(secretsApi.key),
+        SheetApi.get(forexConst.file, forexConst.scope, codeOptions),
+        SheetApi.get(forexConst.file, forexConst.scope, rulesOptions)
       ]);
 
       const rawPriceJson = data[0];
@@ -52,10 +53,10 @@ module.exports = {
 
       const itemList = fulfilRule.map(stringify);
 
-      options.log('send forex monitor...');
+      Logger.log('send forex monitor...');
       return BasicHelper.displayChat(itemList, forexConst.monitorTitle);
     } catch (error) {
-      options.log('cant fetch forex monitor', error);
+      Logger.log('cant fetch forex monitor', error);
     }
     return '';
   }

@@ -13,7 +13,6 @@ const sheetData = [
 ];
 const sheetApiMock = { get: () => sheetData };
 const exceptionMock = () => { throw 'this is an exception'; };
-const log = () => {};
 
 let job;
 test.beforeEach(() => {
@@ -59,7 +58,7 @@ test('fetch works', async t => {
     '4   jackfruit\n' +
     '4   grapefruit\n' +
     '```\n';
-  const actual = await job.fetch('04 Feb 2018', '04', { log, fake: true });
+  const actual = await job.fetch('04 Feb 2018', '04', { fake: true });
 
   t.is(expected, actual);
 });
@@ -68,7 +67,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch('one', 'b', { log, fake: true });
+  const actual = await job.fetch('one', 'b', { fake: true });
 
   t.is(expected, actual);
 });

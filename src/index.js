@@ -7,7 +7,7 @@ const ReminderReport = require('./job/reminder-report-job');
 const StockMonitor = require('./job/stock-monitor-job');
 const ForexMonitor = require('./job/forex-monitor-job');
 const ReminderMonitor = require('./job/reminder-monitor-job');
-const logger = require('./lib/log-helper');
+const Logger = require('./lib/log-helper');
 
 const chat = require('../secrets/chat');
 
@@ -48,18 +48,17 @@ const schedule = {
   }
 };
 
-const log = logger.bind(false);
-
 const bot = new TelegramBot(chat.token, { polling: false });
 const send = data => {
-  log(data);
+  Logger.log(data);
   /* eslint-disable */
   data ? bot.sendMessage(chat.chatId, data, { parse_mode: 'markdown' }) : '';
   /* eslint-enable */
 };
 
+debug = true;
 const state = process.argv[2] || '';
-log('running in state ', state);
+Logger.log('running in state ', state);
 
 const today = moment().startOf('day');
 let dates = [];
@@ -69,56 +68,57 @@ for (let day = 0; day < 3; day++) {
 }
 let time = moment().format('HH');
 
-log(dates[0], time);
+Logger.log(dates[0], time);
+
 
 if (!state) {
-  ReminderReport.fetch(dates, { log }).then(send);
-  ReminderMonitor.fetch(dates[0], time, { log }).then(send);
-  ForexReport.fetch({ log }).then(send);
-  ForexMonitor.fetch({ log }).then(send);
-  StockReport.fetch({ log }).then(send);
-  StockMonitor.fetch({ log }).then(send);
+  ReminderReport.fetch(dates, {}).then(send);
+  ReminderMonitor.fetch(dates[0], time, {}).then(send);
+  ForexReport.fetch({}).then(send);
+  ForexMonitor.fetch({}).then(send);
+  StockReport.fetch({}).then(send);
+  StockMonitor.fetch({}).then(send);
 } else {
   new cron.CronJob({
     cronTime: schedule[state].reminder.report,
-    onTick: () => ReminderReport.fetch(dates, { log }).then(send),
+    onTick: () => ReminderReport.fetch(dates, {}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: schedule[state].reminder.monitor,
-    onTick: () => ReminderMonitor.fetch(dates[0], time, { log }).then(send),
+    onTick: () => ReminderMonitor.fetch(dates[0], time, {}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: schedule[state].forex.report,
-    onTick: () => ForexReport.fetch({ log }).then(send),
+    onTick: () => ForexReport.fetch({}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: schedule[state].forex.monitor,
-    onTick: () => ForexMonitor.fetch({ log }).then(send),
+    onTick: () => ForexMonitor.fetch({}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: schedule[state].stock.report,
-    onTick: () => StockReport.fetch({ log }).then(send),
+    onTick: () => StockReport.fetch({}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: schedule[state].stock.monitor,
-    onTick: () => StockMonitor.fetch({ log }).then(send),
+    onTick: () => StockMonitor.fetch({}).then(send),
     start: true
   });
 
   new cron.CronJob({
     cronTime: '00 */15 * * * *',
     onTick: () => {
-      log('ticking');
+      Logger.log('ticking');
     },
     start: true
   });

@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const Logger = require('../lib/log-helper');
 
 function constructUrl(ticker, market) {
   return `https://www.bloomberg.com/quote/${ticker}${ market ? `:${market}` : ''}`;
@@ -19,12 +20,12 @@ function transform(content) {
 module.exports = {
   _constructUrl: constructUrl,
   _transform: transform,
-  get: async(ticker, market, logger) => {
+  get: async(ticker, market) => {
     try {
       const response = await axios.get(constructUrl(ticker, market), { transformResponse: transform });
       return response.data;
     } catch (e) {
-      logger('Bloomberg Failed', e);
+      Logger.log('Bloomberg Failed', e);
     }
     return '';
   }

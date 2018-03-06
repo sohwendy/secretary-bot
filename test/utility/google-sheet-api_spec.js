@@ -11,7 +11,6 @@ const secrets = {
 };
 /* eslint-enable */
 const noop = () => {};
-const log = () => {};
 
 const googleMock = { auth: { JWT: Jwt } };
 const readFileMock = () => JSON.stringify(secrets);
@@ -45,7 +44,7 @@ test('get works', async t => {
     range: 'range',
     spreadsheetId: 'id'
   };
-  const actual = await helper.get('key', 'scope', options, log);
+  const actual = await helper.get('key', 'scope', options);
 
   t.deepEqual(expected, actual);
 });
@@ -55,7 +54,7 @@ test('get handles exception', async t => {
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.get('', '', {}, log);
+  const actual = await helper.get('', '', {});
 
   t.is(expected, actual);
 });

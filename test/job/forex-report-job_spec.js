@@ -21,8 +21,6 @@ const row = { code: 'ZZ', buyUnit: 2.5, sellUnit: 500, buyRate: 1.789, sellRate:
 
 const exceptionMock = () => { throw 'this is an exception' };
 
-const log = () => {};
-
 let job;
 test.beforeEach(() => {
   job = rewire('../../src/job/forex-report-job');
@@ -45,7 +43,7 @@ test('fetch works', async t => {
     '2 sgdbb     1.2     4 bbsgd   6.667\n' +
     '```\n' +
     '[update ♧](<some_url>)';
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });
@@ -54,7 +52,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });

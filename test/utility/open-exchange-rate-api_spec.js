@@ -2,8 +2,6 @@ import test from 'ava';
 
 const rewire = require('rewire');
 
-const log = () => {};
-
 let helper;
 test.beforeEach(() => {
   helper = rewire('../../src/utility/open-exchange-rate-api');
@@ -25,7 +23,7 @@ test('get works', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = 'rates';
-  const actual = await helper.get('one', log);
+  const actual = await helper.get('one');
 
   t.is(expected, actual);
 });
@@ -35,7 +33,7 @@ test('get handles exception', async t => {
   helper.__set__('axios', axiosMock);
 
   const expected = '';
-  const actual = await helper.get('one', log);
+  const actual = await helper.get('one');
 
   t.is(expected, actual);
 });

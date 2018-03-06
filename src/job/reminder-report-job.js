@@ -1,7 +1,8 @@
 const constants = require('../../config/constants');
+const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const IteratorHelper = require('../lib/iterator-helper');
-const BasicHelper = require('../lib/basic-helper');
+const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
 function rule(row) {
@@ -23,13 +24,13 @@ module.exports = {
   _stringifyReminder: stringifyReminder,
   fetch: async(dates, options) => {
     try {
-      options.log('get reminder report...');
+      Logger.log('get reminder report...');
 
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'), options.log);
+      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.range };
 
-      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params, options.log);
+      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params);
       const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.fields));
 
       const bind = rule.bind(dates);
@@ -44,11 +45,11 @@ module.exports = {
 
       group = group.map(stringify).filter(g => g);
 
-      options.log('send reminder report...');
+      Logger.log('send reminder report...');
 
       return BasicHelper.displayChat(group, reminderConst.reportTitle, secrets.link);
     } catch (err) {
-      options.log('cant fetch reminder report', err);
+      Logger.log('cant fetch reminder report', err);
     }
     return '';
   }

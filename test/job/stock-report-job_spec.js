@@ -19,7 +19,6 @@ const stockApiMock = {
   }
 };
 const exceptionMock = () => { throw 'this is an exception'; };
-const log = () => {};
 
 let job;
 test.beforeEach(() => {
@@ -43,7 +42,7 @@ test('fetch works', async t => {
     'CCC      1   date  a name\n' +
     '```\n' +
     '[update ♧](<some_url>)';
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });
@@ -52,7 +51,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch({ log, fake: true });
+  const actual = await job.fetch({ fake: true });
 
   t.is(expected, actual);
 });

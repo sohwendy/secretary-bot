@@ -1,6 +1,7 @@
 const { promisify } = require('util');
 const { google } = require('googleapis');
 const fs = require('fs');
+const Logger = require('../lib/log-helper');
 
 const readFile = promisify(fs.readFile);
 const sheets = google.sheets('v4');
@@ -15,7 +16,7 @@ const error = (error) => {
 };
 
 module.exports = {
-  get: async(json, scope, options, logger) => {
+  get: async(json, scope, options) => {
     try {
       const file = await readFile(json);
       const secrets = JSON.parse(file);
@@ -35,7 +36,7 @@ module.exports = {
       const result = await readSheets(params);
       return result.data.values;
     } catch (e) {
-      logger('Google Sheet Failed', e);
+      Logger.log('Google Sheet Failed', e);
     }
     return '';
   }
