@@ -25,7 +25,6 @@ module.exports = {
   fetch: async(dates, options) => {
     try {
       Logger.log('get reminder report...');
-
       const reminderConst = constants.reminder;
       const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.range };
@@ -44,13 +43,12 @@ module.exports = {
       });
 
       group = group.map(stringify).filter(g => g);
-
-      Logger.log('send reminder report...');
-
+      Logger.log('send reminder report...', group.length);
       return BasicHelper.displayChat(group, reminderConst.reportTitle, secrets.link);
     } catch (err) {
       Logger.log('cant fetch reminder report', err);
     }
+    Logger.log('no reminder report');
     return '';
   }
 };

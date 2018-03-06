@@ -48,11 +48,12 @@ module.exports = {
 
       const fulfilRule = mergeList.filter(rule);
       const itemList = fulfilRule.map(stringify);
-      Logger.log('send stock monitor...');
+      Logger.log('send stock monitor...', itemList.length);
       return BasicHelper.displayChat(itemList, stockConst.monitorTitle);
     } catch (error) {
       Logger.log('cant fetch stock monitor', error);
     }
+    Logger.log('no stock monitor');
     return '';
   }
 };

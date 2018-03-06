@@ -35,11 +35,12 @@ module.exports = {
 
       const itemList = mergeList.map(stringify);
 
-      Logger.log('send stock report...');
+      Logger.log('send stock report...', itemList.length);
       return BasicHelper.displayChat(itemList, stockConst.reportTitle, secrets.link);
     } catch (error) {
       Logger.log('cant fetch stock report', error);
     }
+    Logger.log('no stock report');
     return '';
   }
 };

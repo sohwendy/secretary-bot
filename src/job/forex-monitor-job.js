@@ -53,11 +53,12 @@ module.exports = {
 
       const itemList = fulfilRule.map(stringify);
 
-      Logger.log('send forex monitor...');
+      Logger.log('send forex monitor...', itemList.length);
       return BasicHelper.displayChat(itemList, forexConst.monitorTitle);
     } catch (error) {
       Logger.log('cant fetch forex monitor', error);
     }
+    Logger.log('no forex monitor');
     return '';
   }
 };

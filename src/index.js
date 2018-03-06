@@ -56,10 +56,6 @@ const send = data => {
   /* eslint-enable */
 };
 
-debug = true;
-const state = process.argv[2] || '';
-Logger.log('running in state ', state);
-
 const today = moment().startOf('day');
 let dates = [];
 for (let day = 0; day < 3; day++) {
@@ -68,8 +64,15 @@ for (let day = 0; day < 3; day++) {
 }
 let time = moment().format('HH');
 
-Logger.log(dates[0], time);
+global.debug = true;
+const state = process.argv[2] || '';
 
+Logger.log(dates[0], time);
+Logger.log('Run State?', state);
+Logger.log(`Enable Reminder? ${process.env.REMINDER || 'No'}`);
+Logger.log(`Enable Stock? ${process.env.STOCK || 'No'}`);
+Logger.log(`Enable Forex? ${process.env.FOREX || 'No'}`);
+Logger.log('.... starting ...');
 
 if (!state) {
   ReminderReport.fetch(dates, {}).then(send);
@@ -79,46 +82,52 @@ if (!state) {
   StockReport.fetch({}).then(send);
   StockMonitor.fetch({}).then(send);
 } else {
-  new cron.CronJob({
-    cronTime: schedule[state].reminder.report,
-    onTick: () => ReminderReport.fetch(dates, {}).then(send),
-    start: true
-  });
+  if (process.env.REMINDER) {
+    new cron.CronJob({
+      cronTime: schedule[state].reminder.report,
+      onTick: () => ReminderReport.fetch(dates, {}).then(send),
+      start: true
+    });
 
-  new cron.CronJob({
-    cronTime: schedule[state].reminder.monitor,
-    onTick: () => ReminderMonitor.fetch(dates[0], time, {}).then(send),
-    start: true
-  });
+    new cron.CronJob({
+      cronTime: schedule[state].reminder.monitor,
+      onTick: () => ReminderMonitor.fetch(dates[0], time, {}).then(send),
+      start: true
+    });
+  }
 
-  new cron.CronJob({
-    cronTime: schedule[state].forex.report,
-    onTick: () => ForexReport.fetch({}).then(send),
-    start: true
-  });
+  if (process.env.FOREX) {
+    new cron.CronJob({
+      cronTime: schedule[state].forex.report,
+      onTick: () => ForexReport.fetch({}).then(send),
+      start: true
+    });
 
-  new cron.CronJob({
-    cronTime: schedule[state].forex.monitor,
-    onTick: () => ForexMonitor.fetch({}).then(send),
-    start: true
-  });
+    new cron.CronJob({
+      cronTime: schedule[state].forex.monitor,
+      onTick: () => ForexMonitor.fetch({}).then(send),
+      start: true
+    });
+  }
 
-  new cron.CronJob({
-    cronTime: schedule[state].stock.report,
-    onTick: () => StockReport.fetch({}).then(send),
-    start: true
-  });
+  if (process.env.STOCK) {
+    new cron.CronJob({
+      cronTime: schedule[state].stock.report,
+      onTick: () => StockReport.fetch({}).then(send),
+      start: true
+    });
 
-  new cron.CronJob({
-    cronTime: schedule[state].stock.monitor,
-    onTick: () => StockMonitor.fetch({}).then(send),
-    start: true
-  });
+    new cron.CronJob({
+      cronTime: schedule[state].stock.monitor,
+      onTick: () => StockMonitor.fetch({}).then(send),
+      start: true
+    });
+  }
 
   new cron.CronJob({
     cronTime: '00 */15 * * * *',
     onTick: () => {
-      Logger.log('ticking');
+      Logger.log('heartbeat');
     },
     start: true
   });

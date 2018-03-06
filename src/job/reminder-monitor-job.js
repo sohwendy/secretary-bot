@@ -32,11 +32,12 @@ module.exports = {
       let reminders = reminderJson.filter(bind);
 
       reminders = reminders.map(stringify);
-      Logger.log('send reminder monitor...');
+      Logger.log('send reminder monitor...', reminders.length);
       return BasicHelper.displayChat(reminders, forexConst.monitorTitle);
     } catch (err) {
       Logger.log('cant fetch reminder report', err);
     }
+    Logger.log('no reminder monitor');
     return '';
   }
 };

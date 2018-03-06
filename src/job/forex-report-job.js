@@ -40,11 +40,12 @@ module.exports = {
       // calculate the exchange rate
       const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
       const itemList = fullItem.map(stringify);
-      Logger.log('send forex report...');
+      Logger.log('send forex report...', itemList.length);
       return BasicHelper.displayChat(itemList, forexConst.reportTitle, secretsForex.link);
     } catch (error) {
       Logger.log('cant fetch forex report', error);
     }
+    Logger.log('no forex report');
     return '';
   }
 };
