@@ -19,7 +19,7 @@ module.exports = {
   _stringify: stringify,
   fetch: async(today, time, options) => {
     try {
-      Logger.log('get reminder monitor...');
+      Logger.log('get reminder monitor...', today, time);
 
       const forexConst = constants.reminder;
       const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));

@@ -10,7 +10,7 @@ const readSheets = promisify(sheets.spreadsheets.values.get);
 /* istanbul ignore next */
 const error = (error) => {
   if (error) {
-    console.error('Google Auth error', error);
+    Logger.log('Google Auth error', error);
     return;
   }
 };

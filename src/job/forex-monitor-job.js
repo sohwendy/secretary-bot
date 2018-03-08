@@ -8,7 +8,7 @@ const SheetApi = require('../utility/google-sheet-api');
 const RateApi = require('../utility/open-exchange-rate-api');
 
 function stringify(row) {
-  return `${row.sellUnit} ${row.code} to ${row.sellRate} sgd   (${row.min}, ${row.max}) ${row.message}`;
+  return `${row.sellUnit} ${row.code} to ${row.sellRate} sgd   (${row.min}, ${row.max}) ${row.message}  ${row.watchlist}`;
 }
 
 function rule(row) {

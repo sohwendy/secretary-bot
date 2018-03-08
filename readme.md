@@ -45,6 +45,7 @@ yarn live
 
 ## To do 
 [ ] update readme  
+[ ] Use secret management - docker secrets, vault etc.
 [ ] create boilerplate  
 [ ] use sinon for mock and spying  
 [X] docker  

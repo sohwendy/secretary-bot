@@ -24,7 +24,7 @@ module.exports = {
   _stringifyReminder: stringifyReminder,
   fetch: async(dates, options) => {
     try {
-      Logger.log('get reminder report...');
+      Logger.log('get reminder report...', dates);
       const reminderConst = constants.reminder;
       const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.range };

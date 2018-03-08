@@ -13,7 +13,7 @@ function stringify(row) {
   const sellRate = BasicHelper.pad(row.sellRate, 7);
   const sellUnit = BasicHelper.pad(row.sellUnit, 5);
 
-  return `${row.buyUnit} sgd${foreign} ${buyRate} ${sellUnit} ${foreign}sgd ${sellRate}`;
+  return `${row.buyUnit} sgd${foreign} ${buyRate} ${sellUnit} ${foreign}sgd ${sellRate}  ${row.watchlist}`;
 }
 
 module.exports = {

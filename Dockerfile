@@ -1,13 +1,18 @@
-FROM node:9.6.1
+FROM node:9.7.1-slim
 
-WORKDIR /app/src
+LABEL version="0.2"
+LABEL description="Image for telegram-bot-secretary"
+LABEL maintainer="Wendy <wencodes@gmail.com>"
 
-COPY package.json yarn.lock ./
+RUN mkdir -p /usr/app/telegram-bot-secretary
+WORKDIR /usr/app/telegram-bot-secretary
 
-RUN yarn install
+COPY ["package.json", "yarn.lock", "./"]
+
+RUN yarn global add forever && cd /usr/app/telegram-bot-secretary && yarn install
 
 COPY . .
 
-EXPOSE 8080
-CMD [ "yarn", "debug" ]
+CMD [ "forever", "src/index.js", "debug" ]
 
+USER node

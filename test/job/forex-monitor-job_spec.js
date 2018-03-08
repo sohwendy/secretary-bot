@@ -5,14 +5,14 @@ const constants = require('../../config/constants');
 
 
 const codeMock = [
-  ['AA', '1', '3', 'n'],
-  ['ZZ', '2', '4', 'n']
+  ['AA', '1', '3', '*', 'mca'],
+  ['ZZ', '2', '4', '', '']
 ];
 const ruleMock = [
-  ['ZZ', '0.1', '0.2', 'no', 'm'],
-  ['ZZ', '5', '8', 'yes', 'm1'],
-  ['ZZ', '7.8', '8', 'yes', 'm2'],
-  ['ZZ', '90', '100', 'no', 'm']
+  ['ZZ', '0.1', '0.2', 'no', 'n'],
+  ['ZZ', '5', '8', 'yes', 'y'],
+  ['ZZ', '7.8', '8', 'yes', 'n'],
+  ['ZZ', '90', '100', 'no', 'n']
 ];
 const rateMock = { AA: 1, BB: 3, ZZ: 3, SGD: 5 };
 
@@ -25,12 +25,13 @@ const row = {
   min: 1,
   max: 8,
   message: 'some_msg',
-  done: 'n'
+  done: 'n',
+  watchlist: '*'
 };
 
 const sheetApiMock = {
   get: (_a, _b, options) => {
-    return options.range === 'ForexCode!B2:E' ? codeMock : ruleMock;
+    return options.range === 'ForexCode!B2:F' ? codeMock : ruleMock;
   }
 };
 
@@ -79,7 +80,7 @@ test('rule returns false for no message', async t => {
 });
 
 test('stringify works', async t => {
-  const expected = '500 ZZ to 7.93 sgd   (1, 8) some_msg';
+  const expected = '500 ZZ to 7.93 sgd   (1, 8) some_msg  *';
   const actual = job._stringify(row);
 
   t.is(expected, actual);
@@ -89,7 +90,7 @@ test('fetch works', async t => {
   const expected = constants.forex.monitorTitle +
     '\n' +
     '```\n' +
-    '4 ZZ to 6.667 sgd   (5, 8) yes\n' +
+    '4 ZZ to 6.667 sgd   (5, 8) yes  \n' +
     '```\n';
   const actual = await job.fetch({ fake: true });
 
