@@ -81,8 +81,8 @@ test('rule returns false for done = Y', async t => {
 });
 
 test('stringify works', async t => {
-  const expected = '2.5sgd  1.789zz   500zz   7.93sgd\n' +
-    '  *  (1, 8)   some_msg\n';
+  const expected = '2.5sgd  1.789zz    500zz   7.93sgd\n' +
+    '  *  (1, 8)   some_msg';
   const actual = job._stringify(row);
 
   t.is(expected, actual);
@@ -92,10 +92,10 @@ test('fetch works', async t => {
   const expected = constants.forex.monitorTitle +
     '\n' +
     '```\n' +
-    '2sgd    1.2zz   4zz  6.667sgd' +
+    '2sgd    1.2zz    4zz  6.667sgd' +
     '\n' +
     '    (5, 8)   yes' +
-    '\n\n' +
+    '\n' +
     '```\n';
   const actual = await job.fetch({ fake: true });
 

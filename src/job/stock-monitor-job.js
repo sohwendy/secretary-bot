@@ -9,14 +9,13 @@ const StockApi = require('../utility/bloomberg-scraper');
 
 function stringify(row) {
   const price = BasicHelper.pad(row.price, 6);
-  const range = BasicHelper.pad(`${row.min}-${row.max}`, 7);
-
-  const name = BasicHelper.pad(row.name, 6);
-  return `${row.code} ${price}  ${range} ${name}  ${row.message}`;
+  const range = BasicHelper.pad(`${row.min}-${row.max}`, 9);
+  const name = BasicHelper.pad(row.name, 8);
+  return `${row.code} ${price}  ${range} ${name} ${row.message}`;
 }
 
 function rule(row) {
-  return (row.price >= row.min && row.price < row.max && row.message && row.done !== 'y') ? true : false;
+  return (row.price >= row.min && row.price < row.max && row.done !== 'Y') ? true : false;
 }
 
 module.exports = {

@@ -12,8 +12,8 @@ function stringify(row) {
   const buyRate = BasicHelper.pad(row.buyRate, 6);
   const sellRate = BasicHelper.pad(row.sellRate, 6);
 
-  return `${row.buyUnit}sgd ${buyRate}${foreign}   ${row.sellUnit}${foreign} ${sellRate}sgd\n` +
-    `  ${row.watchlist}  (${row.min}, ${row.max})   ${row.message}\n`;
+  return `${row.buyUnit}sgd ${buyRate}${foreign}    ${row.sellUnit}${foreign} ${sellRate}sgd\n` +
+    `  ${row.watchlist}  (${row.min}, ${row.max})   ${row.message}`;
 }
 
 function rule(row) {

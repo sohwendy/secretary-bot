@@ -35,7 +35,7 @@ test.beforeEach(() => {
 });
 
 test('stringify works', async t => {
-  const expected = 'AA      1  0.345-0.555  apple  msg';
+  const expected = 'AA      1  0.345-0.555    apple msg';
   const actual = job._stringify({ code: 'AA', name: 'apple', price: 1, min: 0.345, max: 0.555, message: 'msg' });
 
   t.is(expected, actual);
@@ -68,10 +68,10 @@ test('rule returns false for < min value', async t => {
   t.is(expected, actual);
 });
 
-test('rule returns false for no message', async t => {
+test('rule returns false for done = Y', async t => {
   const expected = false;
   const newRow = Object.assign({}, row);
-  newRow.message = '';
+  newRow.done = 'Y';
   const actual = job._rule(newRow);
 
   t.is(expected, actual);
@@ -81,7 +81,7 @@ test('fetch works', async t => {
   const expected = constants.stock.monitorTitle +
     '\n' +
     '```\n' +
-    'BBB     10     4-11 a name  yes\n' +
+    'BBB     10       4-11   a name yes\n' +
     '```\n';
   const actual = await job.fetch({ fake: true });
 
