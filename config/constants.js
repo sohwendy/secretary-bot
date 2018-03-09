@@ -22,8 +22,8 @@ module.exports = {
     },
     scope: ['https://www.googleapis.com/auth/spreadsheets'],
     rule: {
-      range: 'ForexRule!B2:F',
-      fields: ['code', 'min', 'max', 'message', 'done']
+      range: 'ForexRule!B2:G',
+      fields: ['code', 'buysell', 'min', 'max', 'message', 'done']
     }
   },
   stock: {

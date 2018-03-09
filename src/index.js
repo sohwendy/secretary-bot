@@ -47,12 +47,12 @@ Logger.log(`Enable Forex? ${process.env.FOREX || 'No'}`);
 
 if (!state) {
   Logger.log('Fire once...');
-  ReminderReport.fetch(dates, {}).then(send);
-  ReminderMonitor.fetch(dates[0], time, {}).then(send);
+  // ReminderReport.fetch(dates, {}).then(send);
+  // ReminderMonitor.fetch(dates[0], time, {}).then(send);
   ForexReport.fetch({}).then(send);
-  ForexMonitor.fetch({}).then(send);
-  StockReport.fetch({}).then(send);
-  StockMonitor.fetch({}).then(send);
+  // ForexMonitor.fetch({}).then(send);
+  // StockReport.fetch({}).then(send);
+  // StockMonitor.fetch({}).then(send);
 } else {
   Logger.log('Create Cron...');
 

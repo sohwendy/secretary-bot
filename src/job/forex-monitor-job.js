@@ -8,11 +8,17 @@ const SheetApi = require('../utility/google-sheet-api');
 const RateApi = require('../utility/open-exchange-rate-api');
 
 function stringify(row) {
-  return `${row.sellUnit} ${row.code} to ${row.sellRate} sgd   (${row.min}, ${row.max}) ${row.message}  ${row.watchlist}`;
+  const foreign = row.code.toLowerCase();
+  const buyRate = BasicHelper.pad(row.buyRate, 6);
+  const sellRate = BasicHelper.pad(row.sellRate, 6);
+
+  return `${row.buyUnit}sgd ${buyRate}${foreign}   ${row.sellUnit}${foreign} ${sellRate}sgd\n` +
+    `  ${row.watchlist}  (${row.min}, ${row.max})   ${row.message}\n`;
 }
 
 function rule(row) {
-  return row.sellRate >= row.min && row.sellRate < row.max && row.message ? true : false;
+  const rate = row.buysell === 'B' ? row.buyRate : row.sellRate;
+  return rate >= row.min && rate < row.max && row.done !== 'Y' ? true : false;
 }
 
 module.exports = {

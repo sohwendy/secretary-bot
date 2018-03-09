@@ -29,7 +29,7 @@ test.beforeEach(() => {
 });
 
 test('stringify works', async t => {
-  const expected = '2.5 sgdzz   1.789   500 zzsgd    7.93  *';
+  const expected = '2.5sgd  1.789zz   500zz   7.93sgd *';
   const actual = job._stringify(row);
 
   t.is(expected, actual);
@@ -39,8 +39,8 @@ test('fetch works', async t => {
   const expected = constants.forex.reportTitle +
     '\n' +
     '```\n' +
-    '1 sgdaa     0.2     3 aasgd      15  **\n' +
-    '2 sgdbb     1.2     4 bbsgd   6.667  \n' +
+    '1sgd    0.2aa     3aa     15sgd **\n' +
+    '2sgd    1.2bb     4bb  6.667sgd \n' +
     '```\n' +
     '[update ♧](<some_url>)';
   const actual = await job.fetch({ fake: true });

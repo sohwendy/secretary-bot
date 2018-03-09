@@ -9,10 +9,10 @@ const codeMock = [
   ['ZZ', '2', '4', '', '']
 ];
 const ruleMock = [
-  ['ZZ', '0.1', '0.2', 'no', 'n'],
-  ['ZZ', '5', '8', 'yes', 'y'],
-  ['ZZ', '7.8', '8', 'yes', 'n'],
-  ['ZZ', '90', '100', 'no', 'n']
+  ['ZZ', 'S', '0.1', '0.2', 'no', 'N'],
+  ['ZZ', 'S', '5', '8', 'yes', 'N'],
+  ['ZZ', 'S', '7.8', '8', 'yes', 'N'],
+  ['ZZ', 'S', '90', '100', 'no', 'N']
 ];
 const rateMock = { AA: 1, BB: 3, ZZ: 3, SGD: 5 };
 
@@ -22,10 +22,11 @@ const row = {
   sellUnit: 500,
   buyRate: 1.789,
   sellRate: 7.93,
+  buysell: 'S',
   min: 1,
   max: 8,
   message: 'some_msg',
-  done: 'n',
+  done: 'N',
   watchlist: '*'
 };
 
@@ -70,17 +71,18 @@ test('rule returns false for < min value', async t => {
   t.is(expected, actual);
 });
 
-test('rule returns false for no message', async t => {
+test('rule returns false for done = Y', async t => {
   const expected = false;
   const newRow = Object.assign({}, row);
-  newRow.message = '';
+  newRow.done = 'Y';
   const actual = job._rule(newRow);
 
   t.is(expected, actual);
 });
 
 test('stringify works', async t => {
-  const expected = '500 ZZ to 7.93 sgd   (1, 8) some_msg  *';
+  const expected = '2.5sgd  1.789zz   500zz   7.93sgd\n' +
+    '  *  (1, 8)   some_msg\n';
   const actual = job._stringify(row);
 
   t.is(expected, actual);
@@ -90,7 +92,10 @@ test('fetch works', async t => {
   const expected = constants.forex.monitorTitle +
     '\n' +
     '```\n' +
-    '4 ZZ to 6.667 sgd   (5, 8) yes  \n' +
+    '2sgd    1.2zz   4zz  6.667sgd' +
+    '\n' +
+    '    (5, 8)   yes' +
+    '\n\n' +
     '```\n';
   const actual = await job.fetch({ fake: true });
 
