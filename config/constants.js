@@ -8,9 +8,16 @@ module.exports = {
     monitorTitle: '📆🔥 Get Ready...',
     file: './.secrets/google.json',
     scope: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-    range: 'Remind!B2:E',
     link: '[update \u2667](http://bit.ly/sheet_reminders)',
-    fields: ['date', 'time', 'type', 'title', 'action', 'event']
+    fields: ['date', 'time', 'type', 'title', 'action', 'event'],
+    task: {
+      range: 'Task!B2:E',
+      fields: ['date', 'time', 'type', 'title', 'action', 'event']
+    },
+    moment: {
+      range: 'Moment!B2:E',
+      fields: ['date', 'time', 'type', 'title', 'action', 'event']
+    }
   },
   forex: {
     reportTitle: '🌎 Left - more is gd, Right - less is gd...',

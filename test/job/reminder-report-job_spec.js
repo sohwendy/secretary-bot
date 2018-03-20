@@ -2,15 +2,22 @@ import test from 'ava';
 
 const rewire = require('rewire');
 
+const tasks = [
+  ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
+  ['02 Feb 2018', '',         '02', 'orange', 'n'],
+  ['04 Feb 2018', '04:00:00', '04', 'jackfruit', 'n'],
+  ['04 Feb 2018', '15:00:00', '14', 'strawberry', 'n'],
+  ['05 Feb 2018', '08:10:00', '05', 'durian', 'n'],
+];
+const moments = [
+  ['01 Feb 2018', '',         '40', 'peach', 'n'],
+  ['04 Feb 2018', '04:00:00', '41', 'mango', 'n'],
+  ['05 Feb 2018', '',         '42', 'pear', 'n'],
+  ['06 Feb 2018', '',         '43', 'banana', 'n'],
+];
 const sheetApiMock = {
-  get: () => {
-    return [
-      ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
-      ['02 Feb 2018', '', '02', 'orange', 'n'],
-      ['04 Feb 2018', '04:00:00', '04', 'jackfruit', 'n'],
-      ['04 Feb 2018', '15:00:00', '04', 'strawberry', 'n'],
-      ['05 Feb 2018', '08:10:00', '05', 'durian', 'n'],
-    ];
+  get: (_a, _b, c) => {
+    return c.range === 'Task!B2:E' ? tasks : moments;
   }
 };
 
@@ -46,7 +53,7 @@ test('stringify return empty string if no row', async t => {
 });
 
 test('stringify return empty string if no row', async t => {
-  const expected = 'type   title';
+  const expected = ' type  title';
   const actual = job._stringifyReminder({ type: 'type', title: 'title' });
 
   t.is(expected, actual);
@@ -56,12 +63,13 @@ test('fetch works', async t => {
   const expected = '📆 Coming up...\n' +
     '```\n' +
     '2) Today, 02 Feb \n' +
-    '2   apple\n' +
-    '2   orange\n' +
+    ' 2  apple\n' +
+    ' 2  orange\n' +
     // '\n' +
-    '2)  04 Feb \n' +
-    '4   jackfruit\n' +
-    '4   strawberry\n' +
+    '3)  04 Feb \n' +
+    ' 4  jackfruit\n' +
+    ' 14  strawberry\n' +
+    ' 41  mango\n' +
     '```\n' +
     '[update ♧](<some_url>)';
 

@@ -15,7 +15,7 @@ function stringify(row) {
 }
 
 function stringifyReminder(row) {
-  return `${row.type}   ${row.title}`;
+  return ` ${row.type}  ${row.title}`;
 }
 
 module.exports = {
@@ -25,17 +25,28 @@ module.exports = {
   fetch: async(dates, options) => {
     try {
       Logger.log('get reminder report...', dates);
+      const bind = rule.bind(dates);
       const reminderConst = constants.reminder;
       const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
-      const params = { spreadsheetId: secrets.id, range: reminderConst.range };
 
-      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params);
-      const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.fields));
+      const configConstant = [reminderConst.task, reminderConst.moment];
 
-      const bind = rule.bind(dates);
-      let reminders = reminderJson.filter(bind);
+      const taskOptions = { spreadsheetId: secrets.id, range: configConstant[0].range };
+      const momentOptions = { spreadsheetId: secrets.id, range: configConstant[1].range };
+
+      // get task and moment list
+      let data = await Promise.all([
+        SheetApi.get(reminderConst.file, reminderConst.scope, taskOptions),
+        SheetApi.get(reminderConst.file, reminderConst.scope, momentOptions)
+      ]);
+
+      let reminders = [];
+      for (let i = 0; i < 2; i++) {
+        data[i] = data[i].map(row => IteratorHelper.toJson(row, configConstant[i].fields));
+        reminders = reminders.concat(data[i].filter(bind));
+      }
+
       let group = dates.map(date => reminders.filter(r => r.date === date));
-
       group = group.map((g, index) => {
         const msg = g.map(stringifyReminder).join('\n');
         const date = `${index === 0 ? 'Today,' : ''} ${dates[index].replace(/2018/i, '')}`;

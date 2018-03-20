@@ -1,6 +1,5 @@
 const cron = require('cron');
 const moment = require('moment');
-const _tz = require('moment-timezone'); // eslint-disable-line no-unused-vars
 const TelegramBot = require('node-telegram-bot-api');
 const constants = require('../config/constants.js');
 const JsonFileHelper = require('./lib/json-file-helper');
@@ -31,13 +30,13 @@ const send = async(data) => {
   }
 };
 
-const today = moment().tz('Asia/Singapore').startOf('day');
+const today = moment().local().startOf('day');
 let dates = [];
 for (let day = 0; day < 3; day++) {
   const d = today.clone().add(day, 'day').format('DD MMM YYYY');
   dates.push(d);
 }
-let time = moment().tz('Asia/Singapore').format('HH');
+let time = moment().local().format('HH');
 
 Logger.log(dates[0], time);
 Logger.log('Run State?', state);

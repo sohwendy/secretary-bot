@@ -21,19 +21,19 @@ module.exports = {
     try {
       Logger.log('get reminder monitor...', today, time);
 
-      const forexConst = constants.reminder;
+      const reminderConst = constants.reminder;
       const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
-      const params = { spreadsheetId: secrets.id, range: forexConst.range };
+      const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
 
-      const data = await SheetApi.get(forexConst.file, forexConst.scope, params);
+      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params);
 
-      const reminderJson = data.map(row => IteratorHelper.toJson(row, forexConst.fields));
+      const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.task.fields));
       const bind = rule.bind({ date: today, time });
       let reminders = reminderJson.filter(bind);
 
       reminders = reminders.map(stringify);
       Logger.log('send reminder monitor...', reminders.length);
-      return BasicHelper.displayChat(reminders, forexConst.monitorTitle);
+      return BasicHelper.displayChat(reminders, reminderConst.monitorTitle);
     } catch (err) {
       Logger.log('cant fetch reminder report', err);
     }
