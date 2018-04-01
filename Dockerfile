@@ -13,6 +13,6 @@ RUN yarn global add forever && cd /usr/app/telegram-bot-secretary && yarn instal
 
 COPY . .
 
-CMD [ "forever", "src/index.js", "debug" ]
+CMD [ "forever", "src/index.js", "live" ]
 
 # USER node
