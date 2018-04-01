@@ -1,4 +1,4 @@
-FROM node:9.7.1-slim
+FROM node:9.10.0-slim
 
 LABEL version="0.2"
 LABEL description="Image for telegram-bot-secretary"
@@ -15,4 +15,4 @@ COPY . .
 
 CMD [ "forever", "src/index.js", "debug" ]
 
-USER node
+# USER node

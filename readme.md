@@ -43,11 +43,20 @@ yarn install
 yarn live
 ```
 
+# Using docker-compose
+```
+docker-compose build
+docker-compose up
+docker-compose down
+
+```
+
 ## To do 
 [ ] update readme  
 [ ] Use secret management - docker secrets, vault etc.
 [ ] create boilerplate  
-[ ] use sinon for mock and spying  
+[ ] use sinon for mock and spying 
+[ ] Use user in dockerfile
 [X] docker  
 [X] tests  
 [X] check time for reminder  

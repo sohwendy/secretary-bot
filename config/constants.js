@@ -71,12 +71,12 @@ module.exports = {
         monitor: '15 */3 * * * *'
       },
       forex: {
-        report: '25 */4 * * * *',
-        monitor: '35 */2 * * * *'
+        report: '25 */14 * * * *',
+        monitor: '35 */12 * * * *'
       },
       stock: {
         report: '45 */15 * * * *',
-        monitor: '55 */4 * * * *'
+        monitor: '55 */7 * * * *'
       },
       log: {
         monitor: '00 */1 * * * *'
