@@ -44,17 +44,22 @@ Logger.log(`Enable Reminder? ${process.env.REMINDER || 'No'}`);
 Logger.log(`Enable Stock? ${process.env.STOCK || 'No'}`);
 Logger.log(`Enable Forex? ${process.env.FOREX || 'No'}`);
 
-if (!state) {
-  Logger.log('Fire once...');
-  ReminderReport.fetch(dates, {}).then(send);
-  ReminderMonitor.fetch(dates[0], time, {}).then(send);
-  ForexReport.fetch({}).then(send);
-  ForexMonitor.fetch({}).then(send);
-  StockReport.fetch({}).then(send);
-  StockMonitor.fetch({}).then(send);
-} else {
-  Logger.log('Create Cron...');
+const once = (d, t, s) => {
+  ReminderReport.fetch(d, {}).then(s);
+  ReminderMonitor.fetch(d[0], t, {}).then(s);
+  ForexReport.fetch({}).then(s);
+  ForexMonitor.fetch({}).then(s);
+  StockReport.fetch({}).then(s);
+  StockMonitor.fetch({}).then(s);
+};
 
+if (!state) {
+  Logger.log('Fire once...');  
+  once(dates, time, send);
+} else {  
+  Logger.log('Create Cron...');
+  once(dates, time, send);
+  
   if (process.env.REMINDER) {
     chatFile = 'reminderchat.json';
     Logger.log('reminder starts', chatFile);
@@ -111,3 +116,5 @@ if (!state) {
     start: true
   });
 }
+
+
