@@ -44,66 +44,76 @@ Logger.log(`Enable Reminder? ${process.env.REMINDER || 'No'}`);
 Logger.log(`Enable Stock? ${process.env.STOCK || 'No'}`);
 Logger.log(`Enable Forex? ${process.env.FOREX || 'No'}`);
 
-const once = (d, t, s) => {
-  ReminderReport.fetch(d, {}).then(s);
-  ReminderMonitor.fetch(d[0], t, {}).then(s);
-  ForexReport.fetch({}).then(s);
-  ForexMonitor.fetch({}).then(s);
-  StockReport.fetch({}).then(s);
-  StockMonitor.fetch({}).then(s);
-};
+const reminderReport = () => ReminderReport.fetch(dates, {}).then(send);
+const reminderMonitor = () => ReminderMonitor.fetch(dates[0], time, {}).then(send);
+const forexReport = () => ForexReport.fetch({}).then(send);
+const forexMonitor = () => ForexMonitor.fetch({}).then(send);
+const stockReport = () => StockReport.fetch({}).then(send);
+const stockMonitor = () => StockMonitor.fetch({}).then(send);
+
 
 if (!state) {
-  Logger.log('Fire once...');  
-  once(dates, time, send);
-} else {  
+  Logger.log('Fire once...');
+  reminderReport();
+  reminderMonitor();
+  forexReport();
+  forexMonitor();
+  stockReport();
+  stockMonitor();
+} else {
   Logger.log('Create Cron...');
-  once(dates, time, send);
-  
+
   if (process.env.REMINDER) {
+    reminderReport();
+    reminderMonitor();
+
     chatFile = 'reminderchat.json';
     Logger.log('reminder starts', chatFile);
     new cron.CronJob({
       cronTime: constants.schedule[state].reminder.report,
-      onTick: () => ReminderReport.fetch(dates, {}).then(send),
+      onTick: reminderReport,
       start: true
     });
 
     new cron.CronJob({
       cronTime: constants.schedule[state].reminder.monitor,
-      onTick: () => ReminderMonitor.fetch(dates[0], time, {}).then(send),
+      onTick: reminderMonitor,
       start: true
     });
   }
 
   if (process.env.FOREX) {
+    forexReport();
+    forexMonitor();
     chatFile = 'forexchat.json';
     Logger.log('forex starts', chatFile);
     new cron.CronJob({
       cronTime: constants.schedule[state].forex.report,
-      onTick: () => ForexReport.fetch({}).then(send),
+      onTick: forexReport,
       start: true
     });
 
     new cron.CronJob({
       cronTime: constants.schedule[state].forex.monitor,
-      onTick: () => ForexMonitor.fetch({}).then(send),
+      onTick: forexMonitor,
       start: true
     });
   }
 
   if (process.env.STOCK) {
+    stockReport();
+    stockMonitor();
     chatFile = 'stockchat.json';
     Logger.log('stock starts', chatFile);
     new cron.CronJob({
       cronTime: constants.schedule[state].stock.report,
-      onTick: () => StockReport.fetch({}).then(send),
+      onTick: stockReport,
       start: true
     });
 
     new cron.CronJob({
       cronTime: constants.schedule[state].stock.monitor,
-      onTick: () => StockMonitor.fetch({}).then(send),
+      onTick: stockMonitor,
       start: true
     });
   }
