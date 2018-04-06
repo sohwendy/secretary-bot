@@ -22,6 +22,8 @@ module.exports = {
   _transform: transform,
   get: async(ticker, market) => {
     try {
+      const time = Math.floor((Math.random() * 1000) + 1);
+      await new Promise(resolve => setTimeout(resolve, time));
       const response = await axios.get(constructUrl(ticker, market), { transformResponse: transform });
       return response.data;
     } catch (e) {

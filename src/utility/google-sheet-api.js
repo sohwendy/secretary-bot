@@ -4,8 +4,7 @@ const fs = require('fs');
 const Logger = require('../lib/log-helper');
 
 const readFile = promisify(fs.readFile);
-const sheets = google.sheets('v4');
-const readSheets = promisify(sheets.spreadsheets.values.get);
+const sheets = google.sheets('v4').spreadsheets.values;
 
 /* istanbul ignore next */
 const error = (error) => {
@@ -33,7 +32,7 @@ module.exports = {
 
       const params = Object.assign({ auth: jwtClient }, options);
 
-      const result = await readSheets(params);
+      const result = await sheets.get(params);
       return result.data.values;
     } catch (e) {
       Logger.log('Google Sheet Failed', e);

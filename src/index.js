@@ -54,19 +54,18 @@ const stockMonitor = () => StockMonitor.fetch({}).then(send);
 
 if (!state) {
   Logger.log('Fire once...');
-  reminderReport();
-  reminderMonitor();
-  forexReport();
-  forexMonitor();
+  // reminderReport();
+  // reminderMonitor();
+  // forexReport();
+  // forexMonitor();
   stockReport();
-  stockMonitor();
+  // stockMonitor();
 } else {
   Logger.log('Create Cron...');
 
   if (process.env.REMINDER) {
     reminderReport();
     reminderMonitor();
-
     chatFile = 'reminderchat.json';
     Logger.log('reminder starts', chatFile);
     new cron.CronJob({

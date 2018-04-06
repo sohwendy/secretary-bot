@@ -13,6 +13,19 @@ function stringify(row) {
   return `${row.code} ${price} ${changeAmount}  ${row.name}`;
 }
 
+async function sendRequest(requests) {
+  let reqGroup = [];
+  while (requests.length > 0)
+    reqGroup.push(requests.splice(0, 5));
+  let group = [];
+  for (let i = 0; i < reqGroup.length; i ++){
+    group[i] = await Promise.all(reqGroup[i]);
+  }
+
+  const flatten = await group.reduce((acc, val) => acc.concat(val), []);
+  return flatten;
+}
+
 module.exports = {
   _stringify: stringify,
   fetch: async(options) => {
@@ -28,7 +41,7 @@ module.exports = {
 
       // get price list
       const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix));
-      const priceJson = await Promise.all(requests);
+      const priceJson = await sendRequest(requests);
 
       // merge code and price list
       const mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKeyValue, priceJson);

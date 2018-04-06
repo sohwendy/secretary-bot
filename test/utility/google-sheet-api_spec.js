@@ -14,7 +14,7 @@ const noop = () => {};
 
 const googleMock = { auth: { JWT: Jwt } };
 const readFileMock = () => JSON.stringify(secrets);
-const readSheetsMock = params => { return { data: { values: params } }; };
+const sheetsMock = { get: params => { return { data: { values: params } }; } };
 
 function Jwt(email, _a, key, scope, _b) {
   this.email = email;
@@ -27,7 +27,7 @@ test.beforeEach(() => {
   helper = rewire('../../src/utility/google-sheet-api');
   helper.__set__('google', googleMock);
   helper.__set__('readFile', readFileMock);
-  helper.__set__('readSheets', readSheetsMock);
+  helper.__set__('sheets', sheetsMock);
 });
 
 test('get works', async t => {
