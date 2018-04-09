@@ -2,19 +2,25 @@ version: "3"
 services:
   forex:
     build: .
+    restart: always
+    image: bot_forex:v1
     volumes:
-      - ./.secrets:/usr/app/telegram-bot-secretary/.secrets
+      - ./.secrets:/usr/app/.secrets
     environment:
       FOREX: 1
   stock:
     build: .
+    image: bot_stock:v1
+    restart: always
     volumes:
-      - ./.secrets:/usr/app/telegram-bot-secretary/.secrets
+      - ./.secrets:/usr/app/.secrets
     environment:
       STOCK: 1
   reminder:
     build: .
+    image: bot_reminder:v1
+    restart: always
     volumes:
-      - ./.secrets:/usr/app/telegram-bot-secretary/.secrets
+      - ./.secrets:/usr/app/.secrets
     environment:
       REMINDER: 1

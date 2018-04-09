@@ -63,7 +63,7 @@ if (!state) {
 } else {
   Logger.log('Create Cron...');
 
-  if (process.env.REMINDER) {
+  if (process.env.REMINDER === 1) {
     reminderReport();
     reminderMonitor();
     chatFile = 'reminderchat.json';
@@ -81,7 +81,7 @@ if (!state) {
     });
   }
 
-  if (process.env.FOREX) {
+  if (process.env.FOREX === 1) {
     forexReport();
     forexMonitor();
     chatFile = 'forexchat.json';
@@ -99,7 +99,7 @@ if (!state) {
     });
   }
 
-  if (process.env.STOCK) {
+  if (process.env.STOCK === 1) {
     stockReport();
     stockMonitor();
     chatFile = 'stockchat.json';

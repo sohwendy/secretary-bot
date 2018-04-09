@@ -17,5 +17,4 @@ Dockerfile
 yarn-error.log
 log.txt
 
-secrets/
 .secrets/
