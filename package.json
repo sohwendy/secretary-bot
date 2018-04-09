@@ -47,6 +47,6 @@
     "eslint-plugin-import": "^2.9.0",
     "mockdate": "^2.0.2",
     "nyc": "^11.4.1",
-    "rewire": "^3.0.2"
+    "rewire": "^4.0.0"
   }
 }
