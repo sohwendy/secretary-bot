@@ -10,8 +10,8 @@ readme
 .env
 .eslint*
 
-.docker-compose.yml
 .docker_images/
+docker-compose.yml
 Dockerfile
 
 yarn-error.log
