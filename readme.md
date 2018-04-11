@@ -63,6 +63,13 @@ docker-compose down
 [X] check time for reminder  
 [X] scheduler  
 
+## Issue
+Hardcoded the group of docker nodejs user
+```1001 is the primary group of user who owns .secrets/
+RUN groupadd -r nodejs -g 1001 \
+  && useradd -m -r -g nodejs nodejs \
+  && chown -R nodejs:nodejs /usr/app
+```
 
 ## References
 [Node.js Quickstart | Sheets API | Google Developers ](https://developers.google.com/sheets/api/quickstart/nodejs)  

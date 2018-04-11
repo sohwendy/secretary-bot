@@ -19,7 +19,8 @@ RUN cd /usr/app && \
 
 COPY . .
 
-RUN groupadd -r nodejs \
+# add to the same group as file owner
+RUN groupadd -r nodejs -g 1001 \
   && useradd -m -r -g nodejs nodejs \
   && chown -R nodejs:nodejs /usr/app
 
