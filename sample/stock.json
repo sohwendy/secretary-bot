@@ -1,4 +1,6 @@
 {
+  "key1": "<alpha_vantage_key>",
+  "key2": "<alpha_vantage_key>",
   "id": "<stock_sheets_id>",
   "link": "[update \u2667](<some_url>)"
 }
