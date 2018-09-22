@@ -1,8 +1,8 @@
-# telegram-bot-secretary
+# secretary-bot
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/telegram-bot-secretary.svg)](https://greenkeeper.io/)
-[![Build Status](https://travis-ci.org/sohwendy/telegram-bot-secretary.svg?branch=master)](https://travis-ci.org/sohwendy/telegram-bot-secretary)  
-[![Known Vulnerabilities](https://snyk.io/test/github/sohwendy/telegram-bot-secretary/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sohwendy/telegram-bot-secretary?targetFile=package.json)
+[![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/secretary-bot.svg)](https://greenkeeper.io/)
+[![Build Status](https://travis-ci.org/sohwendy/secretary-bot.svg?branch=master)](https://travis-ci.org/sohwendy/secretary-bot)  
+[![Known Vulnerabilities](https://snyk.io/test/github/sohwendy/secretary-bot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sohwendy/secretary-bot?targetFile=package.json)
 
 A bot that sends notifications (reminder, stock, forex) to telegram chat.
   

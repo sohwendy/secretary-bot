@@ -1,5 +1,5 @@
 {
-  "name": "telegram-bot-secretary",
+  "name": "secretary-bot",
   "version": "0.1.0",
   "description": "a bot that reminds",
   "main": "src/index.js",
@@ -19,11 +19,11 @@
     "update-check": "ncu"
   },
   "bugs": {
-    "url": "https://github.com/sohwendy/telegram-bot-secretary/issues"
+    "url": "https://github.com/sohwendy/secretary-bot/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sohwendy/telegram-bot-secretary.git"
+    "url": "https://github.com/sohwendy/secretary-bot.git"
   },
   "keywords": [
     "telegram",
