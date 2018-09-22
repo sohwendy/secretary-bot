@@ -1,7 +1,7 @@
 FROM node:9.10.0-slim
 
 LABEL version="0.3"
-LABEL description="Image for telegram-bot-secretary"
+LABEL description="Image for secretary-bot"
 LABEL maintainer="Wendy <wencodes@gmail.com>"
 
 # Set the time zone
