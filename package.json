@@ -11,7 +11,7 @@
     "start-fake": "node src/test.js",
     "live": "node src/index.js live",
     "debug": "node src/index.js debug",
-    "lint": " ./node_modules/.bin/eslint **/*.js --ignore-pattern node_modules/",
+    "lint": " ./node_modules/.bin/eslint . --ext .js --ignore-pattern node_modules/",
     "test-ddebug": "node --inspect node_modules/ava/profile.js",
     "test-debug": "ava",
     "test-watch": "ava --watch",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "ava": "^0.25.0",
     "eslint": "^5.0.1",
-    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-config-airbnb-base": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "mockdate": "^2.0.2",
     "npm-check-updates": "^2.14.2",
