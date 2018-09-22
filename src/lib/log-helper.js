@@ -1,4 +1,5 @@
 /* istanbul ignore file */
+/* global debug:true */
 const moment = require('moment');
 
 global.debug = false;
