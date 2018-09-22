@@ -5,9 +5,9 @@ const constants = require('../../config/constants');
 
 
 const codeMock = [
-  ['AAA', 'a name', 'io'],
-  ['BBB', 'b name', 'co'],
-  ['CCC', 'c name', 'tv']
+  ['AAA', 'a name', 'io', 'a'],
+  ['BBB', 'b name', 'co', 'b'],
+  ['CCC', 'c name', 'tv', 'c']
 ];
 const ruleMock = [['bbb', 'BBB', 1, 3, 'no', 'n'],
   ['ddd', 'DDD', 3, 4, 'no', 'n'],
@@ -16,13 +16,13 @@ const ruleMock = [['bbb', 'BBB', 1, 3, 'no', 'n'],
 ];
 const sheetApiMock = {
   get: (_a, _b, options, _c) => {
-    return options.range === 'StockCode!A2:C' ? codeMock : ruleMock;
+    return options.range === 'StockCode!A2:D' ? codeMock : ruleMock;
   }
 };
 
 const stockApiMock = {
-  get: (code) => {
-    return { code, name: 'a name', price: 10, changeAmount: 'date' };
+  get: (key, code, _time) => {
+    return { code, name: 'a name', price: 10, changeAmount: 'amt' };
   }
 };
 const exceptionMock = () => { throw 'this is an exception'; };
@@ -36,12 +36,12 @@ test.beforeEach(() => {
 
 test('stringify works', async t => {
   const expected = 'AA      1  0.345-0.555    apple msg';
-  const actual = job._stringify({ code: 'AA', name: 'apple', price: 1, min: 0.345, max: 0.555, message: 'msg' });
+  const actual = job._stringify({ short: 'AA', name: 'apple', price: 1, min: 0.345, max: 0.555, message: 'msg' });
 
   t.is(expected, actual);
 });
 
-const row = { code: 'AA', name: 'apple', price: 5.5, min: 3, max: 6.4, message: 'msg' };
+const row = { code: 'AA', name: 'apple', price: 5.5, min: 3, max: 6.4, message: 'msg', short: 'A' };
 
 test('rule works', async t => {
   const expected = true;
@@ -81,7 +81,7 @@ test('fetch works', async t => {
   const expected = constants.stock.monitorTitle +
     '\n' +
     '```\n' +
-    'BBB     10       4-11   a name yes\n' +
+    'b     10       4-11   a name yes\n' +
     '```\n';
   const actual = await job.fetch({ fake: true });
 

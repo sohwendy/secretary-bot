@@ -125,5 +125,3 @@ if (!state) {
     start: true
   });
 }
-
-

@@ -5,12 +5,12 @@ const IteratorHelper = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
-const StockApi = require('../utility/bloomberg-scraper');
+const StockApi = require('../utility/alpha-vantage-api');
 
 function stringify(row) {
   const price = BasicHelper.pad(row.price, 6);
   const changeAmount = BasicHelper.pad(row.changeAmount, 6);
-  return `${row.code} ${price} ${changeAmount}  ${row.name}`;
+  return `${row.short} ${price} ${changeAmount}  ${row.name}`;
 }
 
 async function sendRequest(requests) {
@@ -40,7 +40,7 @@ module.exports = {
       const codeJson = codes.map(row => IteratorHelper.toJson(row, stockConst.code.fields));
 
       // get price list
-      const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix));
+      const requests = codeJson.map((stock, index) => StockApi.get(secrets.key1, stock.code, index * 15000));
       const priceJson = await sendRequest(requests);
 
       // merge code and price list

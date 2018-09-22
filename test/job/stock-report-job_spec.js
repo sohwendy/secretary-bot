@@ -7,15 +7,15 @@ const constants = require('../../config/constants');
 const sheetApiMock = {
   get: () => {
     return [
-      ['AAA', 'a name', 'io'],
-      ['BBB', 'b name', 'co'],
-      ['CCC', 'c name', 'tv']
+      ['AAA', 'a name', 'io', 'A'],
+      ['BBB', 'b name', 'co', 'B'],
+      ['CCC', 'c name', 'tv', 'C']
     ];
   }
 };
 const stockApiMock = {
-  get: (code, _suffix) => {
-    return { code, name: 'a name', price: 1, changeAmount: 'date' };
+  get: (key, code, _suffix, _time) => {
+    return { code, name: 'a name', price: 1, changeAmount: 'amt' };
   }
 };
 const exceptionMock = () => { throw 'this is an exception'; };
@@ -28,8 +28,8 @@ test.beforeEach(() => {
 });
 
 test('stringify works', async t => {
-  const expected = 'AA      1   date  apple';
-  const actual = job._stringify({ code: 'AA', name: 'apple', price: 1, changeAmount: 'date' });
+  const expected = 'AA      1    amt  apple';
+  const actual = job._stringify({ short: 'AA', name: 'apple', price: 1, changeAmount: 'amt' });
 
   t.is(expected, actual);
 });
@@ -37,9 +37,9 @@ test('stringify works', async t => {
 test('fetch works', async t => {
   const expected = constants.stock.reportTitle + '\n' +
     '```\n' +
-    'AAA      1   date  a name\n' +
-    'BBB      1   date  a name\n' +
-    'CCC      1   date  a name\n' +
+    'A      1    amt  a name\n' +
+    'B      1    amt  a name\n' +
+    'C      1    amt  a name\n' +
     '```\n' +
     '[update ♧](<some_url>)';
   const actual = await job.fetch({ fake: true });

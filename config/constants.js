@@ -39,8 +39,8 @@ module.exports = {
     file: './.secrets/google.json',
     scope: ['https://www.googleapis.com/auth/spreadsheets'],
     code: {
-      range: 'StockCode!A2:C',
-      fields: ['code', 'name', 'suffix']
+      range: 'StockCode!A2:D',
+      fields: ['code', 'name', 'suffix', 'short']
     },
     rule: {
       range: 'StockRule!B2:G',

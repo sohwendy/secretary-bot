@@ -5,13 +5,13 @@ const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
-const StockApi = require('../utility/bloomberg-scraper');
+const StockApi = require('../utility/alpha-vantage-api');
 
 function stringify(row) {
   const price = BasicHelper.pad(row.price, 6);
   const range = BasicHelper.pad(`${row.min}-${row.max}`, 9);
   const name = BasicHelper.pad(row.name, 8);
-  return `${row.code} ${price}  ${range} ${name} ${row.message}`;
+  return `${row.short} ${price}  ${range} ${name} ${row.message}`;
 }
 
 function rule(row) {
@@ -39,11 +39,14 @@ module.exports = {
       const ruleJson = data[1].map(row => IteratorHelper.toJson(row, stockConst.rule.fields));
 
       // get price list
-      const requests = codeJson.map(stock => StockApi.get(stock.code, stock.suffix));
+      const requests = codeJson.map((stock, index) => StockApi.get(secrets.key2, stock.code, index * 15000));
       const priceJson = await Promise.all(requests);
 
+      // console.log('priceJson', priceJson)
       let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKeyValue, priceJson);
       mergeList = ruleJson.map(IteratorHelper.mergeJsonUsingKeyValue, mergeList);
+
+      // console.log('priceJson', priceJson)
 
       const fulfilRule = mergeList.filter(rule);
       const itemList = fulfilRule.map(stringify);
