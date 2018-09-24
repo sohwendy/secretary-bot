@@ -22,12 +22,12 @@ module.exports = {
   _rule: rule,
   _stringify: stringify,
   _stringifyReminder: stringifyReminder,
-  fetch: async(dates, options) => {
+  fetch: async(dates) => {
     try {
       Logger.log('get reminder report...', dates);
       const bind = rule.bind(dates);
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
+      const secrets = await JsonFileHelper.get(constants.secretPath('reminder.json'));
 
       const configConstant = [reminderConst.task, reminderConst.moment];
 

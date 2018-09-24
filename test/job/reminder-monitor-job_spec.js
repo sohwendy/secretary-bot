@@ -1,7 +1,8 @@
 import test from 'ava';
+import sinon from 'sinon';
 
 const rewire = require('rewire');
-const constants = require('../../config/constants');
+const stub = require('../_stub');
 
 const sheetData = [
   ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
@@ -15,10 +16,22 @@ const sheetApiMock = { get: () => sheetData };
 const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
+let sandbox;
+let constants;
 test.beforeEach(() => {
   job = rewire('../../src/job/reminder-monitor-job');
   job.__set__('SheetApi', sheetApiMock);
+
+  sandbox = sinon.createSandbox();
+
+  constants = require('../../config/constants');
+  constants.secretPath = sandbox.stub().callsFake(stub.secretPath);
 });
+
+test.afterEach.always(() => {
+  sandbox.restore();
+});
+
 
 test('rule works', async t => {
   const expected = true;
@@ -58,7 +71,7 @@ test('fetch works', async t => {
     '4   jackfruit\n' +
     '4   grapefruit\n' +
     '```\n';
-  const actual = await job.fetch('04 Feb 2018', '04', { fake: true });
+  const actual = await job.fetch('04 Feb 2018', '04');
 
   t.is(expected, actual);
 });
@@ -67,7 +80,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch('one', 'b', { fake: true });
+  const actual = await job.fetch('one', 'b');
 
   t.is(expected, actual);
 });

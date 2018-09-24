@@ -17,12 +17,12 @@ function stringify(row) {
 module.exports = {
   _rule: rule,
   _stringify: stringify,
-  fetch: async(today, time, options) => {
+  fetch: async(today, time) => {
     try {
       Logger.log('get reminder monitor...', today, time);
 
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'reminder.json'));
+      const secrets = await JsonFileHelper.get(constants.secretPath('reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
 
       const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params);

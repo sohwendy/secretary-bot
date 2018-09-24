@@ -1,8 +1,5 @@
 module.exports = {
-  secretPath: (fake, file) => {
-    /* istanbul ignore next */
-    return `${fake ? 'sample' : '.secrets'}/${file}`;
-  },
+  secretPath: file => `.secrets/${file}`,
   reminder: {
     reportTitle: '📆 Coming up...',
     monitorTitle: '📆🔥 Get Ready...',

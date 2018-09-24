@@ -17,13 +17,13 @@ function stringify(row) {
 
 module.exports = {
   _stringify: stringify,
-  fetch: async(options) => {
+  fetch: async() => {
     try {
       Logger.log('get forex report...');
 
       const forexConst = constants.forex;
-      const secretsApi = await JsonFileHelper.get(constants.secretPath(options.fake, 'oer.json'));
-      const secretsForex = await JsonFileHelper.get(constants.secretPath(options.fake, 'forex.json'));
+      const secretsApi = await JsonFileHelper.get(constants.secretPath('oer.json'));
+      const secretsForex = await JsonFileHelper.get(constants.secretPath('forex.json'));
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
 
       const data = await Promise.all([

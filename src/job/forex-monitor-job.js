@@ -24,14 +24,14 @@ function rule(row) {
 module.exports = {
   _rule: rule,
   _stringify: stringify,
-  fetch: async(options) => {
+  fetch: async() => {
     try {
       Logger.log('get forex monitor...');
 
       const forexConst = constants.forex;
 
-      const secretsApi = await JsonFileHelper.get(constants.secretPath(options.fake, 'oer.json'));
-      const secretsForex = await JsonFileHelper.get(constants.secretPath(options.fake, 'forex.json'));
+      const secretsApi = await JsonFileHelper.get(constants.secretPath('oer.json'));
+      const secretsForex = await JsonFileHelper.get(constants.secretPath('forex.json'));
 
       const rulesOptions = { spreadsheetId: secretsForex.id, range: forexConst.rule.range };
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
