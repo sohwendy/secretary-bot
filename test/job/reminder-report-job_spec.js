@@ -1,6 +1,5 @@
 import test from 'ava';
 import sinon from 'sinon';
-
 const rewire = require('rewire');
 const stub = require('../_stub');
 
@@ -18,12 +17,11 @@ const moments = [
   ['06 Feb 2018', '',         '43', 'banana', 'n'],
 ];
 const sheetApiMock = {
-  get: (_a, _b, c) => {
+  read: (_a, _b, c) => {
     return c.range === 'Task!B2:E' ? tasks : moments;
   }
 };
 
-const exceptionMock = () => { throw 'this is an exception'; };
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
 let job;
@@ -92,7 +90,7 @@ test('fetch works', async t => {
 });
 
 test('fetch handles exception', async t => {
-  job.__set__('SheetApi', exceptionMock);
+  job.__set__('SheetApi', stub.exceptionMock);
 
   const expected = '';
   const actual = await job.fetch('one');

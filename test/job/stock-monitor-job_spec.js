@@ -1,6 +1,5 @@
 import test from 'ava';
 import sinon from 'sinon';
-
 const rewire = require('rewire');
 const stub = require('../_stub');
 
@@ -15,7 +14,7 @@ const ruleMock = [['bbb', 'BBB', 1, 3, 'no', 'n'],
   ['bbb', 'BBB', 10.5, 12, 'no', 'n']
 ];
 const sheetApiMock = {
-  get: (_a, _b, options, _c) => {
+  read: (_a, _b, options, _c) => {
     return options.range === 'StockCode!A2:D' ? codeMock : ruleMock;
   }
 };
@@ -25,7 +24,6 @@ const stockApiMock = {
     return { code, name: 'a name', price: 10, changeAmount: 'amt' };
   }
 };
-const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
 let sandbox;
@@ -101,7 +99,7 @@ test('fetch works', async t => {
 });
 
 test('fetch handles exception', async t => {
-  job.__set__('SheetApi', exceptionMock);
+  job.__set__('SheetApi', stub.exceptionMock);
 
   const expected = '';
   const actual = await job.fetch();

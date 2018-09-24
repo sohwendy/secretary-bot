@@ -25,14 +25,14 @@ module.exports = {
     try {
       Logger.log('get stock monitor...');
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.get(constants.secretPath('stock.json'));
+      const secrets = await JsonFileHelper.read(constants.secretPath('stock.json'));
       const rulesOptions = { spreadsheetId: secrets.id, range: stockConst.rule.range };
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
 
       // get code and rule list
       let data = await Promise.all([
-        SheetApi.get(stockConst.file, stockConst.scope, codeOptions),
-        SheetApi.get(stockConst.file, stockConst.scope, rulesOptions)
+        SheetApi.read(stockConst.file, stockConst.scope, codeOptions),
+        SheetApi.read(stockConst.file, stockConst.scope, rulesOptions)
       ]);
 
       const codeJson = data[0].map(row => IteratorHelper.toJson(row, stockConst.code.fields));

@@ -1,11 +1,10 @@
 import test from 'ava';
 import sinon from 'sinon';
-
 const rewire = require('rewire');
 const stub = require('../_stub');
 
 const sheetApiMock = {
-  get: () => {
+  read: () => {
     return [
       ['AAA', 'a name', 'io', 'A'],
       ['BBB', 'b name', 'co', 'B'],
@@ -18,7 +17,6 @@ const stockApiMock = {
     return { code, name: 'a name', price: 1, changeAmount: 'amt' };
   }
 };
-const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
 let sandbox;
@@ -60,7 +58,7 @@ test('fetch works', async t => {
 });
 
 test('fetch handles exception', async t => {
-  job.__set__('SheetApi', exceptionMock);
+  job.__set__('SheetApi', stub.exceptionMock);
 
   const expected = '';
   const actual = await job.fetch();

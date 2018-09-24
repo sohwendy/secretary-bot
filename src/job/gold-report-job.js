@@ -26,7 +26,7 @@
 //
 // const readSheet = async(spreadsheetId, options) => {
 //   const readOptions = { spreadsheetId, range: options.read.range };
-//   const codeList = await SheetApi.get(options.file, options.scope, readOptions);
+//   const codeList = await SheetApi.read(options.file, options.scope, readOptions);
 //   return generateMeta(codeList);
 // };
 //
@@ -36,7 +36,7 @@
 //
 //   // write to excel
 //   const writeOptions = { spreadsheetId, range: options.write.range };
-//   return await SheetApi.set(options.file, options.scope, writeOptions, dataCells);
+//   return await SheetApi.write(options.file, options.scope, writeOptions, dataCells);
 // };
 //
 // module.exports = {
@@ -49,10 +49,10 @@
 //       Logger.log('get bank forex report...');
 //
 //       const bankforexConst = constants.bankforex;
-//       const secretsForex = await JsonFileHelper.get(constants.secretPath('bankforex.json'));
+//       const secretsForex = await JsonFileHelper.read(constants.secretPath('bankforex.json'));
 //
 //       const meta = await readSheet(secretsForex.id, bankforexConst);
-//       const data = await BankForexApi.get(meta);
+//       const data = await BankForexApi.read(meta);
 //
 //       return await writeSheet(data, secretsForex.id, bankforexConst);
 //

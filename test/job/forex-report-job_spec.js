@@ -5,7 +5,7 @@ const rewire = require('rewire');
 const stub = require('../_stub');
 
 const sheetApiMock = {
-  get: () => {
+  read: () => {
     return [
       ['AA', '1', '3', '**'],
       ['BB', '2', '4', '']
@@ -20,7 +20,6 @@ const rateApiMock = {
 
 const row = { code: 'ZZ', buyUnit: 2.5, sellUnit: 500, buyRate: 1.789, sellRate: 7.93, done: 'n', watchlist: '*' };
 
-const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
 let sandbox;
@@ -62,7 +61,7 @@ test('fetch works', async t => {
 });
 
 test('fetch handles exception', async t => {
-  job.__set__('SheetApi', exceptionMock);
+  job.__set__('SheetApi', stub.exceptionMock);
 
   const expected = '';
   const actual = await job.fetch();

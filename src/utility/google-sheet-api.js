@@ -38,7 +38,7 @@ const auth = async(json, scope) => {
 
 module.exports = {
   _auth: auth,
-  get: async(json, scope, options) => {
+  read: async(json, scope, options) => {
     try {
       const jwtClient = await auth(json, scope);
 
@@ -51,7 +51,7 @@ module.exports = {
     }
     return '';
   },
-  set: async(json, scope, options, values) => {
+  write: async(json, scope, options, values) => {
     try {
       const jwtClient = await auth(json, scope);
 
