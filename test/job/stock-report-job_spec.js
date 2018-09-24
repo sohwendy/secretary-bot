@@ -1,8 +1,8 @@
 import test from 'ava';
+import sinon from 'sinon';
 
 const rewire = require('rewire');
-const constants = require('../../config/constants');
-
+const stub = require('../_stub');
 
 const sheetApiMock = {
   get: () => {
@@ -21,10 +21,22 @@ const stockApiMock = {
 const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
+let sandbox;
+let constants;
+
 test.beforeEach(() => {
   job = rewire('../../src/job/stock-report-job');
   job.__set__('SheetApi', sheetApiMock);
   job.__set__('StockApi', stockApiMock);
+
+  sandbox = sinon.createSandbox();
+
+  constants = require('../../config/constants');
+  constants.secretPath = sandbox.stub().callsFake(stub.secretPath);
+});
+
+test.afterEach.always(() => {
+  sandbox.restore();
 });
 
 test('stringify works', async t => {
@@ -42,7 +54,7 @@ test('fetch works', async t => {
     'C      1    amt  a name\n' +
     '```\n' +
     '[update ♧](<some_url>)';
-  const actual = await job.fetch({ fake: true });
+  const actual = await job.fetch();
 
   t.is(expected, actual);
 });
@@ -51,7 +63,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch({ fake: true });
+  const actual = await job.fetch();
 
   t.is(expected, actual);
 });

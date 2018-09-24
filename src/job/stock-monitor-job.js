@@ -21,11 +21,11 @@ function rule(row) {
 module.exports = {
   _rule: rule,
   _stringify: stringify,
-  fetch: async(options) => {
+  fetch: async() => {
     try {
       Logger.log('get stock monitor...');
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'stock.json'));
+      const secrets = await JsonFileHelper.get(constants.secretPath('stock.json'));
       const rulesOptions = { spreadsheetId: secrets.id, range: stockConst.rule.range };
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
 

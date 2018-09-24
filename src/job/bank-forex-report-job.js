@@ -44,12 +44,12 @@ module.exports = {
   _generateMeta: generateMeta,
   _readSheet: readSheet,
   _writeSheet: writeSheet,
-  update: async(options) => {
+  update: async() => {
     try {
       Logger.log('get bank forex report...');
 
       const bankforexConst = constants.bankforex;
-      const secretsForex = await JsonFileHelper.get(constants.secretPath(options.fake, 'bankforex.json'));
+      const secretsForex = await JsonFileHelper.get(constants.secretPath('bankforex.json'));
 
       const meta = await readSheet(secretsForex.id, bankforexConst);
       const data = await BankForexApi.get(meta);

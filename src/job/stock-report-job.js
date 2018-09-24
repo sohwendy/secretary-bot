@@ -28,12 +28,12 @@ async function sendRequest(requests) {
 
 module.exports = {
   _stringify: stringify,
-  fetch: async(options) => {
+  fetch: async() => {
     try {
       Logger.log('get stock report...');
       // get code list
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.get(constants.secretPath(options.fake, 'stock.json'));
+      const secrets = await JsonFileHelper.get(constants.secretPath('stock.json'));
 
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
       const codes = await SheetApi.get(stockConst.file, stockConst.scope, codeOptions);

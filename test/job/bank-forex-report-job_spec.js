@@ -1,7 +1,8 @@
 import test from 'ava';
+import sinon from 'sinon';
 
 const rewire = require('rewire');
-// const constants = require('../../config/constants');
+const stub = require('../_stub');
 
 const sheetApiMock = {
   get: (file, scope, readOptions) => {
@@ -24,10 +25,21 @@ const bankForexApi = {
 const exceptionMock = () => { throw 'this is an exception'; };
 
 let job;
+let constants;
+let sandbox;
 test.beforeEach(() => {
   job = rewire('../../src/job/bank-forex-report-job');
   job.__set__('SheetApi', sheetApiMock);
   job.__set__('BankForexApi', bankForexApi);
+
+  sandbox = sinon.createSandbox();
+
+  constants = require('../../config/constants');
+  constants.secretPath = sandbox.stub().callsFake(stub.secretPath);
+});
+
+test.afterEach.always(() => {
+  sandbox.restore();
 });
 
 test('generateDataArray works', async t => {
@@ -103,7 +115,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.update({ fake: true });
+  const actual = await job.update();
 
   t.is(expected, actual);
 });

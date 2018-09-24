@@ -1,6 +1,8 @@
 import test from 'ava';
+import sinon from 'sinon';
 
 const rewire = require('rewire');
+const stub = require('../_stub');
 
 const tasks = [
   ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
@@ -25,9 +27,20 @@ const exceptionMock = () => { throw 'this is an exception'; };
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
 let job;
+let sandbox;
+let constants;
+
 test.beforeEach(() => {
   job = rewire('../../src/job/reminder-report-job');
   job.__set__('SheetApi', sheetApiMock);
+  sandbox = sinon.createSandbox();
+
+  constants = require('../../config/constants');
+  constants.secretPath = sandbox.stub().callsFake(stub.secretPath);
+});
+
+test.afterEach.always(() => {
+  sandbox.restore();
 });
 
 test('rule works', async t => {
@@ -73,7 +86,7 @@ test('fetch works', async t => {
     '```\n' +
     '[update ♧](<some_url>)';
 
-  const actual = await job.fetch(dates, { fake: true });
+  const actual = await job.fetch(dates);
 
   t.is(expected, actual);
 });
@@ -82,7 +95,7 @@ test('fetch handles exception', async t => {
   job.__set__('SheetApi', exceptionMock);
 
   const expected = '';
-  const actual = await job.fetch('one', { fake: true });
+  const actual = await job.fetch('one');
 
   t.is(expected, actual);
 });
