@@ -74,3 +74,5 @@ RUN groupadd -r nodejs -g 1001 \
 ## References
 [Node.js Quickstart | Sheets API | Google Developers ](https://developers.google.com/sheets/api/quickstart/nodejs)  
 [ava test runner](https://github.com/avajs/ava)  
+
+[![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
