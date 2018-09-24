@@ -22,13 +22,13 @@ module.exports = {
       Logger.log('get forex report...');
 
       const forexConst = constants.forex;
-      const secretsApi = await JsonFileHelper.get(constants.secretPath('oer.json'));
-      const secretsForex = await JsonFileHelper.get(constants.secretPath('forex.json'));
+      const secretsApi = await JsonFileHelper.read(constants.secretPath('oer.json'));
+      const secretsForex = await JsonFileHelper.read(constants.secretPath('forex.json'));
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
 
       const data = await Promise.all([
         RateApi.get(secretsApi.key),
-        SheetApi.get(forexConst.file, forexConst.scope, codeOptions),
+        SheetApi.read(forexConst.file, forexConst.scope, codeOptions),
       ]);
 
       const rawPriceJson = data[0];

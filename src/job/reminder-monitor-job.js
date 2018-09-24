@@ -22,10 +22,10 @@ module.exports = {
       Logger.log('get reminder monitor...', today, time);
 
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.get(constants.secretPath('reminder.json'));
+      const secrets = await JsonFileHelper.read(constants.secretPath('reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
 
-      const data = await SheetApi.get(reminderConst.file, reminderConst.scope, params);
+      const data = await SheetApi.read(reminderConst.file, reminderConst.scope, params);
 
       const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.task.fields));
       const bind = rule.bind({ date: today, time });

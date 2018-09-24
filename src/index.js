@@ -18,7 +18,7 @@ let chatFile = 'chat.json';
 
 const send = async(data) => {
   try {
-    const chat = await JsonFileHelper.get(constants.secretPath(chatFile));
+    const chat = await JsonFileHelper.read(constants.secretPath(chatFile));
     Logger.log(chatFile, chat);
 
     const bot = new TelegramBot(chat.token, { polling: false });

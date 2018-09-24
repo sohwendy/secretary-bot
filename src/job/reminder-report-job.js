@@ -27,7 +27,7 @@ module.exports = {
       Logger.log('get reminder report...', dates);
       const bind = rule.bind(dates);
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.get(constants.secretPath('reminder.json'));
+      const secrets = await JsonFileHelper.read(constants.secretPath('reminder.json'));
 
       const configConstant = [reminderConst.task, reminderConst.moment];
 
@@ -36,8 +36,8 @@ module.exports = {
 
       // get task and moment list
       let data = await Promise.all([
-        SheetApi.get(reminderConst.file, reminderConst.scope, taskOptions),
-        SheetApi.get(reminderConst.file, reminderConst.scope, momentOptions)
+        SheetApi.read(reminderConst.file, reminderConst.scope, taskOptions),
+        SheetApi.read(reminderConst.file, reminderConst.scope, momentOptions)
       ]);
 
       let reminders = [];

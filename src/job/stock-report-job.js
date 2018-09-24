@@ -33,10 +33,10 @@ module.exports = {
       Logger.log('get stock report...');
       // get code list
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.get(constants.secretPath('stock.json'));
+      const secrets = await JsonFileHelper.read(constants.secretPath('stock.json'));
 
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
-      const codes = await SheetApi.get(stockConst.file, stockConst.scope, codeOptions);
+      const codes = await SheetApi.read(stockConst.file, stockConst.scope, codeOptions);
       const codeJson = codes.map(row => IteratorHelper.toJson(row, stockConst.code.fields));
 
       // get price list

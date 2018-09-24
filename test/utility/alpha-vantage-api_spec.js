@@ -1,6 +1,6 @@
 import test from 'ava';
-
 const rewire = require('rewire');
+const stub = require('../_stub');
 
 let helper;
 test.beforeEach(() => {
@@ -58,7 +58,7 @@ test('get works', async t => {
 });
 
 test('get handles exception', async t => {
-  const axiosMock = { get: () => { throw 'exception'; } };
+  const axiosMock = { get: stub.exceptionMock };
   helper.__set__('axios', axiosMock);
 
   const expected = '';

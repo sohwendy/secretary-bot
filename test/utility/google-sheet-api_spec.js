@@ -1,6 +1,6 @@
 import test from 'ava';
-
 const rewire = require('rewire');
+const stub = require('../_stub');
 
 let helper;
 
@@ -46,7 +46,7 @@ test('auth works', async t => {
   t.deepEqual(expectedJwtClient, actualJwtClient);
 });
 
-test('get works', async t => {
+test('read works', async t => {
   const axiosMock = {
     get: () => {
       return { data: { rates: 'rates' } };
@@ -60,17 +60,17 @@ test('get works', async t => {
     range: 'range',
     spreadsheetId: 'id'
   };
-  const actual = await helper.get('key', 'scope', options);
+  const actual = await helper.read('key', 'scope', options);
 
   t.deepEqual(expected, actual);
 });
 
-test('get handles exception', async t => {
-  const readFileMock = () => {throw 'exception';};
+test('read handles exception', async t => {
+  const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.get('', '', {});
+  const actual = await helper.read('', '', {});
 
   t.is(expected, actual);
 });
@@ -94,17 +94,17 @@ test('set works', async t => {
     spreadsheetId: 'id',
     valueInputOption: 'USER_ENTERED',
   };
-  const actual = await helper.set('key', 'scope', options, ['a']);
+  const actual = await helper.write('key', 'scope', options, ['a']);
 
   t.deepEqual(expected, actual);
 });
 
 test('set handles exception', async t => {
-  const readFileMock = () => {throw 'exception';};
+  const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.set('', '', {});
+  const actual = await helper.write('', '', {});
 
   t.is(expected, actual);
 });
