@@ -10,6 +10,7 @@ const ReminderReport = require('./job/reminder-report-job');
 const StockMonitor = require('./job/stock-monitor-job');
 const ForexMonitor = require('./job/forex-monitor-job');
 const ReminderMonitor = require('./job/reminder-monitor-job');
+const BankReport = require('./job/bank-forex-report-job');
 
 global.debug = true;
 const state = process.argv[2] || '';
@@ -43,6 +44,7 @@ Logger.log('Run State?', state);
 Logger.log(`Enable Reminder? ${process.env.REMINDER || 'No'}`);
 Logger.log(`Enable Stock? ${process.env.STOCK || 'No'}`);
 Logger.log(`Enable Forex? ${process.env.FOREX || 'No'}`);
+Logger.log(`Enable Bank? ${process.env.BANK || 'No'}`);
 
 const reminderReport = () => ReminderReport.fetch(dates, {}).then(send);
 const reminderMonitor = () => ReminderMonitor.fetch(dates[0], time, {}).then(send);
@@ -50,7 +52,7 @@ const forexReport = () => ForexReport.fetch({}).then(send);
 const forexMonitor = () => ForexMonitor.fetch({}).then(send);
 const stockReport = () => StockReport.fetch({}).then(send);
 const stockMonitor = () => StockMonitor.fetch({}).then(send);
-
+const bankReport = () => BankReport.update({});
 
 if (!state) {
   Logger.log('Fire once...');
@@ -101,7 +103,7 @@ if (!state) {
 
   if (process.env.STOCK == 1) {
     stockReport();
-    stockMonitor();
+    // stockMonitor();
     chatFile = 'stockchat.json';
     Logger.log('stock starts', chatFile);
     new cron.CronJob({
@@ -113,6 +115,16 @@ if (!state) {
     new cron.CronJob({
       cronTime: constants.schedule[state].stock.monitor,
       onTick: stockMonitor,
+      start: true
+    });
+  }
+
+  if (process.env.BANK == 1) {
+    bankReport();
+    Logger.log('bank starts');
+    new cron.CronJob({
+      cronTime: constants.schedule[state].bank.report,
+      onTick: bankReport,
       start: true
     });
   }

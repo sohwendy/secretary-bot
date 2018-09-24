@@ -33,6 +33,16 @@ module.exports = {
       fields: ['code', 'buysell', 'min', 'max', 'message', 'done']
     }
   },
+  bankforex: {
+    file: './.secrets/google.json',
+    read: {
+      range: 'Bank!B2:AK4',
+    },
+    scope: ['https://www.googleapis.com/auth/spreadsheets'],
+    write: {
+      range: 'Bank!A6:AK',
+    }
+  },
   stock: {
     reportTitle: '👵 Retirement Nest',
     monitorTitle: '👵🔥 Action?!',
@@ -61,6 +71,9 @@ module.exports = {
         report: '45 10 9 * * 1-6',
         monitor: '45 10 10-5/1 * * 1-5'
       },
+      bank: {
+        report: '37 25 10,4 * * 1-5',
+      },
       log: {
         monitor: '00 */10 * * * *'
       }
@@ -75,8 +88,11 @@ module.exports = {
         monitor: '35 */12 * * * *'
       },
       stock: {
-        report: '45 */15 * * * *',
-        monitor: '55 */7 * * * *'
+        report: '45 0,30 * * * *',
+        monitor: '55 15,45 * * * *'
+      },
+      bank: {
+        report: '37 */20 * * * *',
       },
       log: {
         monitor: '00 */1 * * * *'
