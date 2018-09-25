@@ -1,7 +1,7 @@
 # secretary-bot
 
 [![Greenkeeper badge](https://badges.greenkeeper.io/sohwendy/secretary-bot.svg)](https://greenkeeper.io/)
-[![Build Status](https://travis-ci.org/sohwendy/secretary-bot.svg?branch=master)](https://travis-ci.org/sohwendy/secretary-bot)  
+[![Build Status](https://travis-ci.org/sohwendy/secretary-bot.svg?branch=master)](https://travis-ci.org/sohwendy/secretary-bot)
 [![Known Vulnerabilities](https://snyk.io/test/github/sohwendy/secretary-bot/badge.svg?targetFile=package.json)](https://snyk.io/test/github/sohwendy/secretary-bot?targetFile=package.json)
 
 A bot that sends notifications (reminder, stock, forex) to telegram chat.
@@ -44,20 +44,19 @@ yarn install
 yarn live
 ```
 
-# Using docker-compose
+## Using docker-compose
 ```
 docker-compose build
 docker-compose up
 docker-compose down
-
 ```
 
 ## To do 
 [ ] update readme  
-[ ] Use secret management - docker secrets, vault etc.
+[ ] Use secret management - docker secrets, vault etc.  
 [ ] create boilerplate  
-[ ] use sinon for mock and spying 
-[ ] Use user in dockerfile
+[ ] use sinon for mock and spying  
+[ ] Use user in dockerfile  
 [X] docker  
 [X] tests  
 [X] check time for reminder  
