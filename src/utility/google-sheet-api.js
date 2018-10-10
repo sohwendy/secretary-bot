@@ -2,6 +2,7 @@ const { promisify } = require('util');
 const { google } = require('googleapis');
 const fs = require('fs');
 const Logger = require('../lib/log-helper');
+const IteratorHelper = require('../lib/iterator-helper');
 
 const readFile = promisify(fs.readFile);
 const sheets = google.sheets('v4').spreadsheets.values;
@@ -36,16 +37,20 @@ const auth = async(json, scope) => {
   }
 };
 
+const transform = (values, headers) => (values && headers ? values.map(row => IteratorHelper.arrayToHash(row, headers)) : values);
+
 module.exports = {
+  _transform: transform,
   _auth: auth,
-  read: async(json, scope, options) => {
+  read: async(json, scope, options, headers) => {
     try {
       const jwtClient = await auth(json, scope);
 
       const params = Object.assign({ auth: jwtClient }, options);
 
       const result = await sheets.get(params);
-      return result.data.values;
+
+      return transform(result.data.values, headers);
     } catch (e) {
       Logger.log('Google Sheet get failed', e);
     }

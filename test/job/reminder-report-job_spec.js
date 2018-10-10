@@ -4,18 +4,20 @@ const rewire = require('rewire');
 const stub = require('../_stub');
 
 const tasks = [
-  ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
-  ['02 Feb 2018', '',         '02', 'orange', 'n'],
-  ['04 Feb 2018', '04:00:00', '04', 'jackfruit', 'n'],
-  ['04 Feb 2018', '15:00:00', '14', 'strawberry', 'n'],
-  ['05 Feb 2018', '08:10:00', '05', 'durian', 'n'],
+  { date: '02 Feb 2018', time: '08:10:00', type: '🍎', title: 'bite apple',      action: 'n', event: '' },
+  { date: '02 Feb 2018', time: '',         type: '🍊', title: 'squeeze orange',     action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '04:00:00', type: '🍍', title: 'cut pineapple',  action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '15:00:00', type: '🍓', title: 'wash strawberry', action: 'n', event: '' },
+  { date: '05 Feb 2018', time: '08:10:00', type: '🍋', title: 'throw lemon',     action: 'n', event: '' }
 ];
+
 const moments = [
-  ['01 Feb 2018', '',         '40', 'peach', 'n'],
-  ['04 Feb 2018', '04:00:00', '41', 'mango', 'n'],
-  ['05 Feb 2018', '',         '42', 'pear', 'n'],
-  ['06 Feb 2018', '',         '43', 'banana', 'n'],
+  { date: '01 Feb 2018', time: '',         type: '🍑', title: 'plant peach tree',  action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '04:00:00', type: '🍉', title: 'eat watermelon',  action: 'n', event: '' },
+  { date: '05 Feb 2018', time: '',         type: '🍐', title: 'boil pear',   action: 'n', event: '' },
+  { date: '05 Feb 2018', time: '',         type: '🍌', title: 'peel banana', action: 'n', event: '' }
 ];
+
 const sheetApiMock = {
   read: (_a, _b, c) => {
     return c.range === 'Task!B2:E' ? tasks : moments;
@@ -74,13 +76,13 @@ test('fetch works', async t => {
   const expected = '📆 Coming up...\n' +
     '```\n' +
     '2) Today, 02 Feb \n' +
-    ' 2  apple\n' +
-    ' 2  orange\n' +
+    ' 🍎  bite apple\n' +
+    ' 🍊  squeeze orange\n' +
     // '\n' +
     '3)  04 Feb \n' +
-    ' 4  jackfruit\n' +
-    ' 14  strawberry\n' +
-    ' 41  mango\n' +
+    ' 🍍  cut pineapple\n' +
+    ' 🍓  wash strawberry\n' +
+    ' 🍉  eat watermelon\n' +
     '```\n' +
     '[update ♧](<some_url>)';
 

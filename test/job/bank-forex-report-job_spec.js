@@ -57,42 +57,23 @@ test('generateDataArray works', async t => {
   t.deepEqual(expected, actual);
 });
 
-test('generateMeta works', async t => {
-  const expected = [
-    { id: 'A0', code: 'A1', buyRate: 'A2', sellRate: 'A3' },
-    { id: 'B0', code: 'B1', buyRate: 'B2', sellRate: 'B3' },
-  ];
-
-  const list = [
-    ['A0', '', '', 'B0', '', ''],
-    ['A1', '', '', 'B1', '', ''],
-    ['A2', 'A3', 'A4', 'B2', 'B3', 'B4']
-  ];
-
-  const actual = t.context.job._generateMeta(list);
-
-  t.deepEqual(expected, actual);
-});
-
 test('readSheet works', async t => {
-  const { job, sandbox, sheetApiMock } = t.context;
-  const expected = [];
-  const metaStub = sandbox.mock()
-    .withExactArgs(['a'])
-    .once()
-    .returns(expected);
-  job.__set__('generateMeta', metaStub);
+  const { job, sheetApiMock } = t.context;
+  const expected = [ { id: 'usdollar', code: 'usd', buyRate: 1, sellRate: 2 } ];
 
   sheetApiMock.expects('read')
     .withExactArgs('file', 'scope', readOptions)
     .once()
-    .returns(['a']);
+    .returns([
+      ['usdollar', '', ''],
+      ['usd', '', ''],
+      ['1', '2', '']]
+    );
 
   const actual = await job._readSheet('ssid', options);
 
   t.true(sheetApiMock.verify());
-  t.is(metaStub.callCount, 1);
-  t.is(expected, actual);
+  t.deepEqual(expected, actual);
 });
 
 test('writeSheet works', async t => {

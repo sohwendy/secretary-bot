@@ -1,7 +1,7 @@
 const constants = require('../../config/constants');
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-const IteratorHelper = require('../lib/iterator-helper');
+// const IteratorHelper = require('../lib/iterator-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
@@ -36,13 +36,12 @@ module.exports = {
 
       // get task and moment list
       let data = await Promise.all([
-        SheetApi.read(reminderConst.file, reminderConst.scope, taskOptions),
-        SheetApi.read(reminderConst.file, reminderConst.scope, momentOptions)
+        SheetApi.read(reminderConst.file, reminderConst.scope, taskOptions, configConstant[0].fields),
+        SheetApi.read(reminderConst.file, reminderConst.scope, momentOptions, configConstant[1].fields)
       ]);
 
       let reminders = [];
       for (let i = 0; i < 2; i++) {
-        data[i] = data[i].map(row => IteratorHelper.toJson(row, configConstant[i].fields));
         reminders = reminders.concat(data[i].filter(bind));
       }
 

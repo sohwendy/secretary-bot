@@ -4,19 +4,19 @@ const rewire = require('rewire');
 const stub = require('../_stub');
 
 const codeMock = [
-  ['AA', '1', '3', '*', 'mca'],
-  ['ZZ', '2', '4', '', '']
+  { code: 'AUD', buyUnit: '1', sellUnit: '3', watchlist: '*', mca: ''},
+  { code: 'INR', buyUnit: '2', sellUnit: '4', watchlist: '',  mca: ''}
 ];
 const ruleMock = [
-  ['ZZ', 'S', '0.1', '0.2', 'no', 'N'],
-  ['ZZ', 'S', '5', '8', 'yes', 'N'],
-  ['ZZ', 'S', '7.8', '8', 'yes', 'N'],
-  ['ZZ', 'S', '90', '100', 'no', 'N']
+  { code: 'INR', buysell: 'S', min: '0.1', max: '0.2', message: 'no', done: 'N' },
+  { code: 'INR', buysell: 'S', min: '5',   max: '8',   message: 'yes', done: 'N' },
+  { code: 'INR', buysell: 'S', min: '7.8', max: '8',   message: 'yes', done: 'N' },
+  { code: 'INR', buysell: 'S', min: '90',  max: '100', message: 'no', done: 'N' }
 ];
-const rateMock = { AA: 1, BB: 3, ZZ: 3, SGD: 5 };
+const rateMock = { AUD: 1, BB: 3, INR: 3, SGD: 5 };
 
 const row = {
-  code: 'ZZ',
+  code: 'INR',
   buyUnit: 2.5,
   sellUnit: 500,
   buyRate: 1.789,
@@ -92,7 +92,7 @@ test('rule returns false for done = Y', async t => {
 });
 
 test('stringify works', async t => {
-  const expected = '2.5sgd  1.789zz    500zz   7.93sgd\n' +
+  const expected = '2.5sgd  1.789inr    500inr   7.93sgd\n' +
     '  *  (1, 8)   some_msg';
   const actual = job._stringify(row);
 
@@ -103,7 +103,7 @@ test('fetch works', async t => {
   const expected = constants.forex.monitorTitle +
     '\n' +
     '```\n' +
-    '2sgd    1.2zz    4zz  6.667sgd' +
+    '2sgd    1.2inr    4inr  6.667sgd' +
     '\n' +
     '    (5, 8)   yes' +
     '\n' +

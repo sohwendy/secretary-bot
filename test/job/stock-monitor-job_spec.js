@@ -4,14 +4,15 @@ const rewire = require('rewire');
 const stub = require('../_stub');
 
 const codeMock = [
-  ['AAA', 'a name', 'io', 'a'],
-  ['BBB', 'b name', 'co', 'b'],
-  ['CCC', 'c name', 'tv', 'c']
+  { code: 'GLD',    name: 'gold',    suffix: 'CUR', short: 'GLD' },
+  { code: 'A01.SI', name: 'Stock A', suffix: 'SI',  short: 'A01' },
+  { code: 'B02.SI', name: 'Stock B', suffix: 'SI',  short: 'B02' }
 ];
-const ruleMock = [['bbb', 'BBB', 1, 3, 'no', 'n'],
-  ['ddd', 'DDD', 3, 4, 'no', 'n'],
-  ['bbb', 'BBB', 4, 11, 'yes', 'n'],
-  ['bbb', 'BBB', 10.5, 12, 'no', 'n']
+const ruleMock = [
+  { name: 'stock a', code: 'A01.SI', min: 1,     max: 3,  message: 'no',  done: 'n' },
+  { name: 'ddd',     code: 'DDD',    min: 3,     max: 4,  message: 'no',  done: 'n' },
+  { name: 'stock a', code: 'A01.SI', min: 4,     max: 11, message: 'yes', done: 'n' },
+  { name: 'stock a', code: 'A01.SI', min: 10.5,  max: 12, message: 'no',  done: 'n' },
 ];
 const sheetApiMock = {
   read: (_a, _b, options, _c) => {
@@ -91,7 +92,7 @@ test('fetch works', async t => {
   const expected = constants.stock.monitorTitle +
     '\n' +
     '```\n' +
-    'b     10       4-11   a name yes\n' +
+    'A01     10       4-11   a name yes\n' +
     '```\n';
   const actual = await job.fetch();
 

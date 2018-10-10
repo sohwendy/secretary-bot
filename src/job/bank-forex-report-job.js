@@ -1,6 +1,7 @@
 const constants = require('../../config/constants');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
+const IteratorHelper = require('../lib/iterator-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const BankForexApi = require('../utility/dbs-scraper');
 
@@ -10,24 +11,16 @@ function generateDataArray(data, initial) {
   }, initial);
 }
 
-function generateMeta(list) {
-  const codes = list[0].filter(c => c);
-
-  return codes.map((cell, index) => {
-    const col = index * 3 ;
-    return {
-      id: cell,
-      code: list[1][col],
-      buyRate: list[2][col],
-      sellRate: list[2][col + 1]
-    };
-  });
-}
+const header = [
+  ['id', '', ''],
+  ['code', '', ''],
+  ['buyRate', 'sellRate', '']
+];
 
 const readSheet = async(spreadsheetId, options) => {
   const readOptions = { spreadsheetId, range: options.read.range };
   const codeList = await SheetApi.read(options.file, options.scope, readOptions);
-  return generateMeta(codeList);
+  return IteratorHelper.matrixToHash(codeList, header);
 };
 
 const writeSheet = async(data, spreadsheetId, options) => {
@@ -38,7 +31,6 @@ const writeSheet = async(data, spreadsheetId, options) => {
 
 module.exports = {
   _generateDataArray: generateDataArray,
-  _generateMeta: generateMeta,
   _readSheet: readSheet,
   _writeSheet: writeSheet,
   update: async() => {
