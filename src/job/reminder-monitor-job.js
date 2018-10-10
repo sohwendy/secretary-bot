@@ -1,6 +1,5 @@
 const constants = require('../../config/constants');
 const JsonFileHelper = require('../lib/json-file-helper');
-const IteratorHelper = require('../lib/iterator-helper');
 const Logger = require('../lib/log-helper');
 const BasicHelper = require('../lib/basic-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -25,9 +24,8 @@ module.exports = {
       const secrets = await JsonFileHelper.read(constants.secretPath('reminder.json'));
       const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
 
-      const data = await SheetApi.read(reminderConst.file, reminderConst.scope, params);
+      const reminderJson = await SheetApi.read(reminderConst.file, reminderConst.scope, params, reminderConst.task.fields);
 
-      const reminderJson = data.map(row => IteratorHelper.toJson(row, reminderConst.task.fields));
       const bind = rule.bind({ date: today, time });
       let reminders = reminderJson.filter(bind);
 
