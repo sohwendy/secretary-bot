@@ -11,11 +11,15 @@ const secrets = {
 };
 /* eslint-enable */
 const noop = () => {};
+const sheetsCells = [
+  ['r1-c1', 'r1-c2', 'r1-c3'],
+  ['r2-c1', 'r2-c2', 'r2-c3']
+];
 
 const googleMock = { auth: { JWT: Jwt } };
 const readFileMock = () => JSON.stringify(secrets);
 const sheetsMock = {
-  get: params => { return { data: { values: params } }; },
+  get: _ => { return { data: { values: sheetsCells } }; },
   append: params => { return { data: { updates: { updatedCells: params } } }; },
 };
 
@@ -54,13 +58,20 @@ test('get works', async t => {
   };
   helper.__set__('axios', axiosMock);
   const options = { spreadsheetId: 'id', range: 'range' };
+  const headers = [ 'header1', 'header2', 'header3' ];
 
-  const expected = {
-    auth: new Jwt('client_email', '', 'private_key', 'scope'),
-    range: 'range',
-    spreadsheetId: 'id'
-  };
-  const actual = await helper.get('key', 'scope', options);
+  // const expected = {
+  //   auth: new Jwt('client_email', '', 'private_key', 'scope'),
+  //   range: 'range',
+  //   spreadsheetId: 'id'
+  // };
+
+  const expected = [
+    { header1: 'r1-c1', header2: 'r1-c2', header3: 'r1-c3' },
+    { header1: 'r2-c1', header2: 'r2-c2', header3: 'r2-c3' }
+  ];
+
+  const actual = await helper.get('key', 'scope', options, headers );
 
   t.deepEqual(expected, actual);
 });

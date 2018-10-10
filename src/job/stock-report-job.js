@@ -36,8 +36,8 @@ module.exports = {
       const secrets = await JsonFileHelper.get(constants.secretPath('stock.json'));
 
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
-      const codes = await SheetApi.get(stockConst.file, stockConst.scope, codeOptions);
-      const codeJson = codes.map(row => IteratorHelper.toJson(row, stockConst.code.fields));
+
+      const codeJson = await SheetApi.get(stockConst.file, stockConst.scope, codeOptions, stockConst.code.fields);
 
       // get price list
       const requests = codeJson.map((stock, index) => StockApi.get(secrets.key1, stock.code, index * 15000));

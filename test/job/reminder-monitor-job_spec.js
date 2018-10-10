@@ -5,13 +5,14 @@ const rewire = require('rewire');
 const stub = require('../_stub');
 
 const sheetData = [
-  ['02 Feb 2018', '08:10:00', '02', 'apple', 'n'],
-  ['02 Feb 2018', '', '02', 'orange', 'n'],
-  ['04 Feb 2018', '04:00:00', '04', 'jackfruit', 'n'],
-  ['04 Feb 2018', '04:20:00', '04', 'grapefruit', 'n'],
-  ['04 Feb 2018', '15:00:00', '04', 'strawberry', 'n'],
-  ['03 Feb 2018', '08:10:00', '05', 'durian', 'n'],
+  { date: '02 Feb 2018', time: '08:10:00', type: '02', title: 'apple',      action: 'n', event: '' },
+  { date: '02 Feb 2018', time: '',         type: '02', title: 'orange',     action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '04:00:00', type: '04', title: 'jackfruit',  action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '04:00:00', type: '04', title: 'grapefruit',  action: 'n', event: '' },
+  { date: '04 Feb 2018', time: '15:00:00', type: '14', title: 'strawberry', action: 'n', event: '' },
+  { date: '05 Feb 2018', time: '08:10:00', type: '05', title: 'durian',     action: 'n', event: '' }
 ];
+
 const sheetApiMock = { get: () => sheetData };
 const exceptionMock = () => { throw 'this is an exception'; };
 
@@ -68,8 +69,8 @@ test('fetch works', async t => {
   const expected = constants.reminder.monitorTitle +
     '\n' +
     '```\n' +
-    '4   jackfruit\n' +
-    '4   grapefruit\n' +
+    '04   jackfruit\n' +
+    '04   grapefruit\n' +
     '```\n';
   const actual = await job.fetch('04 Feb 2018', '04');
 

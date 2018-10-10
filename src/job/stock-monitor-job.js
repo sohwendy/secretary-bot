@@ -31,12 +31,12 @@ module.exports = {
 
       // get code and rule list
       let data = await Promise.all([
-        SheetApi.get(stockConst.file, stockConst.scope, codeOptions),
-        SheetApi.get(stockConst.file, stockConst.scope, rulesOptions)
+        SheetApi.get(stockConst.file, stockConst.scope, codeOptions, stockConst.code.fields),
+        SheetApi.get(stockConst.file, stockConst.scope, rulesOptions, stockConst.rule.fields)
       ]);
 
-      const codeJson = data[0].map(row => IteratorHelper.toJson(row, stockConst.code.fields));
-      const ruleJson = data[1].map(row => IteratorHelper.toJson(row, stockConst.rule.fields));
+      const codeJson = data[0];
+      const ruleJson = data[1];
 
       // get price list
       const requests = codeJson.map((stock, index) => StockApi.get(secrets.key2, stock.code, index * 15000));

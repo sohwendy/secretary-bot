@@ -28,11 +28,11 @@ module.exports = {
 
       const data = await Promise.all([
         RateApi.get(secretsApi.key),
-        SheetApi.get(forexConst.file, forexConst.scope, codeOptions),
+        SheetApi.get(forexConst.file, forexConst.scope, codeOptions, forexConst.code.fields),
       ]);
 
       const rawPriceJson = data[0];
-      const codeJson = data[1].map(row => IteratorHelper.toJson(row, forexConst.code.fields));
+      const codeJson = data[1];
 
       // merge code and price list
       let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKey, rawPriceJson);

@@ -7,9 +7,9 @@ const stub = require('../_stub');
 const sheetApiMock = {
   get: () => {
     return [
-      ['AAA', 'a name', 'io', 'A'],
-      ['BBB', 'b name', 'co', 'B'],
-      ['CCC', 'c name', 'tv', 'C']
+      { code: 'GLD',    name: 'gold',    suffix: 'CUR', short: 'GLD' },
+      { code: 'A01.SI', name: 'Stock A', suffix: 'SI',  short: 'A01' },
+      { code: 'B02.SI', name: 'Stock B', suffix: 'SI',  short: 'B02' }
     ];
   }
 };
@@ -49,9 +49,9 @@ test('stringify works', async t => {
 test('fetch works', async t => {
   const expected = constants.stock.reportTitle + '\n' +
     '```\n' +
-    'A      1    amt  a name\n' +
-    'B      1    amt  a name\n' +
-    'C      1    amt  a name\n' +
+    'GLD      1    amt  a name\n' +
+    'A01      1    amt  a name\n' +
+    'B02      1    amt  a name\n' +
     '```\n' +
     '[update ♧](<some_url>)';
   const actual = await job.fetch();

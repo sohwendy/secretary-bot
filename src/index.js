@@ -56,12 +56,12 @@ const bankReport = () => BankReport.update({});
 
 if (!state) {
   Logger.log('Fire once...');
-  // reminderReport();
-  // reminderMonitor();
-  // forexReport();
-  // forexMonitor();
+  reminderReport();
+  reminderMonitor();
+  forexReport();
+  forexMonitor();
   stockReport();
-  // stockMonitor();
+  stockMonitor();
 } else {
   Logger.log('Create Cron...');
 

@@ -53,23 +53,6 @@ test('generateDataArray works', async t => {
   t.deepEqual(expected, actual);
 });
 
-test('generateMeta works', async t => {
-  const expected = [
-    { id: 'A0', code: 'A1', buyRate: 'A2', sellRate: 'A3' },
-    { id: 'B0', code: 'B1', buyRate: 'B2', sellRate: 'B3' },
-  ];
-
-  const list = [
-    ['A0', '', '', 'B0', '', ''],
-    ['A1', '', '', 'B1', '', ''],
-    ['A2', 'A3', 'A4', 'B2', 'B3', 'B4']
-  ];
-
-  const actual = job._generateMeta(list);
-
-  t.deepEqual(expected, actual);
-});
-
 test('readSheet works', async t => {
   const options = {
     file: 'file',
