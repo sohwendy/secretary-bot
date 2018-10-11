@@ -43,8 +43,8 @@ module.exports = {
       const priceJson = await Promise.all(requests);
 
       // console.log('priceJson', priceJson)
-      let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKeyValue, priceJson);
-      mergeList = ruleJson.map(IteratorHelper.mergeJsonUsingKeyValue, mergeList);
+      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKeyValue, priceJson);
+      mergeList = ruleJson.map(IteratorHelper.mergeHashUsingKeyValue, mergeList);
 
       // console.log('priceJson', priceJson)
 

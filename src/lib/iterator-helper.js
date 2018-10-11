@@ -1,10 +1,10 @@
-function mergeJsonUsingKey(row) {
+function mergeHashUsingKey(row) {
   const rawPriceJson = this;
   const price = rawPriceJson[row.code];
   return price ? Object.assign(row, { price }) : {};
 }
 
-function mergeJsonUsingKeyValue(rule) {
+function mergeHashUsingKeyValue(rule) {
   const fullItem = this;
   let item = fullItem.find(i => i.code === rule.code);
   return item ? Object.assign(rule, item) : {};
@@ -63,10 +63,27 @@ function matrixToHash(matrix, keys) {
   return result;
 }
 
-module.exports.mergeJsonUsingKey = mergeJsonUsingKey;
-module.exports.mergeJsonUsingKeyValue = mergeJsonUsingKeyValue;
-module.exports.arrayToHash = arrayToHash;
-module.exports.matrixToHash = matrixToHash;
-module.exports._combineRows = _combineRows;
-module.exports._chunkArray = _chunkArray;
-module.exports._chunkToHash = _chunkToHash;
+
+
+function hashToMatrix(data, keys, initial = []) {
+  return data.reduce((array, hashRow) => {
+    const arrayRow = hashToArray(hashRow, keys);
+    return array.concat([arrayRow]);
+  }, initial);
+}
+
+function hashToArray(row, keys) {
+  return keys.map(key => row[key]);
+}
+
+module.exports = {
+  _combineRows,
+  _chunkArray,
+  _chunkToHash,
+  mergeHashUsingKey,
+  mergeHashUsingKeyValue,
+  arrayToHash,
+  matrixToHash,
+  hashToArray,
+  hashToMatrix
+};

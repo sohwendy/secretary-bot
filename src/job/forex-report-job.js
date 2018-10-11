@@ -35,7 +35,7 @@ module.exports = {
       const codeJson = data[1];
 
       // merge code and price list
-      let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKey, rawPriceJson);
+      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKey, rawPriceJson);
       // calculate the exchange rate
       const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
       const itemList = fullItem.map(stringify);

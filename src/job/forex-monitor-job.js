@@ -47,13 +47,13 @@ module.exports = {
       const ruleJson = data[2];
 
       // merge code and price list
-      let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKey, rawPriceJson);
+      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKey, rawPriceJson);
 
       // calculate the exchange rate
       const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
       // merge rules and code & price
 
-      const fullRule = ruleJson.map(IteratorHelper.mergeJsonUsingKeyValue, fullItem);
+      const fullRule = ruleJson.map(IteratorHelper.mergeHashUsingKeyValue, fullItem);
 
       const fulfilRule = fullRule.filter(rule);
 
