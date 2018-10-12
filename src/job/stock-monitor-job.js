@@ -25,7 +25,7 @@ module.exports = {
     try {
       Logger.log('get stock monitor...');
       const stockConst = constants.stock;
-      const secrets = await JsonFileHelper.read(constants.secretPath('stock.json'));
+      const secrets = await JsonFileHelper.read(stockConst.secretFile);
       const rulesOptions = { spreadsheetId: secrets.id, range: stockConst.rule.range };
       const codeOptions = { spreadsheetId: secrets.id, range: stockConst.code.range };
 

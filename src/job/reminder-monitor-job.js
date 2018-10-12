@@ -21,7 +21,7 @@ module.exports = {
       Logger.log('get reminder monitor...', today, time);
 
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.read(constants.secretPath('reminder.json'));
+      const secrets = await JsonFileHelper.read(reminderConst.secretFile);
       const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
 
       const reminderJson = await SheetApi.read(reminderConst.file, reminderConst.scope, params, reminderConst.task.fields);

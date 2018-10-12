@@ -4,6 +4,7 @@ module.exports = {
     reportTitle: '📆 Coming up...',
     monitorTitle: '📆🔥 Get Ready...',
     file: './.secrets/google.json',
+    secretFile: './.secrets/reminder.json',
     scope: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     link: '[update \u2667](http://bit.ly/sheet_reminders)',
     fields: ['date', 'time', 'type', 'title', 'action', 'event'],
@@ -20,6 +21,8 @@ module.exports = {
     reportTitle: '🌎 Left - more is gd, Right - less is gd...',
     monitorTitle: '🌎🔥 Left - more is gd, Right - less is gd...',
     file: './.secrets/google.json',
+    rateSecretFile: './.secrets/oer.json',
+    secretFile: './.secrets/forex.json',
     code: {
       range: 'ForexCode!B2:F',
       fields: ['code', 'buyUnit', 'sellUnit', 'watchlist', 'mca' ]
@@ -32,6 +35,7 @@ module.exports = {
   },
   bankforex: {
     file: './.secrets/google.json',
+    secretFile: './.secrets/bankforex.json',
     read: {
       range: 'Bank!B2:AK4',
     },
@@ -44,6 +48,7 @@ module.exports = {
     reportTitle: '👵 Retirement Nest',
     monitorTitle: '👵🔥 Action?!',
     file: './.secrets/google.json',
+    secretFile: './.secrets/stock.json',
     scope: ['https://www.googleapis.com/auth/spreadsheets'],
     code: {
       range: 'StockCode!A2:D',

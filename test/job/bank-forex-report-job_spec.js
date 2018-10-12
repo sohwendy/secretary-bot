@@ -21,9 +21,9 @@ const readOptions = { spreadsheetId: 'ssid', ...options.read };
 const writeOptions = { spreadsheetId: 'ssid', ...options.write };
 
 const constants = {
-  secretPath: stub.secretPath,
   bankforex: {
     file: './.secrets/google.json',
+    secretFile: './sample/bankforex.json',
     read: { range: 'ss_tab_read_range' },
     scope: [ 'https://www.googleapis.com/auth/spreadsheets' ],
     write: { range: 'ss_tab_write_range' }

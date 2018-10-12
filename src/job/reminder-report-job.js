@@ -27,7 +27,7 @@ module.exports = {
       Logger.log('get reminder report...', dates);
       const bind = rule.bind(dates);
       const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.read(constants.secretPath('reminder.json'));
+      const secrets = await JsonFileHelper.read(reminderConst.secretFile);
 
       const configConstant = [reminderConst.task, reminderConst.moment];
 

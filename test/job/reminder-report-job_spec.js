@@ -36,7 +36,7 @@ test.beforeEach(() => {
   sandbox = sinon.createSandbox();
 
   constants = require('../../config/constants');
-  constants.secretPath = sandbox.stub().callsFake(stub.secretPath);
+  constants.reminder.secretFile = './sample/reminder.json';
 });
 
 test.afterEach.always(() => {

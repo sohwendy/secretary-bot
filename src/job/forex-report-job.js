@@ -22,8 +22,8 @@ module.exports = {
       Logger.log('get forex report...');
 
       const forexConst = constants.forex;
-      const secretsApi = await JsonFileHelper.read(constants.secretPath('oer.json'));
-      const secretsForex = await JsonFileHelper.read(constants.secretPath('forex.json'));
+      const secretsApi = await JsonFileHelper.read(forexConst.rateSecretFile);
+      const secretsForex = await JsonFileHelper.read(forexConst.secretFile);
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
 
       const data = await Promise.all([
