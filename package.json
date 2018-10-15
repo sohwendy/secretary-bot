@@ -15,8 +15,7 @@
     "test-ddebug": "node --inspect node_modules/ava/profile.js",
     "test-debug": "ava",
     "test-watch": "ava --watch",
-    "test": "yarn lint && nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80",
-    "update-check": "ncu"
+    "test": "yarn lint && nyc ava && nyc check-coverage --lines 95 --functions 95 --branches 80"
   },
   "bugs": {
     "url": "https://github.com/sohwendy/secretary-bot/issues"
@@ -47,9 +46,8 @@
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "mockdate": "^2.0.2",
-    "npm-check-updates": "^2.14.2",
-    "nyc": "^13.0.1",
+    "nyc": "^13.1.0",
     "rewire": "^4.0.1",
-    "sinon": "^6.3.4"
+    "sinon": "^7.0.0"
   }
 }
