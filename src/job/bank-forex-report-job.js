@@ -38,7 +38,7 @@ module.exports = {
       Logger.log('get bank forex report...');
 
       const bankforexConst = constants.bankforex;
-      const secretsForex = await JsonFileHelper.read(constants.secretPath('bankforex.json'));
+      const secretsForex = await JsonFileHelper.read(bankforexConst.secretFile);
 
       const meta = await readSheet(secretsForex.id, bankforexConst);
       const data = await BankForexApi.get(meta);

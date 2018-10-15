@@ -43,7 +43,7 @@ module.exports = {
       const priceJson = await sendRequest(requests);
 
       // merge code and price list
-      const mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKeyValue, priceJson);
+      const mergeList = codeJson.map(IteratorHelper.mergeHashUsingKeyValue, priceJson);
 
       const itemList = mergeList.map(stringify);
 

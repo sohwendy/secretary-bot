@@ -30,8 +30,8 @@ module.exports = {
 
       const forexConst = constants.forex;
 
-      const secretsApi = await JsonFileHelper.read(constants.secretPath('oer.json'));
-      const secretsForex = await JsonFileHelper.read(constants.secretPath('forex.json'));
+      const secretsApi = await JsonFileHelper.read(forexConst.rateSecretFile);
+      const secretsForex = await JsonFileHelper.read(forexConst.secretFile);
 
       const rulesOptions = { spreadsheetId: secretsForex.id, range: forexConst.rule.range };
       const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
@@ -47,13 +47,13 @@ module.exports = {
       const ruleJson = data[2];
 
       // merge code and price list
-      let mergeList = codeJson.map(IteratorHelper.mergeJsonUsingKey, rawPriceJson);
+      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKey, rawPriceJson);
 
       // calculate the exchange rate
       const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
       // merge rules and code & price
 
-      const fullRule = ruleJson.map(IteratorHelper.mergeJsonUsingKeyValue, fullItem);
+      const fullRule = ruleJson.map(IteratorHelper.mergeHashUsingKeyValue, fullItem);
 
       const fulfilRule = fullRule.filter(rule);
 

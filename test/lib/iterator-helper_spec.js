@@ -2,47 +2,47 @@ import test from 'ava';
 
 const helper = require('../../src/lib/iterator-helper');
 
-test('mergeJsonUsingKey works', t => {
+test('mergeHashUsingKey works', t => {
   const rule = { code: 'IBB', min: 1, max: 2 };
   const list = { IAA: 'foo', IBB: 'bar', ICC: 'baz' };
-  const bind = helper.mergeJsonUsingKey.bind(list);
+  const bind = helper.mergeHashUsingKey.bind(list);
   const actual = bind(rule);
   const expected = Object.assign(rule, list[1]);
 
   t.deepEqual(expected, actual);
 });
 
-test('mergeJsonUsingKey returns nil if code is not found', t => {
+test('mergeHashUsingKey returns nil if code is not found', t => {
   const rule = { code: 'IBB', min: 1, max: 2 };
   const list = { IAA: 'foo', ICC: 'bar' };
-  const bind = helper.mergeJsonUsingKey.bind(list);
+  const bind = helper.mergeHashUsingKey.bind(list);
   const actual = bind(rule);
   const expected = {};
 
   t.deepEqual(expected, actual);
 });
 
-test('mergeJsonUsingKeyValue works', t => {
+test('mergeHashUsingKeyValue works', t => {
   const rule = { code: 'IBB', min: 1, max: 2 };
   const list = [
     { code: 'IAA', name: 'foo' },
     { code: 'IBB', name: 'bar' },
     { code: 'ICC', name: 'baz' }
   ];
-  const bind = helper.mergeJsonUsingKeyValue.bind(list);
+  const bind = helper.mergeHashUsingKeyValue.bind(list);
   const actual = bind(rule);
   const expected = Object.assign(rule, list[1]);
 
   t.deepEqual(expected, actual);
 });
 
-test('mergeJsonUsingKeyValue returns nil if code is not found', t => {
+test('mergeHashUsingKeyValue returns nil if code is not found', t => {
   const rule = { code: 'IDD', min: 1, max: 2 };
   const list = [
     { code: 'IAA', name: 'foo' },
     { code: 'IBB', name: 'bar' }
   ];
-  const bind = helper.mergeJsonUsingKeyValue.bind(list);
+  const bind = helper.mergeHashUsingKeyValue.bind(list);
   const actual = bind(rule);
   const expected = {};
 
@@ -109,5 +109,34 @@ test('matrixToHash works', t => {
   ];
 
   const actual = helper.matrixToHash(matrix, keys);
+  t.deepEqual(expected, actual);
+});
+
+
+test('hashToMatrix works', t => {
+  const expected = [
+    ['r1-c0', 'r1-c2', 'r1-c3'],
+    ['r2-c0', 'r2-c2', 'r2-c3']
+  ];
+
+  const keys = ['col0', 'col2', 'col3'];
+
+  const hash = [
+    { col0: 'r1-c0', col1: 'r1-c1', col2: 'r1-c2', col3: 'r1-c3' },
+    { col0: 'r2-c0', col1: 'r2-c1', col2: 'r2-c2', col3: 'r2-c3' }
+  ];
+
+  const actual = helper.hashToMatrix(hash, keys);
+  t.deepEqual(expected, actual);
+});
+
+test('hashToArray works', t => {
+  const expected = ['r1-c0', 'r1-c2', 'r1-c3'];
+  const keys = ['col0', 'col2', 'col3'];
+
+  const hash = { col0: 'r1-c0', col1: 'r1-c1', col2: 'r1-c2', col3: 'r1-c3' };
+
+  const actual = helper.hashToArray(hash, keys);
+
   t.deepEqual(expected, actual);
 });
