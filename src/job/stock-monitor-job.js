@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants').stock;
-const { arrayToHash2, join } = require('../lib/iterator-helper');
+const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
@@ -60,8 +60,8 @@ const Worker = {
     const priceJson = await Promise.all(requests);
 
 
-    let joinList = join(codeJson, priceJson, 'code');
-    joinList = join(ruleJson, joinList, 'code');
+    let joinList = leftJoin(codeJson, priceJson, 'code');
+    joinList = leftJoin(ruleJson, joinList, 'code');
 
     const result = joinList.filter(rule).map(stringify);
     return result;

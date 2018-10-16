@@ -51,17 +51,6 @@ test('round down with precision of 6', t => {
   t.is(expected, actual);
 });
 
-test('calculateExchangeRateWithUnit works', t => {
-  const input = { price: 200, buyUnit: 4, sellUnit: 5 };
-  const factor = 2;
-
-  const bind = helper.calculateExchangeRateWithUnit.bind(factor);
-  const actual = bind(input);
-  const expected = Object.assign(input, { buyRate: 400, sellRate: 0.05 });
-
-  t.deepEqual(expected, actual);
-});
-
 test('displayChat works', async t => {
   const expected = 'title\n```\nfoo\nbar\nbaz\n```\nlink';
   const actual = helper.displayChat(['foo', 'bar', 'baz'], 'title', 'link');

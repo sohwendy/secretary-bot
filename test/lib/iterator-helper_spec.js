@@ -2,52 +2,6 @@ import test from 'ava';
 
 const helper = require('../../src/lib/iterator-helper');
 
-test('mergeHashUsingKey works', t => {
-  const rule = { code: 'IBB', min: 1, max: 2 };
-  const list = { IAA: 'foo', IBB: 'bar', ICC: 'baz' };
-  const bind = helper.mergeHashUsingKey.bind(list);
-  const actual = bind(rule);
-  const expected = Object.assign(rule, list[1]);
-
-  t.deepEqual(expected, actual);
-});
-
-test('mergeHashUsingKey returns nil if code is not found', t => {
-  const rule = { code: 'IBB', min: 1, max: 2 };
-  const list = { IAA: 'foo', ICC: 'bar' };
-  const bind = helper.mergeHashUsingKey.bind(list);
-  const actual = bind(rule);
-  const expected = {};
-
-  t.deepEqual(expected, actual);
-});
-
-test('mergeHashUsingKeyValue works', t => {
-  const leftItem = { code: 'IBB', min: 1, max: 2 };
-  const rightItem = [
-    { code: 'IAA', name: 'foo' },
-    { code: 'IBB', name: 'bar' },
-    { code: 'ICC', name: 'baz' }
-  ];
-  const bind = helper.mergeHashUsingKeyValue.bind(rightItem);
-  const actual = bind(leftItem);
-  const expected = Object.assign(leftItem, rightItem[1]);
-
-  t.deepEqual(expected, actual);
-});
-
-test('mergeHashUsingKeyValue returns nil if code is not found', t => {
-  const rule = { code: 'IDD', min: 1, max: 2 };
-  const list = [
-    { code: 'IAA', name: 'foo' },
-    { code: 'IBB', name: 'bar' }
-  ];
-  const bind = helper.mergeHashUsingKeyValue.bind(list);
-  const actual = bind(rule);
-  const expected = {};
-
-  t.deepEqual(expected, actual);
-});
 
 test('rowToHash works', t => {
   const row = ['name', '0.5', 3, '08:00', '26 Feb 2018'];
@@ -142,7 +96,7 @@ test('hashToArray works', t => {
 });
 
 
-test('join works', t => {
+test('leftJoin works', t => {
   const left = [
     { code: 'AUD', price: 1.1 },
     { code: 'ZZZ', price: 1.2 },
@@ -171,6 +125,6 @@ test('join works', t => {
     price: 1.3
   }];
 
-  const actual = helper.join(left, right, 'code');
+  const actual = helper.leftJoin(left, right, 'code');
   t.deepEqual(expected, actual);
 });

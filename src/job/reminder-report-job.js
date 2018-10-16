@@ -1,7 +1,7 @@
 const constants = require('../../config/constants').reminder;
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-const { arrayToHash2, join } = require('../lib/iterator-helper');
+const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
@@ -46,11 +46,11 @@ const Worker = {
 
     // extract relevant events
     const dateHash = dates.map(date => { return { date }; });
-    data = data.map(d => join(d, dateHash, 'date'));
+    data = data.map(d => leftJoin(d, dateHash, 'date'));
     const array = data[0].concat(data[1]);
 
     // grouping according to date
-    let group = dateHash.map(date => join(array, [date], 'date'));
+    let group = dateHash.map(date => leftJoin(array, [date], 'date'));
 
     // format
     group = group.map(g => g.map(stringifyReminder).join('\n'));

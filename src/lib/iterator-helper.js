@@ -1,23 +1,11 @@
 // returns (left+right) if left has matching right values
-function join(leftHashList, rightHashList, key = 'code') {
+function leftJoin(leftHashList, rightHashList, key = 'code') {
   const result = leftHashList.reduce((acc, left) => {
     const right = rightHashList.find(right => right[key] === left[key]);
     right ? acc.push(Object.assign(left, right)) : '';
     return acc;
   }, []);
   return result;
-}
-
-function mergeHashUsingKey(row) {
-  const rawPriceJson = this;
-  const price = rawPriceJson[row.code];
-  return price ? Object.assign(row, { price }) : {};
-}
-
-function mergeHashUsingKeyValue(rule) {
-  const fullItem = this;
-  let item = fullItem.find(i => i.code === rule.code);
-  return item ? Object.assign(rule, item) : {};
 }
 
 function arrayToHash2(values) {
@@ -71,11 +59,8 @@ function _chunkToHash(row, keys) {
 }
 
 function matrixToHash2(matrix) {
-  // console.log(this);
-  // console.log('matrixToHash2', matrix);
   const keys = this;
   const result = matrixToHash(matrix, keys);
-  // console.log('matrixToHash2', result);
   return result;
 }
 
@@ -108,8 +93,6 @@ module.exports = {
   _combineRows,
   _chunkArray,
   _chunkToHash,
-  mergeHashUsingKey,
-  mergeHashUsingKeyValue,
   rowToHash,
   arrayToHash2,
   matrixToHash,
@@ -117,5 +100,5 @@ module.exports = {
   hashToArray,
   hashToMatrix,
   hashToMatrix2,
-  join
+  leftJoin
 };

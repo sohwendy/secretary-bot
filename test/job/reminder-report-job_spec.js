@@ -21,7 +21,6 @@ const moments = [
 
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
-
 test.beforeEach(t => {
   t.context.job = rewire('../../src/job/reminder-report-job');
   t.context.sandbox = sinon.createSandbox();

@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants').forex;
 const BasicHelper = require('../lib/basic-helper');
-const { arrayToHash2, join } = require('../lib/iterator-helper');
+const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -55,8 +55,8 @@ const Worker = {
       SheetApi.read2(ruleConfig, settings.transformRule)
     ]);
 
-    let joinList = join(data[0], data[1], 'code');
-    joinList = join(data[2], joinList,  'code');
+    let joinList = leftJoin(data[0], data[1], 'code');
+    joinList = leftJoin(data[2], joinList,  'code');
 
     joinList = joinList.map(BasicHelper.calculateUnit);
 

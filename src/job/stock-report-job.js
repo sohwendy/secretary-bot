@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants').stock;
 const BasicHelper = require('../lib/basic-helper');
-const { arrayToHash2, join } = require('../lib/iterator-helper');
+const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -38,7 +38,7 @@ const Worker = {
 
     const priceJson = await Promise.all(requests);
 
-    const joinList = join(codeJson, priceJson, 'code');
+    const joinList = leftJoin(codeJson, priceJson, 'code');
     return joinList.map(stringify);
   }
 };
