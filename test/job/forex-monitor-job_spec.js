@@ -5,18 +5,18 @@ const SheetApi = require('../../src/utility/google-sheet-api');
 const RateApi = require('../../src/utility/open-exchange-rate-api');
 const rewire = require('rewire');
 
-const codeMock = [
+const codeData = [
   { code: 'AUD', buyUnit: '1', sellUnit: '3', watchlist: '*', mca: ''},
   { code: 'INR', buyUnit: '2', sellUnit: '4', watchlist: '',  mca: ''}
 ];
 
-const ruleMock = [
+const ruleData = [
   { code: 'INR', buysell: 'S', min: '0.1', max: '0.2', message: 'no', done: 'N' },
   { code: 'INR', buysell: 'S', min: '5',   max: '8',   message: 'yes', done: 'N' },
   { code: 'INR', buysell: 'S', min: '7.8', max: '8',   message: 'yes', done: 'N' },
   { code: 'INR', buysell: 'S', min: '90',  max: '100', message: 'no', done: 'N' }
 ];
-const rateMock = [
+const rateData = [
   { code: 'AUD', price: 1 },
   { code: 'BB', price: 3 },
   { code: 'INR', price: 30 },
@@ -153,19 +153,19 @@ test('execute() works', async t => {
     .expects('get2')
     .withExactArgs({key: 'rateKey'})
     .once()
-    .returns(rateMock);
+    .returns(rateData);
 
   sheetApiMock
     .expects('read2')
     .withExactArgs('code', settings.transformCode)
     .once()
-    .returns(codeMock);
+    .returns(codeData);
 
   sheetApiMock
     .expects('read2')
     .withExactArgs('rule',  settings.transformRule)
     .once()
-    .returns(ruleMock);
+    .returns(ruleData);
 
   const actual = await job.Worker.execute(settings);
 

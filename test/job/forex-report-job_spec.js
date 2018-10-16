@@ -5,13 +5,13 @@ const SheetApi = require('../../src/utility/google-sheet-api');
 const RateApi = require('../../src/utility/open-exchange-rate-api');
 const rewire = require('rewire');
 
-const rateMock = [
+const rateData = [
   { code: 'MYR', price: 1 },
   { code: 'CNY', price: 3 },
   { code: 'DD',  price: 3 },
   { code: 'SGD', price: 5 }
 ];
-const codeMock = [
+const codeData = [
   { code: 'MYR', buyUnit: '1', sellUnit: '3', watchlist: '**', mca: '' },
   { code: 'CNY', buyUnit: '2', sellUnit: '4', watchlist: '',   mca: '' }
 ];
@@ -93,13 +93,13 @@ test('execute() works', async t => {
     .expects('get2')
     .withExactArgs({key: 'rateKey'})
     .once()
-    .returns(rateMock);
+    .returns(rateData);
 
   sheetApiMock
     .expects('read2')
     .withExactArgs('code', settings.transform)
     .once()
-    .returns(codeMock);
+    .returns(codeData);
 
   const actual = await job.Worker.execute(settings);
 
