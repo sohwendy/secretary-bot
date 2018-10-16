@@ -51,11 +51,11 @@ test('round down with precision of 6', t => {
   t.is(expected, actual);
 });
 
-test('calculateExchangeRate works', t => {
+test('calculateExchangeRateWithUnit works', t => {
   const input = { price: 200, buyUnit: 4, sellUnit: 5 };
   const factor = 2;
 
-  const bind = helper.calculateExchangeRate.bind(factor);
+  const bind = helper.calculateExchangeRateWithUnit.bind(factor);
   const actual = bind(input);
   const expected = Object.assign(input, { buyRate: 400, sellRate: 0.05 });
 

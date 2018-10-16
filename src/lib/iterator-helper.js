@@ -1,3 +1,13 @@
+// returns (left+right) if left has matching right values
+function join(leftHashList, rightHashList, key = 'code') {
+  const result = leftHashList.reduce((acc, left) => {
+    const right = rightHashList.find(right => right[key] === left[key]);
+    right ? acc.push(Object.assign(left, right)) : '';
+    return acc;
+  }, []);
+  return result;
+}
+
 function mergeHashUsingKey(row) {
   const rawPriceJson = this;
   const price = rawPriceJson[row.code];
@@ -10,8 +20,13 @@ function mergeHashUsingKeyValue(rule) {
   return item ? Object.assign(rule, item) : {};
 }
 
-function arrayToHash(values, keys) {
-  return values.reduce((json, field, index) => {
+function arrayToHash2(values) {
+  const keys = this;
+  return values.map(row => rowToHash(row, keys));
+}
+
+function rowToHash(row, keys) {
+  return row.reduce((json, field, index) => {
     let value;
     if (!keys[index]) {
       return json;
@@ -52,7 +67,16 @@ function _chunkArray(row, size) {
 
 // converts nested array to hash
 function _chunkToHash(row, keys) {
-  return row.map(group => arrayToHash(group, keys));
+  return row.map(group => rowToHash(group, keys));
+}
+
+function matrixToHash2(matrix) {
+  // console.log(this);
+  // console.log('matrixToHash2', matrix);
+  const keys = this;
+  const result = matrixToHash(matrix, keys);
+  // console.log('matrixToHash2', result);
+  return result;
 }
 
 function matrixToHash(matrix, keys) {
@@ -63,10 +87,14 @@ function matrixToHash(matrix, keys) {
   return result;
 }
 
+function hashToMatrix2(matrix){
+  const keys = this;
+  const result = matrixToHash(matrix, keys);
+  return result;
+}
 
-
-function hashToMatrix(data, keys, initial = []) {
-  return data.reduce((array, hashRow) => {
+function hashToMatrix(hash, keys, initial = []) {
+  return hash.reduce((array, hashRow) => {
     const arrayRow = hashToArray(hashRow, keys);
     return array.concat([arrayRow]);
   }, initial);
@@ -82,8 +110,12 @@ module.exports = {
   _chunkToHash,
   mergeHashUsingKey,
   mergeHashUsingKeyValue,
-  arrayToHash,
+  rowToHash,
+  arrayToHash2,
   matrixToHash,
+  matrixToHash2,
   hashToArray,
-  hashToMatrix
+  hashToMatrix,
+  hashToMatrix2,
+  join
 };
