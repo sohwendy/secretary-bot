@@ -24,7 +24,7 @@ const Worker = {
       key: secrets.key1,
       code: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.code.range
       },

@@ -42,7 +42,7 @@ test('transformHashToArray works', async t => {
 test('init() returns config', async t => {
   const expected = {
     token: constants.file,
-    permission: constants.scope,
+    permission: constants.permission,
     spreadsheetId: '<bank forex>',
     range: constants.read.range
   };

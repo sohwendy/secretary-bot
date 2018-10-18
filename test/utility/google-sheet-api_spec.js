@@ -1,5 +1,6 @@
 import test from 'ava';
 const rewire = require('rewire');
+import sinon from 'sinon';
 const stub = require('../_stub');
 
 let helper;
@@ -15,26 +16,38 @@ const sheetsCells = [
   ['r1-c1', 'r1-c2', 'r1-c3'],
   ['r2-c1', 'r2-c2', 'r2-c3']
 ];
-
-const googleMock = { auth: { JWT: Jwt } };
-const readFileMock = () => JSON.stringify(secrets);
-const sheetsMock = {
-  get: _ => { return { data: { values: sheetsCells } }; },
-  append: params => { return { data: { updates: { updatedCells: params } } }; },
+const sheetParams = {
+  spreadsheetId: 'id',
+  range: 'range'
 };
 
-function Jwt(email, _a, key, scope, _b) {
+const authData = {
+  token: 'token',
+  permission: 'permission',
+};
+
+function Jwt(email, _a, key, permission, _b) {
   this.email = email;
   this.key = key;
-  this.scope = scope;
+  this.permission = permission;
   this.authorize = noop;
 }
 
-test.beforeEach(() => {
+const googleMock = { auth: { JWT: Jwt } };
+const readFileMock = () => JSON.stringify(secrets);
+// const sheetsMock = {
+//   get: _ => { return { data: { values: sheetsCells } }; },
+//   append: params => { return { data: { updates: { updatedCells: params } } }; },
+// };
+
+
+test.beforeEach(t => {
+  t.context.sandbox = sinon.createSandbox();
   helper = rewire('../../src/utility/google-sheet-api');
   helper.__set__('google', googleMock);
   helper.__set__('readFile', readFileMock);
-  helper.__set__('sheets', sheetsMock);
+
+  t.context.helper = helper;
 });
 
 test('auth works', async t => {
@@ -42,82 +55,116 @@ test('auth works', async t => {
     secrets.client_email,
     '',
     secrets.private_key,
-    'scope'
+    authData.permission
   );
 
-  const actualJwtClient = await helper._auth('', 'scope');
+  const actualJwtClient = await helper._auth(authData);
 
   t.deepEqual(expectedJwtClient, actualJwtClient);
 });
 
-test('read works', async t => {
-  const axiosMock = {
-    get: () => {
-      return { data: { rates: 'rates' } };
-    }
-  };
-  helper.__set__('axios', axiosMock);
-  const options = { spreadsheetId: 'id', range: 'range' };
+const options = {
+  ...authData,
+  ...sheetParams
+};
+const params = {
+  auth: {},
+  ...sheetParams
+};
+const jwtClient = {};
 
-  const headers = [ 'header1', 'header2', 'header3' ];
+test('read2 works', async t => {
+  const { sandbox } = t.context;
+  const expected = 'values';
 
-  // const expected = {
-  //   auth: new Jwt('client_email', '', 'private_key', 'scope'),
-  //   range: 'range',
-  //   spreadsheetId: 'id'
-  // };
+  const sheets = { get: sandbox.stub()};
+  const authStub = sandbox.stub();
+  const transformStub = sandbox.stub();
+  helper.__set__('sheets', sheets);
+  helper.__set__('auth',  authStub);
 
+  authStub
+    .withArgs(authData)
+    .returns(jwtClient);
 
-  const expected = [
-    { header1: 'r1-c1', header2: 'r1-c2', header3: 'r1-c3' },
-    { header1: 'r2-c1', header2: 'r2-c2', header3: 'r2-c3' }
-  ];
+  sheets.get
+    .withArgs(params)
+    .returns(Promise.resolve({ data: { values: sheetsCells } }));
 
-  const actual = await helper.read('key', 'scope', options, headers);
+  transformStub
+    .withArgs(sheetsCells)
+    .returns(expected);
 
-  t.deepEqual(expected, actual);
+  const actual = await helper.read2(options, transformStub);
+
+  t.is(authStub.callCount, 1);
+  t.is(sheets.get.callCount, 1);
+  t.is(transformStub.callCount, 1);
+  t.is(expected, actual);
 });
 
-test('read handles exception', async t => {
+test('read2 handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.read('', '', {});
+  const actual = await helper.read2('', '', {});
 
   t.is(expected, actual);
 });
 
-test('set works', async t => {
-  const axiosMock = {
-    set: () => {
-      return { data: { rates: 'rates' } };
-    }
-  };
-  helper.__set__('axios', axiosMock);
-  const options = { spreadsheetId: 'id', range: 'range' };
 
-  const expected = {
-    auth: new Jwt('client_email', '', 'private_key', 'scope'),
-    range: 'range',
-    resource: {
-      majorDimension: 'ROWS',
-      values: [['a']]
-    },
-    spreadsheetId: 'id',
-    valueInputOption: 'USER_ENTERED',
-  };
-  const actual = await helper.write('key', 'scope', options, ['a']);
-
-  t.deepEqual(expected, actual);
-});
-
-test('set handles exception', async t => {
+test('read2 handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.write('', '', {});
+  const actual = await helper.read2('', '', {});
+
+  t.is(expected, actual);
+});
+
+test('write2 works', async t => {
+  const { sandbox } = t.context;
+
+  const sheets = { append: sandbox.stub()};
+  const authStub = sandbox.stub();
+  helper.__set__('auth',  authStub);
+  helper.__set__('sheets', sheets);
+  const values = ['a', 'b'];
+  const expected = 5;
+
+  const params = {
+    auth: jwtClient,
+    resource: {
+      majorDimension: 'ROWS',
+      values: [values]
+    },
+    ...sheetParams,
+    valueInputOption: 'USER_ENTERED',
+  };
+
+  authStub
+    .withArgs(authData)
+    .returns(jwtClient);
+
+  sheets.append
+    .withArgs(params)
+    .returns(Promise.resolve({ data: { updates: { updatedCells: expected } } }));
+
+  const actual = await helper.write2(options, values);
+
+  t.is(authStub.callCount, 1);
+  t.is(sheets.append.callCount, 1);
+  t.deepEqual(expected, actual);
+});
+
+test('write handles exception', async t => {
+  const readFileMock = stub.exceptionMock;
+  helper.__set__('readFile', readFileMock);
+
+  const expected = '';
+  const actual = await helper.write2('', '', {});
 
   t.is(expected, actual);
 });

@@ -22,7 +22,7 @@ const Worker = {
       title: constants.monitorTitle,
       task: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.task.range
       },

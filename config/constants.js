@@ -5,7 +5,7 @@ module.exports = {
     monitorTitle: '📆🔥 Get Ready...',
     file: './.secrets/google.json',
     secretFile: './.secrets/reminder.json',
-    scope: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    permission: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     link: '[update \u2667](http://bit.ly/sheet_reminders)',
     task: {
       range: 'Task!B2:E',
@@ -26,7 +26,7 @@ module.exports = {
       range: 'ForexCode!B2:F',
       fields: ['code', 'buyUnit', 'sellUnit', 'watchlist', 'mca' ]
     },
-    scope: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    permission: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     rule: {
       range: 'ForexRule!B2:G',
       fields: ['code', 'buysell', 'min', 'max', 'message', 'done']
@@ -43,7 +43,7 @@ module.exports = {
         ['buyRate', 'sellRate', '']
       ]
     },
-    scope: ['https://www.googleapis.com/auth/spreadsheets'],
+    permission: ['https://www.googleapis.com/auth/spreadsheets'],
     write: {
       range: 'Bank!A6:AK',
       fields: ['sellPrice', 'buyTTPrice', 'buyODPrice']
@@ -54,7 +54,7 @@ module.exports = {
     monitorTitle: '👵🔥 Action?!',
     file: './.secrets/google.json',
     secretFile: './.secrets/stock.json',
-    scope: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    permission: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
     code: {
       range: 'StockCode!A2:D',
       fields: ['code', 'name', 'suffix', 'short']

@@ -26,7 +26,7 @@ const Worker = {
       rateKey: secretsApi.key,
       code: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secretsForex.id,
         range: constants.code.range
       },

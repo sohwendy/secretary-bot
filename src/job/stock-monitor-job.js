@@ -32,13 +32,13 @@ const Worker = {
       key: secrets.key2,
       code: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.code.range
       },
       rule: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.rule.range
       }

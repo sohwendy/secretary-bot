@@ -19,7 +19,7 @@ const Worker = {
     const transform = matrixToHash2.bind(constants.read.fields);
     const config = {
       token: constants.file,
-      permission: constants.scope,
+      permission: constants.permission,
       spreadsheetId: secrets.id,
       range: constants.read.range
     };
@@ -36,6 +36,8 @@ const Worker = {
 };
 
 module.exports = {
+  Worker,
+  _transformHashToArray: transformHashToArray,
   update: async() => {
     try {
       Logger.log('get bank forex report...');
@@ -50,6 +52,4 @@ module.exports = {
       return 0;
     }
   },
-  _transformHashToArray: transformHashToArray,
-  Worker
 };

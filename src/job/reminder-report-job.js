@@ -24,13 +24,13 @@ const Worker = {
       title: constants.reportTitle,
       task: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.task.range
       },
       moment: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secrets.id,
         range: constants.moment.range
       }

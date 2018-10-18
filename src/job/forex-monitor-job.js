@@ -33,13 +33,13 @@ const Worker = {
       rateKey: secretsApi.key,
       rule: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secretsForex.id,
         range: constants.rule.range
       },
       code: {
         token: constants.file,
-        permission: constants.scope,
+        permission: constants.permission,
         spreadsheetId: secretsForex.id,
         range: constants.code.range
       },
