@@ -72,12 +72,6 @@ function matrixToHash(matrix, keys) {
   return result;
 }
 
-function hashToMatrix2(matrix){
-  const keys = this;
-  const result = matrixToHash(matrix, keys);
-  return result;
-}
-
 function hashToMatrix(hash, keys, initial = []) {
   return hash.reduce((array, hashRow) => {
     const arrayRow = hashToArray(hashRow, keys);
@@ -99,6 +93,5 @@ module.exports = {
   matrixToHash2,
   hashToArray,
   hashToMatrix,
-  hashToMatrix2,
   leftJoin
 };

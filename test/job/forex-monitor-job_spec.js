@@ -65,8 +65,18 @@ test('rule works', async t => {
 
 test('rule returns false for > max value', async t => {
   const expected = false;
-  const newRow = Object.assign({}, row);
+  let newRow = {};
+  Object.assign(newRow, row);
   newRow.max = 3;
+  const actual = t.context.job._rule(newRow);
+
+  t.is(expected, actual);
+});
+
+test('rule returns true for buy', async t => {
+  const expected = true;
+  const newRow = Object.assign({}, row);
+  newRow.buysell = 'B';
   const actual = t.context.job._rule(newRow);
 
   t.is(expected, actual);

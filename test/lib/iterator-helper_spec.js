@@ -12,6 +12,22 @@ test('rowToHash works', t => {
   t.deepEqual(expected, actual);
 });
 
+test('arrayToHash2 works', t => {
+  const row = [
+    ['name1', '0.5', 3, '08:00', '26 Feb 2018'],
+    ['name2', '0.5', 3, '08:00', '26 Feb 2018']
+  ];
+  const params = ['stringN', 'float', 'number', 'time', 'date'];
+  const expected = [
+    { stringN: 'name1', float: 0.5, number: 3, time: '08:00', date: '26 Feb 2018' },
+    { stringN: 'name2', float: 0.5, number: 3, time: '08:00', date: '26 Feb 2018' }
+  ];
+  const bind = helper.arrayToHash2.bind(params);
+  const actual = bind(row);
+
+  t.deepEqual(expected, actual);
+});
+
 test('_chunkArray', t => {
   const row = ['A0', '', '', 'A1', '', '', 'A2', '', '' ];
   const expected = [['A0', '', ''], ['A1', '', ''], ['A2', '', '']];
@@ -44,6 +60,29 @@ test('_combineRows', t => {
   t.deepEqual(expected, actual);
 });
 
+test('matrixToHash2 works', t => {
+  const expected = [
+    { id: 'A0', code: 'A1', buyRate: 'A2', sellRate: 'A3' },
+    { id: 'B0', code: 'B1', buyRate: 'B2', sellRate: 'B3' }
+  ];
+
+  const keys = [
+    ['id', '', ''],
+    ['code', '', ''],
+    ['buyRate', 'sellRate', '']
+  ];
+
+  const matrix = [
+    ['A0', '', '', 'B0', '', ''],
+    ['A1', '', '', 'B1', '', ''],
+    ['A2', 'A3', 'A4', 'B2', 'B3', 'B4']
+  ];
+
+  const bind = helper.matrixToHash2.bind(keys);
+  const actual = bind(matrix);
+  t.deepEqual(expected, actual);
+});
+
 test('matrixToHash works', t => {
   const expected = [
     { id: 'A0', code: 'A1', buyRate: 'A2', sellRate: 'A3' },
@@ -65,7 +104,6 @@ test('matrixToHash works', t => {
   const actual = helper.matrixToHash(matrix, keys);
   t.deepEqual(expected, actual);
 });
-
 
 test('hashToMatrix works', t => {
   const expected = [
@@ -96,7 +134,7 @@ test('hashToArray works', t => {
 });
 
 
-test('leftJoin works', t => {
+test('leftJoin works with default code', t => {
   const left = [
     { code: 'AUD', price: 1.1 },
     { code: 'ZZZ', price: 1.2 },
@@ -125,6 +163,40 @@ test('leftJoin works', t => {
     price: 1.3
   }];
 
-  const actual = helper.leftJoin(left, right, 'code');
+  const actual = helper.leftJoin(left, right);
+  t.deepEqual(expected, actual);
+});
+
+
+test('leftJoin works with key', t => {
+  const left = [
+    { key: 'AUD', price: 1.1 },
+    { key: 'ZZZ', price: 1.2 },
+    { key: 'JPY', price: 1.3 },
+  ];
+
+  const right = [{
+    key: 'AUD',
+    buyUnit: 1,
+    sellUnit: 1,
+  }, {
+    key: 'JPY',
+    buyUnit: 1,
+    sellUnit: 100,
+  }];
+
+  const expected = [{
+    key: 'AUD',
+    buyUnit: 1,
+    sellUnit: 1,
+    price: 1.1
+  }, {
+    key: 'JPY',
+    buyUnit: 1,
+    sellUnit: 100,
+    price: 1.3
+  }];
+
+  const actual = helper.leftJoin(left, right, 'key');
   t.deepEqual(expected, actual);
 });

@@ -131,3 +131,30 @@ test('execute() works', async t => {
   t.true(bankForexMock.verify());
   t.is(count, 7);
 });
+
+test('update works', async t => {
+  const expected = 4;
+
+  const { sandbox, job } = t.context;
+  const initStub = sandbox
+    .stub(job.Worker, 'init')
+    .withArgs(constants)
+    .returns('ok');
+  const executeStub = sandbox
+    .stub(job.Worker, 'execute')
+    .withArgs('ok')
+    .returns(expected);
+
+  const actual = await job.update();
+
+  t.is(expected, actual);
+  t.is(initStub.callCount, 1);
+  t.is(executeStub.callCount, 1);
+});
+
+test('update handles exception', async t => {
+  const expected = 0;
+  const actual = await t.context.job.update();
+
+  t.is(expected, actual);
+});

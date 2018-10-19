@@ -9,7 +9,7 @@ function constructUrl(key) {
 function transform(rates) {
   const sgdRate = rates['SGD'];
   const keys = Object.keys(rates);
-  return keys.map(key => {
+  return keys.sort().map(key => {
     return {
       code: key,
       price: calculateExchangeRate(rates[key], sgdRate)
@@ -19,6 +19,7 @@ function transform(rates) {
 
 module.exports = {
   _constructUrl: constructUrl,
+  _transform: transform,
   get2: async(config) => {
     try {
       const response = await axios.get(constructUrl(config.key));
@@ -29,13 +30,4 @@ module.exports = {
     }
     return '';
   },
-  get: async(key) => {
-    try {
-      const response = await axios.get(constructUrl(key));
-      return response.data.rates;
-    } catch (e) {
-      Logger.log('OER Failed', e);
-    }
-    return '';
-  }
 };

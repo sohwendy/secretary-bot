@@ -22,7 +22,7 @@ function calculateUnit(row) {
 }
 
 function calculateExchangeRate(foreign, local) {
-  return foreign / local;
+  return local > 0 ? foreign / local : 0;
 }
 
 function pad(value, padding = 7) {
