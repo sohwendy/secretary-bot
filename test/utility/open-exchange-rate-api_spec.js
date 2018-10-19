@@ -32,7 +32,7 @@ test('transform works', async t => {
   t.deepEqual(output, actual);
 });
 
-test('get2 works', async t => {
+test('get works', async t => {
   const { sandbox } = t.context;
 
   const config = { key: 'key' };
@@ -46,13 +46,13 @@ test('get2 works', async t => {
     .withArgs('https://openexchangerates.org/api/latest.json?app_id=key')
     .returns(Promise.resolve(response));
 
-  const actual = await helper.get2(config);
+  const actual = await helper.get(config);
 
   t.is(axiosMock.get.callCount, 1);
   t.deepEqual(output, actual);
 });
 
-test('get2 returns empty string', async t => {
+test('get returns empty string', async t => {
   const { sandbox } = t.context;
 
   const config = { key: 'key' };
@@ -66,12 +66,12 @@ test('get2 returns empty string', async t => {
     .withArgs('https://openexchangerates.org/api/latest.json?app_id=key')
     .returns(Promise.resolve(response));
 
-  const actual = await helper.get2(config);
+  const actual = await helper.get(config);
 
   t.is('', actual);
 });
 
-test('get2 handles exception', async t => {
+test('get handles exception', async t => {
   const { sandbox } = t.context;
   const axiosMock = { get: sandbox.stub() };
   helper.__set__('axios', axiosMock);
@@ -79,7 +79,7 @@ test('get2 handles exception', async t => {
   axiosMock.get.throws();
 
   const expected = '';
-  const actual = await helper.get2({});
+  const actual = await helper.get({});
 
   t.is(expected, actual);
 });

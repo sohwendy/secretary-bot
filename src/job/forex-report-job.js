@@ -37,8 +37,8 @@ const Worker = {
     const { code: codeConfig, rateKey: key } = settings.config;
 
     const data = await Promise.all([
-      RateApi.get2({ key }),
-      SheetApi.read2(codeConfig, settings.transform),
+      RateApi.get({ key }),
+      SheetApi.read(codeConfig, settings.transform),
     ]);
 
     let joinList = leftJoin(data[0], data[1], 'code');

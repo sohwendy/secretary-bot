@@ -90,13 +90,13 @@ test('execute() works', async t => {
   ];
 
   rateApiMock
-    .expects('get2')
+    .expects('get')
     .withExactArgs({key: 'rateKey'})
     .once()
     .returns(rateData);
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('code', settings.transform)
     .once()
     .returns(codeData);

@@ -32,7 +32,7 @@ const Worker = {
     return { config, transform };
   },
   execute: async(settings) => {
-    const codeJson = await SheetApi.read2(settings.config.code, settings.transform);
+    const codeJson = await SheetApi.read(settings.config.code, settings.transform);
     // get price list
     const requests = codeJson.map((stock, index) => StockApi.get(settings.key, stock.code, index * INTERVAL_BETWEEN_API_CALL));
 

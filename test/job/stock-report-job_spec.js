@@ -92,7 +92,7 @@ test('execute() works', async t => {
   ];
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('code', settings.transform)
     .once()
     .returns(sheetData);

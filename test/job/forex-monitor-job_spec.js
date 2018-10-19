@@ -160,19 +160,19 @@ test('execute() works', async t => {
   const expected = ['2sgd     15inr    4inr  0.134sgd\n    (0.1, 0.2)   no'];
 
   rateApiMock
-    .expects('get2')
+    .expects('get')
     .withExactArgs({key: 'rateKey'})
     .once()
     .returns(rateData);
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('code', settings.transformCode)
     .once()
     .returns(codeData);
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('rule',  settings.transformRule)
     .once()
     .returns(ruleData);

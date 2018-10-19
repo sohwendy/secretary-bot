@@ -27,7 +27,7 @@ const Worker = {
   },
   execute: async(settings) => {
     const { config, transform } = settings;
-    const requested = await SheetApi.read2(config, transform);
+    const requested = await SheetApi.read(config, transform);
     const response = await BankForexApi.get(requested);
     const results = transformHashToArray(response);
 

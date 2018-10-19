@@ -40,8 +40,8 @@ const Worker = {
   execute: async(settings, dates) => {
     // get task and moment list
     let data = await Promise.all([
-      SheetApi.read2(settings.config.task, settings.transform),
-      SheetApi.read2(settings.config.moment, settings.transform)
+      SheetApi.read(settings.config.task, settings.transform),
+      SheetApi.read(settings.config.moment, settings.transform)
     ]);
 
     // extract relevant events

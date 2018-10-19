@@ -38,7 +38,7 @@ const auth = async({ token: tokenFile, permission: scope }) => {
 
 module.exports = {
   _auth: auth,
-  read2: async(config, transform) => {
+  read: async(config, transform) => {
     try {
       const { token, permission, spreadsheetId, range } = config;
 

@@ -128,13 +128,13 @@ test('execute() works', async t => {
 
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('task', settings.transform)
     .once()
     .returns(tasks);
 
   sheetApiMock
-    .expects('read2')
+    .expects('read')
     .withExactArgs('moment',  settings.transform)
     .once()
     .returns(moments);

@@ -73,7 +73,7 @@ const params = {
 };
 const jwtClient = {};
 
-test('read2 works', async t => {
+test('read works', async t => {
   const { sandbox } = t.context;
   const expected = 'values';
 
@@ -95,7 +95,7 @@ test('read2 works', async t => {
     .withArgs(sheetsCells)
     .returns(expected);
 
-  const actual = await helper.read2(options, transformStub);
+  const actual = await helper.read(options, transformStub);
 
   t.is(authStub.callCount, 1);
   t.is(sheets.get.callCount, 1);
@@ -103,23 +103,23 @@ test('read2 works', async t => {
   t.is(expected, actual);
 });
 
-test('read2 handles exception', async t => {
+test('read handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.read2('', '', {});
+  const actual = await helper.read('', '', {});
 
   t.is(expected, actual);
 });
 
 
-test('read2 handles exception', async t => {
+test('read handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
   const expected = '';
-  const actual = await helper.read2('', '', {});
+  const actual = await helper.read('', '', {});
 
   t.is(expected, actual);
 });

@@ -20,7 +20,7 @@ function transform(rates) {
 module.exports = {
   _constructUrl: constructUrl,
   _transform: transform,
-  get2: async(config) => {
+  get: async(config) => {
     try {
       const response = await axios.get(constructUrl(config.key));
       const { rates } = response.data;

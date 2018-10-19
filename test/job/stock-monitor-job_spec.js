@@ -124,7 +124,7 @@ test('execute() works', async t => {
   sheetApiStub
     .withArgs('code', settings.transform.code).returns(Promise.resolve(codeData))
     .withArgs('rule', settings.transform.rule).returns(Promise.resolve(ruleData));
-  job.__set__('SheetApi', { read2: sheetApiStub });
+  job.__set__('SheetApi', { read: sheetApiStub });
 
   const stockApiStub = sandbox.stub();
   stockApiStub

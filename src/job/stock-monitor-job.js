@@ -48,8 +48,8 @@ const Worker = {
   execute: async(settings) => {
     // get code and rule list
     let data = await Promise.all([
-      SheetApi.read2(settings.config.code, settings.transform.code),
-      SheetApi.read2(settings.config.rule, settings.transform.rule)
+      SheetApi.read(settings.config.code, settings.transform.code),
+      SheetApi.read(settings.config.rule, settings.transform.rule)
     ]);
 
     const codeJson = data[0];

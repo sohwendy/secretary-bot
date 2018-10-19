@@ -31,7 +31,7 @@ const Worker = {
   },
   execute: async(settings, bind) => {
     const { task: codeConfig} = settings.config;
-    let list = await SheetApi.read2(codeConfig, settings.transform);
+    let list = await SheetApi.read(codeConfig, settings.transform);
     list = list.filter(bind).map(stringify);
 
     return list ;
