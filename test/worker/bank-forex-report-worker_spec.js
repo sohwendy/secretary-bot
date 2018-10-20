@@ -5,27 +5,26 @@ const constants = require('../../config/constants').bankforex;
 const SheetApi = require('../../src/utility/google-sheet-api');
 const BankForexApi = require('../../src/utility/dbs-scraper');
 
-
 test.beforeEach(t => {
   let sandbox = sinon.createSandbox();
 
   t.context.sandbox = sandbox;
   t.context.sheetApiMock  = sandbox.mock(SheetApi);
-  t.context.job = rewire('../../src/job/bank-forex-report-job');
-  const { job } = t.context;
+  t.context.worker = rewire('../../src/worker/bank-forex-report-worker');
+  const { worker } = t.context;
 
   t.context.bankForexMock = sandbox.mock(BankForexApi);
 
   constants.secretFile = './sample/bankforex.json';
   constants.file = './sample/google.json';
-  job.__set__('constants', constants);
+  worker.__set__('constants', constants);
 });
 
 test.afterEach.always(t => {
   t.context.sandbox.restore();
 });
 
-test('transformHashToArray works', async t => {
+test('_transformHashToArray works', async t => {
   const expected = ['01-Jan-2018', '1.0', '1.1', '1.2', '2.0', '2.1','2.2'];
   const data = {
     date: '01-Jan-2018',
@@ -34,7 +33,7 @@ test('transformHashToArray works', async t => {
       { sellPrice: '2.0', buyTTPrice: '2.1', buyODPrice: '2.2' }
     ]
   };
-  const actual = t.context.job._transformHashToArray(data);
+  const actual = t.context.worker._transformHashToArray(data, constants.write.fields);
 
   t.deepEqual(expected, actual);
 });
@@ -47,19 +46,19 @@ test('init() returns config', async t => {
     range: constants.read.range
   };
 
-  const actual = await t.context.job.Worker.init(constants);
+  const actual = await t.context.worker.init(constants);
 
   t.deepEqual(expected, actual.config);
 });
 
 test('init() returns transform', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   const matrixToHash = { bind: sandbox.stub() };
 
-  job.__set__('matrixToHash', matrixToHash);
+  worker.__set__('matrixToHash', matrixToHash);
 
-  await job.Worker.init(constants);
+  await worker.init(constants);
 
   t.is(matrixToHash.bind.callCount, 1);
   t.is(matrixToHash.bind.calledWithExactly(constants.read.fields), true);
@@ -101,10 +100,11 @@ const result = [
 ];
 
 test('execute() works', async t => {
-  const { job, sheetApiMock, bankForexMock } = t.context;
+  const { worker, sheetApiMock, bankForexMock } = t.context;
   const settings = {
     config: { },
-    transform: () => {}
+    transform: () => {},
+    fields: constants.write.fields
   };
 
   sheetApiMock
@@ -125,36 +125,9 @@ test('execute() works', async t => {
     .once()
     .returns(result.length);
 
-  const count = await job.Worker.execute(settings);
+  const count = await worker.execute(settings);
 
   t.true(sheetApiMock.verify());
   t.true(bankForexMock.verify());
   t.is(count, 7);
-});
-
-test('update works', async t => {
-  const expected = 4;
-
-  const { sandbox, job } = t.context;
-  const initStub = sandbox
-    .stub(job.Worker, 'init')
-    .withArgs(constants)
-    .returns('ok');
-  const executeStub = sandbox
-    .stub(job.Worker, 'execute')
-    .withArgs('ok')
-    .returns(expected);
-
-  const actual = await job.update();
-
-  t.is(expected, actual);
-  t.is(initStub.callCount, 1);
-  t.is(executeStub.callCount, 1);
-});
-
-test('update handles exception', async t => {
-  const expected = 0;
-  const actual = await t.context.job.update();
-
-  t.is(expected, actual);
 });

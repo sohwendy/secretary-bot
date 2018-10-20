@@ -22,16 +22,16 @@ const moments = [
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
 test.beforeEach(t => {
-  t.context.job = rewire('../../src/job/reminder-report-job');
+  t.context.worker = rewire('../../src/worker/reminder-report-worker');
   t.context.sandbox = sinon.createSandbox();
 
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   t.context.sheetApiMock  = sandbox.mock(SheetApi);
 
   constants.file =  './sample/google.json';
   constants.secretFile = './sample/reminder.json';
-  job.__set__('constants', constants);
+  worker.__set__('constants', constants);
 });
 
 test.afterEach.always(t => {
@@ -46,7 +46,7 @@ const group = [
 
 test('stringify returns today', async t => {
   const expected = `Today,15 Aug \n${group[0]}`;
-  const bind = t.context.job._stringify.bind(group);
+  const bind = t.context.worker._stringify.bind(group);
   const actual = bind('15 Aug 2018', 0);
 
   t.is(expected, actual);
@@ -54,21 +54,21 @@ test('stringify returns today', async t => {
 
 test('stringify return empty string if no row', async t => {
   const expected = '15 Aug \ndo nothing';
-  const bind = t.context.job._stringify.bind(group);
+  const bind = t.context.worker._stringify.bind(group);
   const actual = bind('15 Aug 2018', 1);
   t.is(expected, actual);
 });
 
 test('stringify return empty string if no row', async t => {
   const expected = '';
-  const bind = t.context.job._stringify.bind(group);
+  const bind = t.context.worker._stringify.bind(group);
   const actual = bind('15 Aug 2018', 2);
   t.is(expected, actual);
 });
 
 test('_stringifyReminder works', async t => {
   const expected = ' type  title';
-  const actual = t.context.job._stringifyReminder({ type: 'type', title: 'title' });
+  const actual = t.context.worker._stringifyReminder({ type: 'type', title: 'title' });
 
   t.is(expected, actual);
 });
@@ -90,19 +90,19 @@ test('init() returns config', async t => {
     }
   };
 
-  const actual = await t.context.job.Worker.init(constants);
+  const actual = await t.context.worker.init(constants);
 
   t.deepEqual(expected, actual.config);
 });
 
 test('init() returns transform', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   const arrayToHash = { bind: sandbox.stub() };
 
-  job.__set__('arrayToHash', arrayToHash);
+  worker.__set__('arrayToHash', arrayToHash);
 
-  await job.Worker.init(constants);
+  await worker.init(constants);
 
   t.is(arrayToHash.bind.callCount, 1);
   t.is(arrayToHash.bind.calledWithExactly(constants.task.fields), true);
@@ -115,7 +115,7 @@ const list = [
 ];
 
 test('execute() works', async t => {
-  const { job, sheetApiMock } = t.context;
+  const { worker, sheetApiMock } = t.context;
   const settings = {
     config: {
       rateKey: 'rateKey',
@@ -125,7 +125,6 @@ test('execute() works', async t => {
     transform: () => {},
     transformCode: () => {},
   };
-
 
   sheetApiMock
     .expects('read')
@@ -139,30 +138,8 @@ test('execute() works', async t => {
     .once()
     .returns(moments);
 
-  const actual = await job.Worker.execute(settings, dates);
+  const actual = await worker.execute(settings, dates);
 
   t.true(sheetApiMock.verify());
   t.deepEqual(list, actual);
-});
-
-test('fetch works', async t => {
-  const expected = '📆 Coming up...\n' +
-    '```\n' +
-    list.join('\n') +
-    '\n'+
-    '```\n';
-
-  const { sandbox, job } = t.context;
-  sandbox.stub(job.Worker, 'init').returns({ config: {title: constants.reportTitle }});
-  sandbox.stub(job.Worker, 'execute').returns(list);
-  const actual = await job.fetch(dates);
-
-  t.is(expected, actual);
-});
-
-test('fetch handles exception', async t => {
-  const expected = '';
-  const actual = await t.context.job.fetch();
-
-  t.is(expected, actual);
 });

@@ -1,22 +1,22 @@
-const constants = require('../../config/constants').reminder;
-const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
-const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
-function stringify(item, index) {
+function _stringify(item, index) {
   const group = this;
   const today = index === 0 ? 'Today,' : '';
   const date = item.replace(/2018/i, '');
   return group[index] ? `${today}${date}\n${group[index]}` : '';
 }
 
-function stringifyReminder(row) {
+function _stringifyReminder(row) {
   return ` ${row.type}  ${row.title}`;
 }
 
-const Worker = {
+module.exports = {
+  _stringify,
+  _stringifyReminder,
+  name: 'reminder reporter',
   init: async(constants) => {
     const secrets = await JsonFileHelper.read(constants.secretFile);
     const transform = arrayToHash.bind(constants.task.fields);
@@ -53,28 +53,7 @@ const Worker = {
     let group = dateHash.map(date => leftJoin(array, [date], 'date'));
 
     // format
-    group = group.map(g => g.map(stringifyReminder).join('\n'));
-    return dates.map(stringify, group);
+    group = group.map(g => g.map(_stringifyReminder).join('\n'));
+    return dates.map(_stringify, group);
   }
-};
-
-module.exports = {
-  _stringify: stringify,
-  _stringifyReminder: stringifyReminder,
-  fetch: async(dates) => {
-    try {
-      Logger.log('get reminder report...', dates);
-
-      const settings = await Worker.init(constants);
-      const list = await Worker.execute(settings, dates);
-
-      Logger.log('send reminder report...', list.length);
-      return BasicHelper.displayChat(list, settings.config.title);
-    } catch (err) {
-      Logger.log('cant fetch reminder report', err);
-    }
-    Logger.log('no reminder report');
-    return '';
-  },
-  Worker
 };

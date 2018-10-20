@@ -21,14 +21,14 @@ const stockData = [
 ];
 
 test.beforeEach(t => {
-  t.context.job = rewire('../../src/job/stock-monitor-job');
+  t.context.worker = rewire('../../src/worker/stock-monitor-worker');
   t.context.sandbox = sinon.createSandbox();
 
-  const { job } = t.context;
+  const { worker } = t.context;
 
   constants.file =  './sample/google.json';
   constants.secretFile =  './sample/stock.json';
-  job.__set__('constants', constants);
+  worker.__set__('constants', constants);
 });
 
 test.afterEach.always(t => {
@@ -39,7 +39,7 @@ const row = { code: 'AA', name: 'apple', price: 5.5, min: 3, max: 6.4, message: 
 
 test('rule works', async t => {
   const expected = true;
-  const actual = t.context.job._rule(row);
+  const actual = t.context.worker._rule(row);
 
   t.is(expected, actual);
 });
@@ -48,7 +48,7 @@ test('rule returns false for > max value', async t => {
   const expected = false;
   const newRow = Object.assign({}, row);
   newRow.max = 3;
-  const actual = t.context.job._rule(newRow);
+  const actual = t.context.worker._rule(newRow);
 
   t.is(expected, actual);
 });
@@ -57,7 +57,7 @@ test('rule returns false for < min value', async t => {
   const expected = false;
   const newRow = Object.assign({}, row);
   newRow.min = 7.99;
-  const actual = t.context.job._rule(newRow);
+  const actual = t.context.worker._rule(newRow);
 
   t.is(expected, actual);
 });
@@ -66,7 +66,7 @@ test('rule returns false for done = Y', async t => {
   const expected = false;
   const newRow = Object.assign({}, row);
   newRow.done = 'Y';
-  const actual = t.context.job._rule(newRow);
+  const actual = t.context.worker._rule(newRow);
 
   t.is(expected, actual);
 });
@@ -90,19 +90,19 @@ test('init() returns config', async t => {
     }
   };
 
-  const actual = await t.context.job.Worker.init(constants);
+  const actual = await t.context.worker.init(constants);
 
   t.deepEqual(expected, actual.config);
 });
 
 test('init() returns transform', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   const arrayToHash = { bind: sandbox.stub() };
 
-  job.__set__('arrayToHash', arrayToHash);
+  worker.__set__('arrayToHash', arrayToHash);
 
-  await job.Worker.init(constants);
+  await worker.init(constants);
 
   t.is(arrayToHash.bind.callCount, 2);
   t.is(arrayToHash.bind.calledWithExactly(constants.code.fields), true);
@@ -110,7 +110,7 @@ test('init() returns transform', async t => {
 });
 
 test('execute() works', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
   const settings = {
     config: {
       key: 'key',
@@ -124,49 +124,18 @@ test('execute() works', async t => {
   sheetApiStub
     .withArgs('code', settings.transform.code).returns(Promise.resolve(codeData))
     .withArgs('rule', settings.transform.rule).returns(Promise.resolve(ruleData));
-  job.__set__('SheetApi', { read: sheetApiStub });
+  worker.__set__('SheetApi', { read: sheetApiStub });
 
   const stockApiStub = sandbox.stub();
   stockApiStub
     .withArgs('key', 'GLD', 0).returns(Promise.resolve(stockData[0]))
     .withArgs('key', 'A01.SI', 15000).returns(Promise.resolve(stockData[1]))
     .withArgs('key', 'B02.SI', 30000).returns(Promise.resolve(stockData[2]));
-  job.__set__('StockApi', { get: stockApiStub });
+  worker.__set__('StockApi', { get: stockApiStub });
 
-  const expected = ['A01     10       4-11  Stock A yes'];
+  const expected = [' A01      10       4-11  Stock A yes'];
 
-  const actual = await job.Worker.execute(settings);
+  const actual = await worker.execute(settings);
 
   t.deepEqual(expected, actual);
 });
-
-const list = ['A01     10       4-11  Stock A yes'];
-
-test('fetch works', async t => {
-  const expected = constants.monitorTitle +
-    '\n' +
-    '```\n' +
-    list.join('\n') +
-    '\n' +
-    '```\n';
-
-  const { sandbox, job } = t.context;
-  sandbox.stub(job.Worker, 'init').returns({
-    config: {
-      title: constants.monitorTitle
-    }
-  });
-  sandbox.stub(job.Worker, 'execute').returns(list);
-
-  const actual = await t.context.job.fetch();
-
-  t.is(expected, actual);
-});
-
-test('fetch handles exception', async t => {
-  const expected = '';
-  const actual = await t.context.job.fetch();
-
-  t.is(expected, actual);
-});
-

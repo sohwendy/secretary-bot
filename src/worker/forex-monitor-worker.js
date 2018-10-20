@@ -1,13 +1,11 @@
 const Promise = require('bluebird');
-const constants = require('../../config/constants').forex;
 const BasicHelper = require('../lib/basic-helper');
 const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const RateApi = require('../utility/open-exchange-rate-api');
 
-function stringify(row) {
+function _stringify(row) {
   const foreign = row.code.toLowerCase();
   const buyRate = BasicHelper.pad(row.buyRate, 6);
   const sellRate = BasicHelper.pad(row.sellRate, 6);
@@ -16,12 +14,15 @@ function stringify(row) {
     `  ${row.watchlist}  (${row.min}, ${row.max})   ${row.message}`;
 }
 
-function rule(row) {
+function _rule(row) {
   const rate = row.buysell === 'B' ? row.buyRate : row.sellRate;
   return rate >= row.min && rate < row.max && row.done !== 'Y' ? true : false;
 }
 
-const Worker = {
+module.exports = {
+  _stringify,
+  _rule,
+  name: 'forex monitor',
   init: async(constants) => {
     const secretsApi = await JsonFileHelper.read(constants.rateSecretFile);
     const secretsForex = await JsonFileHelper.read(constants.secretFile);
@@ -60,29 +61,7 @@ const Worker = {
 
     joinList = joinList.map(BasicHelper.calculateUnit);
 
-    const list = joinList.filter(rule).map(stringify);
+    const list = joinList.filter(_rule).map(_stringify);
     return list ;
   }
 };
-
-module.exports = {
-  _rule: rule,
-  _stringify: stringify,
-  fetch: async() => {
-    try {
-      Logger.log('get forex monitor...');
-
-      const settings = await Worker.init(constants);
-      const list = await Worker.execute(settings);
-
-      Logger.log('send forex monitor...', list.length);
-      return BasicHelper.displayChat(list, settings.config.title);
-    } catch (error) {
-      Logger.log('cant fetch forex monitor', error);
-    }
-    Logger.log('no forex monitor');
-    return '';
-  },
-  Worker
-};
-

@@ -18,10 +18,10 @@ const codeData = [
 const row = { code: 'AUD', buyUnit: 2.5, sellUnit: 500, buyRate: 1.789, sellRate: 7.93, done: 'n', watchlist: '*' };
 
 test.beforeEach(t => {
-  t.context.job = rewire('../../src/job/forex-report-job');
+  t.context.worker = rewire('../../src/worker/forex-report-worker');
   t.context.sandbox = sinon.createSandbox();
 
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   t.context.sheetApiMock  = sandbox.mock(SheetApi);
   t.context.rateApiMock  = sandbox.mock(RateApi);
@@ -29,7 +29,7 @@ test.beforeEach(t => {
   constants.file =  './sample/google.json';
   constants.rateSecretFile =  './sample/oer.json';
   constants.secretFile =  './sample/forex.json';
-  job.__set__('constants', constants);
+  worker.__set__('constants', constants);
 });
 
 test.afterEach.always(t => {
@@ -38,7 +38,7 @@ test.afterEach.always(t => {
 
 test('stringify works', async t => {
   const expected = '2.5sgd  1.789aud   500aud   7.93sgd *';
-  const actual = t.context.job._stringify(row);
+  const actual = t.context.worker._stringify(row);
 
   t.is(expected, actual);
 });
@@ -55,26 +55,26 @@ test('init() returns config', async t => {
     }
   };
 
-  const actual = await t.context.job.Worker.init(constants);
+  const actual = await t.context.worker.init(constants);
 
   t.deepEqual(expected, actual.config);
 });
 
 test('init() returns transform', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   const arrayToHash = { bind: sandbox.stub() };
 
-  job.__set__('arrayToHash', arrayToHash);
+  worker.__set__('arrayToHash', arrayToHash);
 
-  await job.Worker.init(constants);
+  await worker.init(constants);
 
   t.is(arrayToHash.bind.callCount, 1);
   t.is(arrayToHash.bind.calledWithExactly(constants.code.fields), true);
 });
 
 test('execute() works', async t => {
-  const { job, sheetApiMock, rateApiMock } = t.context;
+  const { worker, sheetApiMock, rateApiMock } = t.context;
   const settings = {
     config: {
       rateKey: 'rateKey',
@@ -101,42 +101,9 @@ test('execute() works', async t => {
     .once()
     .returns(codeData);
 
-  const actual = await job.Worker.execute(settings);
+  const actual = await worker.execute(settings);
 
   t.true(sheetApiMock.verify());
   t.true(rateApiMock.verify());
   t.deepEqual(expected, actual);
-});
-
-const list = [
-  '1sgd      1myr     3myr      3sgd **',
-  '2sgd    1.5cny     4cny  1.334sgd '
-];
-
-test('fetch works', async t => {
-  const expected = constants.reportTitle +
-    '\n' +
-    '```\n' +
-    list.join('\n') +
-    '\n' +
-    '```\n';
-
-  const { sandbox, job } = t.context;
-  sandbox.stub(job.Worker, 'init').returns({
-    config: {
-      title: constants.reportTitle
-    }
-  });
-  sandbox.stub(job.Worker, 'execute').returns(list);
-
-  const actual = await t.context.job.fetch();
-
-  t.is(expected, actual);
-});
-
-test('fetch handles exception', async t => {
-  const expected = '';
-  const actual = await t.context.job.fetch();
-
-  t.is(expected, actual);
 });
