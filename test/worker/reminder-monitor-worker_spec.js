@@ -14,17 +14,17 @@ const sheetData = [
 ];
 
 test.beforeEach(t => {
-  t.context.job = rewire('../../src/job/reminder-monitor-job');
+  t.context.worker = rewire('../../src/worker/reminder-monitor-worker');
   t.context.sandbox = sinon.createSandbox();
 
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   t.context.sheetApiMock  = sandbox.mock(SheetApi);
 
   constants.file =  './sample/google.json';
   constants.secretFile =  './sample/forex.json';
 
-  job.__set__('constants', constants);
+  worker.__set__('constants', constants);
 });
 
 test.afterEach.always(t => {
@@ -33,31 +33,34 @@ test.afterEach.always(t => {
 
 test('rule works', async t => {
   const expected = true;
-  const bind = t.context.job._rule.bind({ date: '04 Feb 2018', time: '08' });
-  const actual = bind({ date: '04 Feb 2018', time: '08:20:00' });
+  const datetime = { date: '04 Feb 2018', time: '08' };
+  const row = { date: '04 Feb 2018', time: '08:20:00' };
+  const actual = t.context.worker._rule(row, datetime);
 
   t.is(expected, actual);
 });
 
 test('rule returns false for non-matching date', async t => {
   const expected = false;
-  const bind = t.context.job._rule.bind({ date: '04 Feb 2018', time: '08' });
-  const actual = bind({ date: '14 Feb 2018', time: '08:20:00' });
+  const datetime = { date: '04 Feb 2018', time: '08' };
+  const row = { date: '14 Feb 2018', time: '08:20:00' };
+  const actual = t.context.worker._rule(row, datetime);
 
   t.is(expected, actual);
 });
 
 test('rule returns false for non-matching  time', async t => {
   const expected = false;
-  const bind = t.context.job._rule.bind({ date: '04 Feb 2018', time: '08' });
-  const actual = bind({ date: '04 Feb 2018', time: '04:08:00' });
+  const datetime = { date: '04 Feb 2018', time: '08' };
+  const row = { date: '04 Feb 2018', time: '04:08:00' };
+  const actual = t.context.worker._rule(row, datetime);
 
   t.is(expected, actual);
 });
 
 test('stringify works', async t => {
   const expected = 'type   title';
-  const actual = t.context.job._stringify({ type: 'type', title: 'title' });
+  const actual = t.context.worker._stringify({ type: 'type', title: 'title' });
 
   t.is(expected, actual);
 });
@@ -73,24 +76,23 @@ test('init() returns config', async t => {
     }
   };
 
-  const actual = await t.context.job.Worker.init(constants);
+  const actual = await t.context.worker.init(constants);
 
   t.deepEqual(expected, actual.config);
 });
 
 test('init() returns transform', async t => {
-  const { job, sandbox } = t.context;
+  const { worker, sandbox } = t.context;
 
   const arrayToHash = { bind: sandbox.stub() };
 
-  job.__set__('arrayToHash', arrayToHash);
+  worker.__set__('arrayToHash', arrayToHash);
 
-  await job.Worker.init(constants);
+  await worker.init(constants);
 
   t.is(arrayToHash.bind.callCount, 1);
   t.is(arrayToHash.bind.calledWithExactly(constants.fields), true);
 });
-
 
 const list = [
   '04   cut jackfruit',
@@ -98,13 +100,14 @@ const list = [
 ];
 
 test('execute() works', async t => {
-  const { job, sheetApiMock } = t.context;
+  const { worker, sheetApiMock } = t.context;
   const settings = {
     config: {
       task: 'task',
     },
     transform: () => {},
   };
+  const datetime = { date: '04 Feb 2018', time: '04' };
 
   sheetApiMock
     .expects('read')
@@ -112,37 +115,8 @@ test('execute() works', async t => {
     .once()
     .returns(sheetData);
 
-  const bind = job._rule.bind({ date: '04 Feb 2018', time: '04' });
-
-  const actual = await job.Worker.execute(settings, bind);
+  const actual = await worker.execute(settings, datetime);
 
   t.true(sheetApiMock.verify());
   t.deepEqual(list, actual);
-});
-
-test('fetch works', async t => {
-  const expected = constants.monitorTitle +
-    '\n' +
-    '```\n' +
-    list.join('\n') +
-    '\n' +
-    '```\n';
-  const { sandbox, job } = t.context;
-  sandbox.stub(job.Worker, 'init').returns({
-    config: {
-      title: constants.monitorTitle
-    }
-  });
-  sandbox.stub(job.Worker, 'execute').returns(list);
-
-  const actual = await job.fetch('04 Feb 2018', '04');
-
-  t.is(expected, actual);
-});
-
-test('fetch handles exception', async t => {
-  const expected = '';
-  const actual = await t.context.job.fetch('one', 'b');
-
-  t.is(expected, actual);
 });

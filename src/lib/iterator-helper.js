@@ -49,7 +49,6 @@ function hashToArray(row, keys) {
   return keys.map(key => row[key]);
 }
 
-
 function hashToMatrix(hash, keys, initial = []) {
   return hash.reduce((array, hashRow) => {
     const arrayRow = hashToArray(hashRow, keys);
@@ -75,7 +74,6 @@ function leftJoin(leftHashList, rightHashList, key = 'code') {
   }, []);
   return result;
 }
-
 
 module.exports = {
   _combineRows,

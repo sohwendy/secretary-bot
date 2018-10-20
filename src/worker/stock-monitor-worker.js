@@ -1,26 +1,28 @@
 const Promise = require('bluebird');
-const constants = require('../../config/constants').stock;
 const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const StockApi = require('../utility/alpha-vantage-api');
 
 const INTERVAL_BETWEEN_API_CALL = 15000;
 
-function stringify(row) {
-  const price = BasicHelper.pad(row.price, 6);
+function _stringify(row) {
+  const code = BasicHelper.pad(row.short, 4);
+  const price = BasicHelper.pad(Number.parseFloat(row.price), 6);
   const range = BasicHelper.pad(`${row.min}-${row.max}`, 9);
   const name = BasicHelper.pad(row.name, 8);
-  return `${row.short} ${price}  ${range} ${name} ${row.message}`;
+  return `${code}  ${price}  ${range} ${name} ${row.message}`;
 }
 
-function rule(row) {
+function _rule(row) {
   return (row.price >= row.min && row.price < row.max && row.done !== 'Y') ? true : false;
 }
 
-const Worker = {
+module.exports = {
+  _stringify,
+  _rule,
+  name: 'stock monitor',
   init: async(constants) => {
     const secrets = await JsonFileHelper.read(constants.secretFile);
     const transform = {
@@ -63,28 +65,7 @@ const Worker = {
     let joinList = leftJoin(codeJson, priceJson, 'code');
     joinList = leftJoin(ruleJson, joinList, 'code');
 
-    const result = joinList.filter(rule).map(stringify);
+    const result = joinList.filter(_rule).map(_stringify);
     return result;
   }
-};
-
-module.exports = {
-  _rule: rule,
-  _stringify: stringify,
-  fetch: async() => {
-    try {
-      Logger.log('get stock monitor...');
-
-      const settings = await Worker.init(constants);
-      const result = await Worker.execute(settings);
-
-      Logger.log('send stock monitor...', result.length);
-      return BasicHelper.displayChat(result, settings.config.title);
-    } catch (error) {
-      Logger.log('cant fetch stock monitor', error);
-    }
-    Logger.log('no stock monitor');
-    return '';
-  },
-  Worker
 };
