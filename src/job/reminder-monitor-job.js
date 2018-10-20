@@ -1,6 +1,7 @@
-const constants = require('../../config/constants');
+const constants = require('../../config/constants').reminder;
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
+const { arrayToHash } = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
@@ -13,6 +14,30 @@ function stringify(row) {
   return `${row.type}   ${row.title}`;
 }
 
+const Worker = {
+  init: async(constants) => {
+    const secrets = await JsonFileHelper.read(constants.secretFile);
+    const transform = arrayToHash.bind(constants.fields);
+    const config = {
+      title: constants.monitorTitle,
+      task: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secrets.id,
+        range: constants.task.range
+      },
+    };
+    return { config, transform };
+  },
+  execute: async(settings, bind) => {
+    const { task: codeConfig} = settings.config;
+    let list = await SheetApi.read(codeConfig, settings.transform);
+    list = list.filter(bind).map(stringify);
+
+    return list ;
+  }
+};
+
 module.exports = {
   _rule: rule,
   _stringify: stringify,
@@ -20,22 +45,18 @@ module.exports = {
     try {
       Logger.log('get reminder monitor...', today, time);
 
-      const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.read(reminderConst.secretFile);
-      const params = { spreadsheetId: secrets.id, range: reminderConst.task.range };
-
-      const reminderJson = await SheetApi.read(reminderConst.file, reminderConst.scope, params, reminderConst.task.fields);
-
+      const settings = await Worker.init(constants);
       const bind = rule.bind({ date: today, time });
-      let reminders = reminderJson.filter(bind);
 
-      reminders = reminders.map(stringify);
-      Logger.log('send reminder monitor...', reminders.length);
-      return BasicHelper.displayChat(reminders, reminderConst.monitorTitle);
+      const list = await Worker.execute(settings, bind);
+
+      Logger.log('send reminder monitor...', list.length);
+      return BasicHelper.displayChat(list, settings.config.title);
     } catch (err) {
       Logger.log('cant fetch reminder report', err);
     }
     Logger.log('no reminder monitor');
     return '';
-  }
+  },
+  Worker
 };

@@ -51,15 +51,36 @@ test('round down with precision of 6', t => {
   t.is(expected, actual);
 });
 
-test('calculateExchangeRate works', t => {
-  const input = { price: 200, buyUnit: 4, sellUnit: 5 };
-  const factor = 2;
+test('calculateUnit returns rate', t => {
+  const row = { price: 100, buyUnit: 5.55, sellUnit: 4.44 };
+  const expected = { sellRate: 0.045, buyRate: 18.018, ...row };
 
-  const bind = helper.calculateExchangeRate.bind(factor);
-  const actual = bind(input);
-  const expected = Object.assign(input, { buyRate: 400, sellRate: 0.05 });
+  const actual = helper.calculateUnit(row);
 
   t.deepEqual(expected, actual);
+});
+
+test('calculateUnit rounds buyrate', t => {
+  const row = { price: 255, buyUnit: 1, sellUnit: 4.5 };
+  const expected = { sellRate: 0.018, buyRate: 255, ...row };
+
+  const actual = helper.calculateUnit(row);
+
+  t.deepEqual(expected, actual);
+});
+
+test('calculateExchangeRate returns rate', t => {
+  const expected = 5.5;
+  const actual = helper.calculateExchangeRate(11, 2);
+
+  t.is(expected, actual);
+});
+
+test('calculateExchangeRate returns 0 for invalid local value', t => {
+  const expected = 0;
+  const actual = helper.calculateExchangeRate(11, 0);
+
+  t.is(expected, actual);
 });
 
 test('displayChat works', async t => {

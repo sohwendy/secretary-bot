@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
-const constants = require('../../config/constants');
+const constants = require('../../config/constants').forex;
 const BasicHelper = require('../lib/basic-helper');
-const IteratorHelper = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -21,6 +21,50 @@ function rule(row) {
   return rate >= row.min && rate < row.max && row.done !== 'Y' ? true : false;
 }
 
+const Worker = {
+  init: async(constants) => {
+    const secretsApi = await JsonFileHelper.read(constants.rateSecretFile);
+    const secretsForex = await JsonFileHelper.read(constants.secretFile);
+
+    const transformCode = arrayToHash.bind(constants.code.fields);
+    const transformRule = arrayToHash.bind(constants.rule.fields);
+    const config = {
+      title: constants.monitorTitle,
+      rateKey: secretsApi.key,
+      rule: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secretsForex.id,
+        range: constants.rule.range
+      },
+      code: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secretsForex.id,
+        range: constants.code.range
+      },
+    };
+    return { config, transformCode, transformRule };
+  },
+  execute: async(settings) => {
+    const { code: codeConfig, rule: ruleConfig, rateKey: key } = settings.config;
+
+    const data = await Promise.all([
+      RateApi.get({ key }),
+      SheetApi.read(codeConfig, settings.transformCode),
+      SheetApi.read(ruleConfig, settings.transformRule)
+    ]);
+
+    let joinList = leftJoin(data[0], data[1], 'code');
+    joinList = leftJoin(data[2], joinList,  'code');
+
+    joinList = joinList.map(BasicHelper.calculateUnit);
+
+    const list = joinList.filter(rule).map(stringify);
+    return list ;
+  }
+};
+
 module.exports = {
   _rule: rule,
   _stringify: stringify,
@@ -28,44 +72,17 @@ module.exports = {
     try {
       Logger.log('get forex monitor...');
 
-      const forexConst = constants.forex;
+      const settings = await Worker.init(constants);
+      const list = await Worker.execute(settings);
 
-      const secretsApi = await JsonFileHelper.read(forexConst.rateSecretFile);
-      const secretsForex = await JsonFileHelper.read(forexConst.secretFile);
-
-      const rulesOptions = { spreadsheetId: secretsForex.id, range: forexConst.rule.range };
-      const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
-
-      const data = await Promise.all([
-        RateApi.get(secretsApi.key),
-        SheetApi.read(forexConst.file, forexConst.scope, codeOptions, forexConst.code.fields),
-        SheetApi.read(forexConst.file, forexConst.scope, rulesOptions, forexConst.rule.fields)
-      ]);
-
-      const rawPriceJson = data[0];
-      const codeJson = data[1];
-      const ruleJson = data[2];
-
-      // merge code and price list
-      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKey, rawPriceJson);
-
-      // calculate the exchange rate
-      const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
-      // merge rules and code & price
-
-      const fullRule = ruleJson.map(IteratorHelper.mergeHashUsingKeyValue, fullItem);
-
-      const fulfilRule = fullRule.filter(rule);
-
-      const itemList = fulfilRule.map(stringify);
-
-      Logger.log('send forex monitor...', itemList.length);
-      return BasicHelper.displayChat(itemList, forexConst.monitorTitle);
+      Logger.log('send forex monitor...', list.length);
+      return BasicHelper.displayChat(list, settings.config.title);
     } catch (error) {
       Logger.log('cant fetch forex monitor', error);
     }
     Logger.log('no forex monitor');
     return '';
-  }
+  },
+  Worker
 };
 

@@ -1,53 +1,55 @@
-const constants = require('../../config/constants');
+const constants = require('../../config/constants').bankforex;
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
-const IteratorHelper = require('../lib/iterator-helper');
+const { hashToMatrix, matrixToHash } = require('../lib/iterator-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const BankForexApi = require('../utility/dbs-scraper');
 
-function generateDataArray(data, initial) {
-  return data.reduce((array, current) => {
-    return array.concat([current.sellPrice, current.buyTTPrice, current.buyODPrice]);
-  }, initial);
+function transformHashToArray(hash){
+  const keys = constants.write.fields;
+  const data = hashToMatrix(hash.data, keys);
+  const result = data.reduce((acc, row) => acc.concat(row), [hash.date]);
+  return result;
 }
 
-const header = [
-  ['id', '', ''],
-  ['code', '', ''],
-  ['buyRate', 'sellRate', '']
-];
+const Worker = {
+  init: async(constants) => {
+    const secrets = await JsonFileHelper.read(constants.secretFile);
 
-const readSheet = async(spreadsheetId, options) => {
-  const readOptions = { spreadsheetId, range: options.read.range };
-  const codeList = await SheetApi.read(options.file, options.scope, readOptions);
-  return IteratorHelper.matrixToHash(codeList, header);
-};
+    const transform = matrixToHash.bind(constants.read.fields);
+    const config = {
+      token: constants.file,
+      permission: constants.permission,
+      spreadsheetId: secrets.id,
+      range: constants.read.range
+    };
+    return { config, transform };
+  },
+  execute: async(settings) => {
+    const { config, transform } = settings;
+    const requested = await SheetApi.read(config, transform);
+    const response = await BankForexApi.get(requested);
+    const results = transformHashToArray(response);
 
-const writeSheet = async(data, spreadsheetId, options) => {
-  const dataCells = generateDataArray(data.data, [data.date]);
-  const writeOptions = { spreadsheetId, range: options.write.range };
-  return await SheetApi.write(options.file, options.scope, writeOptions, dataCells);
+    return await SheetApi.write2(config, results);
+  }
 };
 
 module.exports = {
-  _generateDataArray: generateDataArray,
-  _readSheet: readSheet,
-  _writeSheet: writeSheet,
+  Worker,
+  _transformHashToArray: transformHashToArray,
   update: async() => {
     try {
       Logger.log('get bank forex report...');
 
-      const bankforexConst = constants.bankforex;
-      const secretsForex = await JsonFileHelper.read(bankforexConst.secretFile);
-
-      const meta = await readSheet(secretsForex.id, bankforexConst);
-      const data = await BankForexApi.get(meta);
-      const count = await writeSheet(data, secretsForex.id, bankforexConst);
+      const settings = await Worker.init(constants);
+      const count = await Worker.execute(settings);
       Logger.log(`bank forex report ok... ${count}`);
+
       return count;
     } catch (err) {
       Logger.log('cant fetch bank forex report', err);
       return 0;
     }
-  }
+  },
 };

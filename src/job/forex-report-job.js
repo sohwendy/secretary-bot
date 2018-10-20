@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
-const constants = require('../../config/constants');
+const constants = require('../../config/constants').forex;
 const BasicHelper = require('../lib/basic-helper');
-const IteratorHelper = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -15,36 +15,55 @@ function stringify(row) {
   return `${row.buyUnit}sgd ${buyRate}${foreign}  ${sellUnit}${foreign} ${sellRate}sgd ${row.watchlist}`;
 }
 
+const Worker = {
+  init: async(constants) => {
+    const secretsApi = await JsonFileHelper.read(constants.rateSecretFile);
+    const secretsForex = await JsonFileHelper.read(constants.secretFile);
+
+    const transform = arrayToHash.bind(constants.code.fields);
+    const config = {
+      title: constants.reportTitle,
+      rateKey: secretsApi.key,
+      code: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secretsForex.id,
+        range: constants.code.range
+      },
+    };
+    return { config, transform };
+  },
+  execute: async(settings) => {
+    const { code: codeConfig, rateKey: key } = settings.config;
+
+    const data = await Promise.all([
+      RateApi.get({ key }),
+      SheetApi.read(codeConfig, settings.transform),
+    ]);
+
+    let joinList = leftJoin(data[0], data[1], 'code');
+    joinList = joinList.map(BasicHelper.calculateUnit);
+    const list = joinList.map(stringify);
+    return list ;
+  }
+};
+
 module.exports = {
   _stringify: stringify,
   fetch: async() => {
     try {
       Logger.log('get forex report...');
 
-      const forexConst = constants.forex;
-      const secretsApi = await JsonFileHelper.read(forexConst.rateSecretFile);
-      const secretsForex = await JsonFileHelper.read(forexConst.secretFile);
-      const codeOptions = { spreadsheetId: secretsForex.id, range: forexConst.code.range };
+      const settings = await Worker.init(constants);
+      const list = await Worker.execute(settings);
 
-      const data = await Promise.all([
-        RateApi.get(secretsApi.key),
-        SheetApi.read(forexConst.file, forexConst.scope, codeOptions, forexConst.code.fields),
-      ]);
-
-      const rawPriceJson = data[0];
-      const codeJson = data[1];
-
-      // merge code and price list
-      let mergeList = codeJson.map(IteratorHelper.mergeHashUsingKey, rawPriceJson);
-      // calculate the exchange rate
-      const fullItem = mergeList.map(BasicHelper.calculateExchangeRate, rawPriceJson['SGD']);
-      const itemList = fullItem.map(stringify);
-      Logger.log('send forex report...', itemList.length);
-      return BasicHelper.displayChat(itemList, forexConst.reportTitle, secretsForex.link);
+      Logger.log('send forex report...', list.length);
+      return BasicHelper.displayChat(list, settings.config.title);
     } catch (error) {
       Logger.log('cant fetch forex report', error);
     }
     Logger.log('no forex report');
     return '';
-  }
+  },
+  Worker
 };

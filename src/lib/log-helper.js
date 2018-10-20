@@ -10,4 +10,4 @@ function log(msg, error) {
   console.log(`[${timestamp}] ${msg} ${error == undefined ? '' : error}`); //eslint-disable-line no-console
 }
 
-module.exports.log = log;
+module.exports = { log };

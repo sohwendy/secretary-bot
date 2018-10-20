@@ -1,7 +1,8 @@
 import test from 'ava';
 import sinon from 'sinon';
 const rewire = require('rewire');
-const stub = require('../_stub');
+const constants = require('../../config/constants').reminder;
+const SheetApi = require('../../src/utility/google-sheet-api');
 
 const tasks = [
   { date: '02 Feb 2018', time: '08:10:00', type: '🍎', title: 'bite apple',      action: 'n', event: '' },
@@ -18,84 +19,150 @@ const moments = [
   { date: '05 Feb 2018', time: '',         type: '🍌', title: 'peel banana', action: 'n', event: '' }
 ];
 
-const sheetApiMock = {
-  read: (_a, _b, c) => {
-    return c.range === 'Task!B2:E' ? tasks : moments;
-  }
-};
-
 const dates = ['02 Feb 2018', '03 Feb 2018', '04 Feb 2018'];
 
-let job;
-let sandbox;
-let constants;
+test.beforeEach(t => {
+  t.context.job = rewire('../../src/job/reminder-report-job');
+  t.context.sandbox = sinon.createSandbox();
 
-test.beforeEach(() => {
-  job = rewire('../../src/job/reminder-report-job');
-  job.__set__('SheetApi', sheetApiMock);
-  sandbox = sinon.createSandbox();
+  const { job, sandbox } = t.context;
 
-  constants = require('../../config/constants');
-  constants.reminder.secretFile = './sample/reminder.json';
+  t.context.sheetApiMock  = sandbox.mock(SheetApi);
+
+  constants.file =  './sample/google.json';
+  constants.secretFile = './sample/reminder.json';
+  job.__set__('constants', constants);
 });
 
-test.afterEach.always(() => {
-  sandbox.restore();
+test.afterEach.always(t => {
+  t.context.sandbox.restore();
 });
 
-test('rule works', async t => {
-  const expected = true;
-  const bind = job._rule.bind(['foo', 'bar', 'baz']);
-  const actual = bind({ date: 'baz' });
+const group = [
+  'do something',
+  'do nothing',
+  ''
+];
+
+test('stringify returns today', async t => {
+  const expected = `Today,15 Aug \n${group[0]}`;
+  const bind = t.context.job._stringify.bind(group);
+  const actual = bind('15 Aug 2018', 0);
 
   t.is(expected, actual);
 });
 
-test('stringify works', async t => {
-  const expected = '1) date\nmsg';
-  const actual = job._stringify({ count: 1, date: 'date', msg: 'msg' });
-
+test('stringify return empty string if no row', async t => {
+  const expected = '15 Aug \ndo nothing';
+  const bind = t.context.job._stringify.bind(group);
+  const actual = bind('15 Aug 2018', 1);
   t.is(expected, actual);
 });
 
 test('stringify return empty string if no row', async t => {
   const expected = '';
-  const actual = job._stringify({ count: 0, date: 'date', msg: 'msg' });
+  const bind = t.context.job._stringify.bind(group);
+  const actual = bind('15 Aug 2018', 2);
+  t.is(expected, actual);
+});
+
+test('_stringifyReminder works', async t => {
+  const expected = ' type  title';
+  const actual = t.context.job._stringifyReminder({ type: 'type', title: 'title' });
 
   t.is(expected, actual);
 });
 
-test('stringify return empty string if no row', async t => {
-  const expected = ' type  title';
-  const actual = job._stringifyReminder({ type: 'type', title: 'title' });
+test('init() returns config', async t => {
+  const expected = {
+    title: constants.reportTitle,
+    task: {
+      token: './sample/google.json',
+      permission: [ 'https://www.googleapis.com/auth/spreadsheets.readonly' ],
+      spreadsheetId: '<reminder_sheet_id>',
+      range: 'Task!B2:E'
+    },
+    moment: {
+      token: './sample/google.json',
+      permission: [ 'https://www.googleapis.com/auth/spreadsheets.readonly' ],
+      spreadsheetId: '<reminder_sheet_id>',
+      range: 'Moment!B2:E'
+    }
+  };
 
-  t.is(expected, actual);
+  const actual = await t.context.job.Worker.init(constants);
+
+  t.deepEqual(expected, actual.config);
+});
+
+test('init() returns transform', async t => {
+  const { job, sandbox } = t.context;
+
+  const arrayToHash = { bind: sandbox.stub() };
+
+  job.__set__('arrayToHash', arrayToHash);
+
+  await job.Worker.init(constants);
+
+  t.is(arrayToHash.bind.callCount, 1);
+  t.is(arrayToHash.bind.calledWithExactly(constants.task.fields), true);
+});
+
+const list = [
+  'Today,02 Feb \n 🍎  bite apple\n 🍊  squeeze orange',
+  '',
+  '04 Feb \n 🍍  cut pineapple\n 🍓  wash strawberry\n 🍉  eat watermelon'
+];
+
+test('execute() works', async t => {
+  const { job, sheetApiMock } = t.context;
+  const settings = {
+    config: {
+      rateKey: 'rateKey',
+      task: 'task',
+      moment: 'moment'
+    },
+    transform: () => {},
+    transformCode: () => {},
+  };
+
+
+  sheetApiMock
+    .expects('read')
+    .withExactArgs('task', settings.transform)
+    .once()
+    .returns(tasks);
+
+  sheetApiMock
+    .expects('read')
+    .withExactArgs('moment',  settings.transform)
+    .once()
+    .returns(moments);
+
+  const actual = await job.Worker.execute(settings, dates);
+
+  t.true(sheetApiMock.verify());
+  t.deepEqual(list, actual);
 });
 
 test('fetch works', async t => {
   const expected = '📆 Coming up...\n' +
     '```\n' +
-    '2) Today, 02 Feb \n' +
-    ' 🍎  bite apple\n' +
-    ' 🍊  squeeze orange\n' +
-    // '\n' +
-    '3)  04 Feb \n' +
-    ' 🍍  cut pineapple\n' +
-    ' 🍓  wash strawberry\n' +
-    ' 🍉  eat watermelon\n' +
-    '```\n' +
-    '[update ♧](<some_url>)';
+    list.join('\n') +
+    '\n'+
+    '```\n';
 
+  const { sandbox, job } = t.context;
+  sandbox.stub(job.Worker, 'init').returns({ config: {title: constants.reportTitle }});
+  sandbox.stub(job.Worker, 'execute').returns(list);
   const actual = await job.fetch(dates);
 
   t.is(expected, actual);
 });
 
 test('fetch handles exception', async t => {
-  job.__set__('SheetApi', stub.exceptionMock);
-
   const expected = '';
-  const actual = await job.fetch('one');
+  const actual = await t.context.job.fetch();
 
   t.is(expected, actual);
 });

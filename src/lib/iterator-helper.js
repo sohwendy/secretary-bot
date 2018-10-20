@@ -1,17 +1,5 @@
-function mergeHashUsingKey(row) {
-  const rawPriceJson = this;
-  const price = rawPriceJson[row.code];
-  return price ? Object.assign(row, { price }) : {};
-}
-
-function mergeHashUsingKeyValue(rule) {
-  const fullItem = this;
-  let item = fullItem.find(i => i.code === rule.code);
-  return item ? Object.assign(rule, item) : {};
-}
-
-function arrayToHash(values, keys) {
-  return values.reduce((json, field, index) => {
+function _rowToHash(row, keys) {
+  return row.reduce((json, field, index) => {
     let value;
     if (!keys[index]) {
       return json;
@@ -50,40 +38,52 @@ function _chunkArray(row, size) {
   return result;
 }
 
-// converts nested array to hash
-function _chunkToHash(row, keys) {
-  return row.map(group => arrayToHash(group, keys));
+// converts array to hash
+function arrayToHash(row, keys) {
+  keys = keys || this;
+  return row.map(item => _rowToHash(item, keys));
 }
 
-function matrixToHash(matrix, keys) {
-  const size = keys[0].length;
-  const chunkMatrix = matrix.map(row => _chunkArray(row, size));
-  const hash = chunkMatrix.map((row, i) => _chunkToHash(row, keys[i]));
-  const result = _combineRows(hash);
-  return result;
+function hashToArray(row, keys) {
+  keys = keys || this;
+  return keys.map(key => row[key]);
 }
 
 
-
-function hashToMatrix(data, keys, initial = []) {
-  return data.reduce((array, hashRow) => {
+function hashToMatrix(hash, keys, initial = []) {
+  return hash.reduce((array, hashRow) => {
     const arrayRow = hashToArray(hashRow, keys);
     return array.concat([arrayRow]);
   }, initial);
 }
 
-function hashToArray(row, keys) {
-  return keys.map(key => row[key]);
+function matrixToHash(matrix, keys) {
+  keys = keys || this;
+  const size = keys[0].length;
+  const chunkMatrix = matrix.map(row => _chunkArray(row, size));
+  const hash = chunkMatrix.map((row, i) => arrayToHash(row, keys[i]));
+  const result = _combineRows(hash);
+  return result;
 }
+
+// returns (left+right) if left has matching right values
+function leftJoin(leftHashList, rightHashList, key = 'code') {
+  const result = leftHashList.reduce((acc, left) => {
+    const right = rightHashList.find(right => right[key] === left[key]);
+    right ? acc.push(Object.assign(left, right)) : '';
+    return acc;
+  }, []);
+  return result;
+}
+
 
 module.exports = {
   _combineRows,
   _chunkArray,
-  _chunkToHash,
-  mergeHashUsingKey,
-  mergeHashUsingKeyValue,
+  _rowToHash,
   arrayToHash,
-  matrixToHash,
   hashToArray,
-  hashToMatrix
+  matrixToHash,
+  hashToMatrix,
+  leftJoin
 };

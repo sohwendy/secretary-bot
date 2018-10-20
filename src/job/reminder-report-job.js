@@ -1,64 +1,80 @@
-const constants = require('../../config/constants');
+const constants = require('../../config/constants').reminder;
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-// const IteratorHelper = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
-function rule(row) {
-  const dates = this;
-  return dates.includes(row.date);
-}
-
-function stringify(row) {
-  return row.count === 0 ? '' : `${row.count}) ${row.date}\n${row.msg}`;
+function stringify(item, index) {
+  const group = this;
+  const today = index === 0 ? 'Today,' : '';
+  const date = item.replace(/2018/i, '');
+  return group[index] ? `${today}${date}\n${group[index]}` : '';
 }
 
 function stringifyReminder(row) {
   return ` ${row.type}  ${row.title}`;
 }
 
+const Worker = {
+  init: async(constants) => {
+    const secrets = await JsonFileHelper.read(constants.secretFile);
+    const transform = arrayToHash.bind(constants.task.fields);
+    const config = {
+      title: constants.reportTitle,
+      task: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secrets.id,
+        range: constants.task.range
+      },
+      moment: {
+        token: constants.file,
+        permission: constants.permission,
+        spreadsheetId: secrets.id,
+        range: constants.moment.range
+      }
+    };
+    return { config, transform };
+  },
+  execute: async(settings, dates) => {
+    // get task and moment list
+    let data = await Promise.all([
+      SheetApi.read(settings.config.task, settings.transform),
+      SheetApi.read(settings.config.moment, settings.transform)
+    ]);
+
+    // extract relevant events
+    const dateHash = dates.map(date => { return { date }; });
+    data = data.map(d => leftJoin(d, dateHash, 'date'));
+    const array = data[0].concat(data[1]);
+
+    // grouping according to date
+    let group = dateHash.map(date => leftJoin(array, [date], 'date'));
+
+    // format
+    group = group.map(g => g.map(stringifyReminder).join('\n'));
+    return dates.map(stringify, group);
+  }
+};
+
 module.exports = {
-  _rule: rule,
   _stringify: stringify,
   _stringifyReminder: stringifyReminder,
   fetch: async(dates) => {
     try {
       Logger.log('get reminder report...', dates);
-      const bind = rule.bind(dates);
-      const reminderConst = constants.reminder;
-      const secrets = await JsonFileHelper.read(reminderConst.secretFile);
 
-      const configConstant = [reminderConst.task, reminderConst.moment];
+      const settings = await Worker.init(constants);
+      const list = await Worker.execute(settings, dates);
 
-      const taskOptions = { spreadsheetId: secrets.id, range: configConstant[0].range };
-      const momentOptions = { spreadsheetId: secrets.id, range: configConstant[1].range };
-
-      // get task and moment list
-      let data = await Promise.all([
-        SheetApi.read(reminderConst.file, reminderConst.scope, taskOptions, configConstant[0].fields),
-        SheetApi.read(reminderConst.file, reminderConst.scope, momentOptions, configConstant[1].fields)
-      ]);
-
-      let reminders = [];
-      for (let i = 0; i < 2; i++) {
-        reminders = reminders.concat(data[i].filter(bind));
-      }
-
-      let group = dates.map(date => reminders.filter(r => r.date === date));
-      group = group.map((g, index) => {
-        const msg = g.map(stringifyReminder).join('\n');
-        const date = `${index === 0 ? 'Today,' : ''} ${dates[index].replace(/2018/i, '')}`;
-        return { count: g.length, msg, date: date };
-      });
-
-      group = group.map(stringify).filter(g => g);
-      Logger.log('send reminder report...', group.length);
-      return BasicHelper.displayChat(group, reminderConst.reportTitle, secrets.link);
+      Logger.log('send reminder report...', list.length);
+      return BasicHelper.displayChat(list, settings.config.title);
     } catch (err) {
       Logger.log('cant fetch reminder report', err);
     }
     Logger.log('no reminder report');
     return '';
-  }
+  },
+  Worker
 };
