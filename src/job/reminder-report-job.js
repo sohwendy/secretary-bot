@@ -1,7 +1,7 @@
 const constants = require('../../config/constants').reminder;
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
-const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
 
@@ -19,7 +19,7 @@ function stringifyReminder(row) {
 const Worker = {
   init: async(constants) => {
     const secrets = await JsonFileHelper.read(constants.secretFile);
-    const transform = arrayToHash2.bind(constants.task.fields);
+    const transform = arrayToHash.bind(constants.task.fields);
     const config = {
       title: constants.reportTitle,
       task: {

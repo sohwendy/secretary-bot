@@ -55,14 +55,14 @@ test('init() returns config', async t => {
 test('init() returns transform', async t => {
   const { job, sandbox } = t.context;
 
-  const matrixToHash2 = { bind: sandbox.stub() };
+  const matrixToHash = { bind: sandbox.stub() };
 
-  job.__set__('matrixToHash2', matrixToHash2);
+  job.__set__('matrixToHash', matrixToHash);
 
   await job.Worker.init(constants);
 
-  t.is(matrixToHash2.bind.callCount, 1);
-  t.is(matrixToHash2.bind.calledWithExactly(constants.read.fields), true);
+  t.is(matrixToHash.bind.callCount, 1);
+  t.is(matrixToHash.bind.calledWithExactly(constants.read.fields), true);
 });
 
 const rateData = {

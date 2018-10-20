@@ -1,19 +1,4 @@
-// returns (left+right) if left has matching right values
-function leftJoin(leftHashList, rightHashList, key = 'code') {
-  const result = leftHashList.reduce((acc, left) => {
-    const right = rightHashList.find(right => right[key] === left[key]);
-    right ? acc.push(Object.assign(left, right)) : '';
-    return acc;
-  }, []);
-  return result;
-}
-
-function arrayToHash2(values) {
-  const keys = this;
-  return values.map(row => rowToHash(row, keys));
-}
-
-function rowToHash(row, keys) {
+function _rowToHash(row, keys) {
   return row.reduce((json, field, index) => {
     let value;
     if (!keys[index]) {
@@ -53,24 +38,17 @@ function _chunkArray(row, size) {
   return result;
 }
 
-// converts nested array to hash
-function _chunkToHash(row, keys) {
-  return row.map(group => rowToHash(group, keys));
+// converts array to hash
+function arrayToHash(row, keys) {
+  keys = keys || this;
+  return row.map(item => _rowToHash(item, keys));
 }
 
-function matrixToHash2(matrix) {
-  const keys = this;
-  const result = matrixToHash(matrix, keys);
-  return result;
+function hashToArray(row, keys) {
+  keys = keys || this;
+  return keys.map(key => row[key]);
 }
 
-function matrixToHash(matrix, keys) {
-  const size = keys[0].length;
-  const chunkMatrix = matrix.map(row => _chunkArray(row, size));
-  const hash = chunkMatrix.map((row, i) => _chunkToHash(row, keys[i]));
-  const result = _combineRows(hash);
-  return result;
-}
 
 function hashToMatrix(hash, keys, initial = []) {
   return hash.reduce((array, hashRow) => {
@@ -79,19 +57,33 @@ function hashToMatrix(hash, keys, initial = []) {
   }, initial);
 }
 
-function hashToArray(row, keys) {
-  return keys.map(key => row[key]);
+function matrixToHash(matrix, keys) {
+  keys = keys || this;
+  const size = keys[0].length;
+  const chunkMatrix = matrix.map(row => _chunkArray(row, size));
+  const hash = chunkMatrix.map((row, i) => arrayToHash(row, keys[i]));
+  const result = _combineRows(hash);
+  return result;
 }
+
+// returns (left+right) if left has matching right values
+function leftJoin(leftHashList, rightHashList, key = 'code') {
+  const result = leftHashList.reduce((acc, left) => {
+    const right = rightHashList.find(right => right[key] === left[key]);
+    right ? acc.push(Object.assign(left, right)) : '';
+    return acc;
+  }, []);
+  return result;
+}
+
 
 module.exports = {
   _combineRows,
   _chunkArray,
-  _chunkToHash,
-  rowToHash,
-  arrayToHash2,
-  matrixToHash,
-  matrixToHash2,
+  _rowToHash,
+  arrayToHash,
   hashToArray,
+  matrixToHash,
   hashToMatrix,
   leftJoin
 };

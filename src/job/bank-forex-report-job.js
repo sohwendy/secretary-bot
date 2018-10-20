@@ -1,7 +1,7 @@
 const constants = require('../../config/constants').bankforex;
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
-const { hashToMatrix, matrixToHash2 } = require('../lib/iterator-helper');
+const { hashToMatrix, matrixToHash } = require('../lib/iterator-helper');
 const SheetApi = require('../utility/google-sheet-api');
 const BankForexApi = require('../utility/dbs-scraper');
 
@@ -16,7 +16,7 @@ const Worker = {
   init: async(constants) => {
     const secrets = await JsonFileHelper.read(constants.secretFile);
 
-    const transform = matrixToHash2.bind(constants.read.fields);
+    const transform = matrixToHash.bind(constants.read.fields);
     const config = {
       token: constants.file,
       permission: constants.permission,

@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants').forex;
 const BasicHelper = require('../lib/basic-helper');
-const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
 const SheetApi = require('../utility/google-sheet-api');
@@ -20,7 +20,7 @@ const Worker = {
     const secretsApi = await JsonFileHelper.read(constants.rateSecretFile);
     const secretsForex = await JsonFileHelper.read(constants.secretFile);
 
-    const transform = arrayToHash2.bind(constants.code.fields);
+    const transform = arrayToHash.bind(constants.code.fields);
     const config = {
       title: constants.reportTitle,
       rateKey: secretsApi.key,

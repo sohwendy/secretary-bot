@@ -98,15 +98,15 @@ test('init() returns config', async t => {
 test('init() returns transform', async t => {
   const { job, sandbox } = t.context;
 
-  const arrayToHash2 = { bind: sandbox.stub() };
+  const arrayToHash = { bind: sandbox.stub() };
 
-  job.__set__('arrayToHash2', arrayToHash2);
+  job.__set__('arrayToHash', arrayToHash);
 
   await job.Worker.init(constants);
 
-  t.is(arrayToHash2.bind.callCount, 2);
-  t.is(arrayToHash2.bind.calledWithExactly(constants.code.fields), true);
-  t.is(arrayToHash2.bind.calledWithExactly(constants.rule.fields), true);
+  t.is(arrayToHash.bind.callCount, 2);
+  t.is(arrayToHash.bind.calledWithExactly(constants.code.fields), true);
+  t.is(arrayToHash.bind.calledWithExactly(constants.rule.fields), true);
 });
 
 test('execute() works', async t => {

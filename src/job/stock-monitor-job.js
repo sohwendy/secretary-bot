@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const constants = require('../../config/constants').stock;
-const { arrayToHash2, leftJoin } = require('../lib/iterator-helper');
+const { arrayToHash, leftJoin } = require('../lib/iterator-helper');
 const BasicHelper = require('../lib/basic-helper');
 const JsonFileHelper = require('../lib/json-file-helper');
 const Logger = require('../lib/log-helper');
@@ -24,8 +24,8 @@ const Worker = {
   init: async(constants) => {
     const secrets = await JsonFileHelper.read(constants.secretFile);
     const transform = {
-      code: arrayToHash2.bind(constants.code.fields),
-      rule: arrayToHash2.bind(constants.rule.fields),
+      code: arrayToHash.bind(constants.code.fields),
+      rule: arrayToHash.bind(constants.rule.fields),
     };
     const config = {
       title: constants.monitorTitle,
