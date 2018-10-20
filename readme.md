@@ -55,8 +55,8 @@ docker-compose down
 [ ] update readme  
 [ ] Use secret management - docker secrets, vault etc.  
 [ ] create boilerplate  
-[ ] use sinon for mock and spying  
-[ ] Use user in dockerfile  
+[ ] Use user in dockerfile
+[X] use sinon for mock and spying    
 [X] docker  
 [X] tests  
 [X] check time for reminder  
@@ -69,6 +69,18 @@ RUN groupadd -r nodejs -g 1001 \
   && useradd -m -r -g nodejs nodejs \
   && chown -R nodejs:nodejs /usr/app
 ```
+
+## Helpful commands
+
+Test a specific test file  
+```npm run test-debug <file>```
+
+Full test ( lint + unit tests + coverage )  
+```npm run test```
+
+Run locally  
+```npm run start```
+
 
 ## References
 [Node.js Quickstart | Sheets API | Google Developers ](https://developers.google.com/sheets/api/quickstart/nodejs)  
