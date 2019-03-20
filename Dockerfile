@@ -12,10 +12,10 @@ RUN echo "Asia/Singapore" > /etc/timezone && \
 RUN mkdir -p /usr/app
 WORKDIR /usr/app
 
-COPY ["package.json", "yarn.lock", "./"]
+COPY ["package.json", "./"]
 
 RUN cd /usr/app && \
-  yarn install --production
+  npm install --production
 
 COPY . .
 
@@ -24,6 +24,6 @@ RUN groupadd -r nodejs -g 1001 \
   && useradd -m -r -g nodejs nodejs \
   && chown -R nodejs:nodejs /usr/app
 
-CMD [ "yarn", "live" ]
 
 USER nodejs
+CMD [ "npm", "run", "live" ]

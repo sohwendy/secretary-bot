@@ -20,28 +20,28 @@ const htmlData = {
   time: 'E',
 };
 
-test('_constructUrl works', async t => {
+test.serial('_constructUrl works', async t => {
   const expected = 'https://www.bloomberg.com/quote/one:two';
   const actual = helper._constructUrl('one', 'two');
 
   t.is(expected, actual);
 });
 
-test('_constructUrl without suffix', async t => {
+test.serial('_constructUrl without suffix', async t => {
   const expected = 'https://www.bloomberg.com/quote/one';
   const actual = helper._constructUrl('one');
 
   t.is(expected, actual);
 });
 
-test('_transform', async t => {
+test.serial('_transform', async t => {
   const expected = htmlData;
   const actual = helper._transform(html);
 
   t.deepEqual(expected, actual);
 });
 
-test('get works', async t => {
+test.serial('get works', async t => {
   const axiosMock = {
     get: (url, { transformResponse }) => {
       return { url, data: transformResponse(html) };
@@ -52,10 +52,13 @@ test('get works', async t => {
   const expected = htmlData;
   const actual = await helper.get('foo', 'bar');
 
+
+  t.log('ex', expected); t.log('ac', actual);
+
   t.deepEqual(expected, actual);
 });
 
-test('get handles exception', async t => {
+test.serial('get handles exception', async t => {
   const axiosMock = { get: stub.exceptionMock };
   helper.__set__('axios', axiosMock);
 

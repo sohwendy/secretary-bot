@@ -29,21 +29,21 @@ const jsonData = {
   price: '9.9',
 };
 
-test('_constructUrl works', async t => {
+test.serial('_constructUrl works', async t => {
   const expected = 'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=one&apikey=key';
   const actual = helper._constructUrl('key', 'one',);
 
   t.is(expected, actual);
 });
 
-test('_transform', async t => {
+test.serial('_transform', async t => {
   const expected = jsonData;
   const actual = helper._transform(json);
 
   t.deepEqual(expected, actual);
 });
 
-test('get works', async t => {
+test.serial('get works', async t => {
   const axiosMock = {
     get: (url, { transformResponse }) => {
       return { url, data: transformResponse(json) };
@@ -57,7 +57,7 @@ test('get works', async t => {
   t.deepEqual(expected, actual);
 });
 
-test('get handles exception', async t => {
+test.serial('get handles exception', async t => {
   const axiosMock = { get: stub.exceptionMock };
   helper.__set__('axios', axiosMock);
 

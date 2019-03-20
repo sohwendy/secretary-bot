@@ -52,7 +52,7 @@ test('stringify returns today', async t => {
   t.is(expected, actual);
 });
 
-test('stringify return empty string if no row', async t => {
+test('stringify returns works', async t => {
   const expected = '15 Aug \ndo nothing';
   const bind = t.context.worker._stringify.bind(group);
   const actual = bind('15 Aug 2018', 1);

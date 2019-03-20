@@ -73,7 +73,7 @@ const params = {
 };
 const jwtClient = {};
 
-test('read works', async t => {
+test.serial('read works', async t => {
   const { sandbox } = t.context;
   const expected = 'values';
 
@@ -103,7 +103,7 @@ test('read works', async t => {
   t.is(expected, actual);
 });
 
-test('read handles exception', async t => {
+test.serial('read handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
@@ -113,18 +113,7 @@ test('read handles exception', async t => {
   t.is(expected, actual);
 });
 
-
-test('read handles exception', async t => {
-  const readFileMock = stub.exceptionMock;
-  helper.__set__('readFile', readFileMock);
-
-  const expected = '';
-  const actual = await helper.read('', '', {});
-
-  t.is(expected, actual);
-});
-
-test('write2 works', async t => {
+test.serial('write2 works', async t => {
   const { sandbox } = t.context;
 
   const sheets = { append: sandbox.stub()};
@@ -159,7 +148,7 @@ test('write2 works', async t => {
   t.deepEqual(expected, actual);
 });
 
-test('write handles exception', async t => {
+test.serial('write handles exception', async t => {
   const readFileMock = stub.exceptionMock;
   helper.__set__('readFile', readFileMock);
 
