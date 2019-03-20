@@ -35,8 +35,8 @@
     "bluebird": "^3.5.2",
     "cheerio": "^1.0.0-rc.2",
     "cron": "^1.4.1",
-    "google-auth-library": "^2.0.0",
-    "googleapis": "^34.0.0",
+    "google-auth-library": "^3.1.1",
+    "googleapis": "^38.0.0",
     "moment": "^2.22.2",
     "node-telegram-bot-api": "^0.30.0"
   },
