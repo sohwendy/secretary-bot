@@ -40,8 +40,13 @@ Book Shuttle
 
 ## Running the bot
 ```
-yarn install
-yarn live
+npm run install
+npm run live
+```
+
+## Running the bot once
+```
+npm run start
 ```
 
 ## Using docker-compose
