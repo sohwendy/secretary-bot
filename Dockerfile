@@ -1,4 +1,4 @@
-FROM node:10.11.0-slim
+FROM node:10.15.3-slim
 
 LABEL version="0.3"
 LABEL description="Image for secretary-bot"
