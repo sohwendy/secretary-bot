@@ -72,7 +72,7 @@ module.exports = {
       },
       forex: {
         report: '30 48 10 * * 1-6',
-        monitor: '30 48 11-20/4 * * 1-5'
+        monitor: '30 48 17-18/1 * * 1-5'
       },
       stock: {
         report: '45 10 9 * * 1-6',
