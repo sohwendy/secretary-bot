@@ -16,6 +16,20 @@ module.exports = {
       fields: ['date', 'time', 'type', 'title', 'action', 'event']
     }
   },
+  learn: {
+    title: '👩‍🎓',
+    file: './.secrets/google.json',
+    secretFile: './.secrets/learn.json',
+    permission: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+    code: {
+      range: 'ToKnow!B$:D$',
+      fields: ['display', 'content', 'domain']
+    },
+    rules: {
+      range: 'ToKnow!A1:A1',
+      fields: ['total']
+    },
+  },
   forex: {
     reportTitle: '🌎 Left - more is gd, Right - less is gd...',
     monitorTitle: '🌎🔥 Left - more is gd, Right - less is gd...',
@@ -81,8 +95,11 @@ module.exports = {
       bank: {
         report: '37 25 10,4 * * 1-5',
       },
+      learn: {
+        report: '37 25 10,4 * * 1-5',
+      },
       log: {
-        monitor: '00 */10 * * * *'
+        report: '15 40 8 * * *',
       }
     },
     debug: {
@@ -100,6 +117,9 @@ module.exports = {
       },
       bank: {
         report: '37 */20 * * * *',
+      },
+      learn: {
+        report: '5 */9 * * * *',
       },
       log: {
         monitor: '00 */1 * * * *'
