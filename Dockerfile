@@ -15,7 +15,7 @@ WORKDIR /usr/app
 COPY ["package.json", "./"]
 
 RUN cd /usr/app && \
-  npm install --production
+  npm ci --only=production
 
 COPY . .
 
