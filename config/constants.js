@@ -82,21 +82,21 @@ module.exports = {
     live: {
       reminder: {
         report: '15 48 8 * * *',
-        monitor: '15 0 9-22/1 * * *'
+        monitor: '15 0 9-22/3 * * *'
       },
       forex: {
         report: '30 48 10 * * 1-6',
-        monitor: '30 48 17-18/1 * * 1-5'
+        monitor: '30 48 17-18 * * 1-5'
       },
       stock: {
         report: '45 10 9 * * 1-6',
-        monitor: '45 10 10-5/1 * * 1-5'
+        monitor: '45 10 10-18/3 * * 1-5'
       },
       bank: {
-        report: '37 25 10,4 * * 1-5',
+        report: '37 25 10 * * 1-5',
       },
       learn: {
-        report: '37 25 10,4 * * 1-5',
+        report: '00 13 09 * * *',
       },
       log: {
         report: '15 40 8 * * *',

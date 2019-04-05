@@ -24,6 +24,7 @@ services:
       - ./.secrets:/usr/app/.secrets
     environment:
       REMINDER: 1
+      LEARN: 1
   bank:
     build: .
     image: bot_bank:v1
@@ -32,11 +33,3 @@ services:
       - ./.secrets:/usr/app/.secrets
     environment:
       BANK: 1
-  learn:
-    build: .
-    image: bot_learn:v1
-    restart: always
-    volumes:
-      - ./.secrets:/usr/app/.secrets
-    environment:
-      LEARN: 1

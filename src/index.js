@@ -39,8 +39,8 @@ const send = async(data) => {
 const today = moment().local().startOf('day');
 const day = today.clone().dayOfYear();
 let dates = [];
-for (let day = 0; day < 3; day++) {
-  const d = today.clone().add(day, 'day').format('DD MMM YYYY');
+for (let i = 0; i < 3; i++) {
+  const d = today.clone().add(i, 'day').format('DD MMM YYYY');
   dates.push(d);
 }
 let time = moment().local().format('HH');
