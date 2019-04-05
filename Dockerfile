@@ -12,7 +12,7 @@ RUN echo "Asia/Singapore" > /etc/timezone && \
 RUN mkdir -p /usr/app
 WORKDIR /usr/app
 
-COPY ["package.json", "./"]
+COPY ["package*.json", "./"]
 
 RUN cd /usr/app && \
   npm ci --only=production
