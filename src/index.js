@@ -77,6 +77,17 @@ if (!state) {
 } else {
   Logger.log('Create Cron...');
 
+  if (process.env.LEARN == 1) {
+    chatFile = 'learnchat.json';
+    learnReporter();
+    Logger.log('learn starts');
+    new cron.CronJob({
+      cronTime: constants.schedule[state].learn.report,
+      onTick: learnReporter,
+      start: true
+    });
+  }
+
   if (process.env.REMINDER == 1) {
     reminderReporter();
     reminderMonitor();
@@ -137,17 +148,6 @@ if (!state) {
     new cron.CronJob({
       cronTime: constants.schedule[state].bank.report,
       onTick: bankReporter,
-      start: true
-    });
-  }
-
-  if (process.env.LEARN == 1) {
-    chatFile = 'learnchat.json';
-    learnReporter();
-    Logger.log('learn starts');
-    new cron.CronJob({
-      cronTime: constants.schedule[state].learn.report,
-      onTick: learnReporter,
       start: true
     });
   }
