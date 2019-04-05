@@ -153,7 +153,7 @@ if (!state) {
   }
 
   new cron.CronJob({
-    cronTime: '00 */15 * * * *',
+    cronTime: '00 00 */2 * * *',
     onTick: () => {
       Logger.log('heartbeat');
     },
