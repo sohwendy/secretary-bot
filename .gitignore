@@ -1,5 +1,5 @@
 node_modules/
 .secrets/
 .nyc_output/
-*test.js
+stub.js
 log.txt
