@@ -35,19 +35,19 @@
     "bluebird": "^3.5.5",
     "cheerio": "^1.0.0-rc.3",
     "cron": "^1.7.1",
-    "google-auth-library": "^5.1.1",
+    "google-auth-library": "^5.2.0",
     "googleapis": "^41.0.1",
     "moment": "^2.24.0",
     "node-telegram-bot-api": "^0.30.0"
   },
   "devDependencies": {
-    "ava": "^2.2.0",
-    "eslint": "^6.1.0",
+    "ava": "^2.3.0",
+    "eslint": "^6.3.0",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.2",
-    "mockdate": "^2.0.3",
+    "mockdate": "^2.0.5",
     "nyc": "^14.1.1",
     "rewire": "^4.0.1",
-    "sinon": "^7.3.2"
+    "sinon": "^7.4.2"
   }
 }
