@@ -38,7 +38,7 @@
     "google-auth-library": "^5.2.0",
     "googleapis": "^42.0.0",
     "moment": "^2.24.0",
-    "node-telegram-bot-api": "^0.30.0"
+    "node-telegram-bot-api": "^0.40.0"
   },
   "devDependencies": {
     "ava": "^2.3.0",
