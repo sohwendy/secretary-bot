@@ -37,7 +37,7 @@
     "cron": "^1.7.1",
     "google-auth-library": "^5.2.0",
     "googleapis": "^42.0.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-telegram-bot-api": "^0.30.0"
   },
   "devDependencies": {
